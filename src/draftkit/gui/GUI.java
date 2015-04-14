@@ -3,7 +3,6 @@ package draftkit.gui;
 import static draftkit.DraftKit_StartupConstants.*;
 import draftkit.DraftKit_PropertyType;
 //import draftkit.controller.DraftEditController;
-import draftkit.data.Draft;
 import draftkit.data.DraftDataManager;
 import draftkit.data.DraftDataView;
 import draftkit.controller.FileController;
@@ -11,19 +10,11 @@ import draftkit.controller.FileController;
 import draftkit.controller.TeamEditController;
 import draftkit.controller.PlayerEditController;
 */
-import draftkit.data.Hitter;
-import draftkit.data.Pitcher;
 import draftkit.data.Player;
-import draftkit.data.DraftTeam;
-import draftkit.data.Team;
 import draftkit.data.Draft;
 import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,12 +22,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -74,16 +64,16 @@ public class GUI implements DraftDataView {
     // THIS MANAGES ALL OF THE APPLICATION'S DATA
     DraftDataManager dataManager;
 
-    // THIS MANAGES COURSE FILE I/O
+    // THIS MANAGES DRAFT FILE I/O
     DraftFileManager draftFileManager;
 
     // THIS MANAGES EXPORTING OUR SITE PAGES
     //DraftSiteExporter siteExporter;
 
     // THIS HANDLES INTERACTIONS WITH FILE-RELATED CONTROLS
-    //FileController fileController;
+    FileController fileController;
 
-    // THIS HANDLES INTERACTIONS WITH COURSE INFO CONTROLS
+    // THIS HANDLES INTERACTIONS WITH DRAFT INFO CONTROLS
     //DraftEditController draftController;
     
     // THIS HANDLES REQUESTS TO ADD OR EDIT SCHEDULE STUFF
@@ -120,20 +110,102 @@ public class GUI implements DraftDataView {
     // WE'LL PUT THE WORKSPACE INSIDE A SCROLL PANE
     ScrollPane workspaceScrollPane;
 
+    // VBOXES FOR VARIOUS SCREENS
+    VBox teamScreen;
+    Label teamsLabel;
+    VBox playerScreen;
+    Label playersLabel;
+    VBox standingsScreen;
+    Label standingsLabel;
+    VBox summaryScreen;
+    Label summaryLabel;
+    VBox MLBTeamsScreen;
+    Label MLBTeamsLabel;
     
+    //PLAYER SCREEN CONTROLS
+    HBox firstBox;
+    Button addPlayerButton;
+    Button removePlayerButton;
+    Label searchLabel;
+    
+    //RADIO BUTTON CONTROLS
+    HBox radioBox;
+    ToggleGroup select;
+    RadioButton all;
+    RadioButton c;
+    RadioButton firstB;
+    RadioButton cI;
+    RadioButton secondB;
+    RadioButton thirdB;
+    RadioButton MI;
+    RadioButton SS;
+    RadioButton OF;
+    RadioButton U;
+    RadioButton P;
+    
+    //PLAYER SCREEN CONTROLS
+    TableView<Player> playerTable;
+    TableColumn player_first;
+    TableColumn player_last;
+    TableColumn player_proTeam;
+    TableColumn player_positions;
+    TableColumn player_year;
+    TableColumn player_nation;
+    TableColumn player_r_w;
+    TableColumn player_hr_sv;
+    TableColumn player_rbi_k;
+    TableColumn player_sb_era;
+    TableColumn player_ba_whip;
+    TableColumn player_est_value;
+    TableColumn player_notes;
+    
+    //LABELS FOR RADIO BUTTONS
+    static final String RADIO_ALL = "All";
+    static final String RADIO_C = "C";
+    static final String RADIO_1B = "1B";
+    static final String RADIO_CI = "CI";
+    static final String RADIO_3B = "3B";
+    static final String RADIO_2B = "2B";
+    static final String RADIO_MI = "MI";
+    static final String RADIO_SS = "SS";
+    static final String RADIO_OF = "OF";
+    static final String RADIO_U = "U";
+    static final String RADIO_P = "P";
     
     // AND TABLE COLUMNS
-    static final String COL_DESCRIPTION = "Description";
-    static final String COL_DATE = "Date";
-    static final String COL_LINK = "Link";
-    static final String COL_TOPIC = "Topic";
-    static final String COL_SESSIONS = "Number of Sessions";
-    static final String COL_NAME = "Name";
-    static final String COL_TOPICS = "Topics";
+    static final String COL_FIRST = "First";
+    static final String COL_LAST = "Last";
+    static final String COL_PRO_TEAM = "Pro Team";
+    static final String COL_POSITIONS = "Positions";
+    static final String COL_YEAR = "Year of Birth";
+    static final String COL_R_W = "R/W";
+    static final String COL_HR_SV = "HR/SV";
+    static final String COL_RBI_K = "RBI/K";
+    static final String COL_SB_ERA = "SBI/ERA";
+    static final String COL_BA_WHIP = "BA/WHIP";
+    static final String COL_VALUE = "Estimated Value";
+    static final String COL_NOTES = "Notes";
+    static final String COL_R = "R";
+    static final String COL_HR = "HR";
+    static final String COL_RBI = "RBI";
+    static final String COL_SB = "SB";
+    static final String COL_BA = "BA";
+    static final String COL_W = "W";
+    static final String COL_SV = "SV";
+    static final String COL_ERA = "ERA";
+    static final String COL_WHIP = "WHIP";
     
     // HERE ARE OUR DIALOGS
     MessageDialog messageDialog;
     YesNoCancelDialog yesNoCancelDialog;
+    
+    // SWITCH SCREEN TOOLBAR
+    FlowPane switchToolbarPane;
+    Button playersButton;
+    Button teamsButton;
+    Button standingsButton;
+    Button summaryButton;
+    Button MLBTeamsButton;
     
     /**
      * Constructor for making this GUI, note that it does not initialize the UI
@@ -177,9 +249,11 @@ public class GUI implements DraftDataView {
      *
      * @return The DraftSiteExporter used by this UI.
      */
+    /*
     public DraftSiteExporter getSiteExporter() {
         return siteExporter;
     }
+    */
 
     /**
      * Accessor method for the window (i.e. stage).
@@ -221,9 +295,11 @@ public class GUI implements DraftDataView {
      *
      * @param initSiteExporter The DraftSiteExporter to be used by this UI.
      */
+    /*
     public void setSiteExporter(DraftSiteExporter initSiteExporter) {
         siteExporter = initSiteExporter;
     }
+    */
 
     /**
      * This method fully initializes the user interface for use.
@@ -232,16 +308,17 @@ public class GUI implements DraftDataView {
      * @param subjects The list of subjects to choose from.
      * @throws IOException Thrown if any initialization files fail to load.
      */
-    public void initGUI(String windowTitle, ArrayList<String> subjects) throws IOException {
+    public void initGUI(String windowTitle) throws IOException {
         // INIT THE DIALOGS
         initDialogs();
         
-        // INIT THE TOOLBAR
+        // INIT THE TOOLBARS
         initFileToolbar();
 
         // INIT THE CENTER WORKSPACE CONTROLS BUT DON'T ADD THEM
         // TO THE WINDOW YET
-        initWorkspace(subjects);
+        initWorkspace();
+        
 
         // NOW SETUP THE EVENT HANDLERS
         initEventHandlers();
@@ -277,35 +354,8 @@ public class GUI implements DraftDataView {
 
         // WE DON'T WANT TO RESPOND TO EVENTS FORCED BY
         // OUR INITIALIZATION SELECTIONS
-        draftController.enable(false);
+        //draftController.enable(false);
 
-        // FIRST LOAD ALL THE BASIC COURSE INFO
-        draftSubjectComboBox.setValue(draftToReload.getSubject());
-        draftNumberTextField.setText("" + draftToReload.getNumber());
-        draftSemesterComboBox.setValue(draftToReload.getSemester());
-        draftYearComboBox.setValue(draftToReload.getYear());
-        draftTitleTextField.setText(draftToReload.getTitle());
-        instructorNameTextField.setText(draftToReload.getInstructor().getName());
-        instructorURLTextField.setText(draftToReload.getInstructor().getHomepageURL());
-        indexPageCheckBox.setSelected(draftToReload.hasDraftPage(DraftPage.INDEX));
-        syllabusPageCheckBox.setSelected(draftToReload.hasDraftPage(DraftPage.SYLLABUS));
-        schedulePageCheckBox.setSelected(draftToReload.hasDraftPage(DraftPage.SCHEDULE));
-        hwsPageCheckBox.setSelected(draftToReload.hasDraftPage(DraftPage.HWS));
-        projectsPageCheckBox.setSelected(draftToReload.hasDraftPage(DraftPage.PROJECTS));
-
-        // THEN THE DATE PICKERS
-        LocalDate startDate = draftToReload.getStartingMonday();
-        startDatePicker.setValue(startDate);
-        LocalDate endDate = draftToReload.getEndingFriday();
-        endDatePicker.setValue(endDate);
-
-        // THE LECTURE DAY CHECK BOXES
-        mondayCheckBox.setSelected(draftToReload.hasLectureDay(DayOfWeek.MONDAY));
-        tuesdayCheckBox.setSelected(draftToReload.hasLectureDay(DayOfWeek.TUESDAY));
-        wednesdayCheckBox.setSelected(draftToReload.hasLectureDay(DayOfWeek.WEDNESDAY));
-        thursdayCheckBox.setSelected(draftToReload.hasLectureDay(DayOfWeek.THURSDAY));
-        fridayCheckBox.setSelected(draftToReload.hasLectureDay(DayOfWeek.FRIDAY));
-        
         // THE SCHEDULE ITEMS TABLE
         
        
@@ -314,7 +364,7 @@ public class GUI implements DraftDataView {
         // THE HWS TABLE
 
         // NOW WE DO WANT TO RESPOND WHEN THE USER INTERACTS WITH OUR CONTROLS
-        draftController.enable(true);
+        //draftController.enable(true);
     }
 
     /**
@@ -324,12 +374,12 @@ public class GUI implements DraftDataView {
      * @param saved Describes whether the loaded Draft has been saved or not.
      */
     public void updateToolbarControls(boolean saved) {
-        // THIS TOGGLES WITH WHETHER THE CURRENT COURSE
+        // THIS TOGGLES WITH WHETHER THE CURRENT DRAFT
         // HAS BEEN SAVED OR NOT
         saveDraftButton.setDisable(saved);
 
         // ALL THE OTHER BUTTONS ARE ALWAYS ENABLED
-        // ONCE EDITING THAT FIRST COURSE BEGINS
+        // ONCE EDITING THAT FIRST DRAFT BEGINS
         loadDraftButton.setDisable(false);
         exportSiteButton.setDisable(false);
 
@@ -344,26 +394,6 @@ public class GUI implements DraftDataView {
      * @param draft The draft to be updated using the data from the UI controls.
      */
     public void updateDraftInfo(Draft draft) {
-        draft.setSubject(Subject.valueOf(draftSubjectComboBox.getSelectionModel().getSelectedItem().toString()));
-        draft.setNumber(Integer.parseInt(draftNumberTextField.getText()));
-        draft.setSemester(Semester.valueOf(draftSemesterComboBox.getSelectionModel().getSelectedItem().toString()));
-        draft.setYear((int) draftYearComboBox.getSelectionModel().getSelectedItem());
-        draft.setTitle(draftTitleTextField.getText());
-        Instructor instructor = draft.getInstructor();
-        instructor.setName(instructorNameTextField.getText());
-        instructor.setHomepageURL(instructorURLTextField.getText());
-        updatePageUsingCheckBox(indexPageCheckBox, draft, DraftPage.INDEX);
-        updatePageUsingCheckBox(syllabusPageCheckBox, draft, DraftPage.SYLLABUS);
-        updatePageUsingCheckBox(schedulePageCheckBox, draft, DraftPage.SCHEDULE);
-        updatePageUsingCheckBox(hwsPageCheckBox, draft, DraftPage.HWS);
-        updatePageUsingCheckBox(projectsPageCheckBox, draft, DraftPage.PROJECTS);
-        draft.setStartingMonday(startDatePicker.getValue());
-        draft.setEndingFriday(endDatePicker.getValue());
-        draft.selectLectureDay(DayOfWeek.MONDAY, mondayCheckBox.isSelected());
-        draft.selectLectureDay(DayOfWeek.TUESDAY, tuesdayCheckBox.isSelected());
-        draft.selectLectureDay(DayOfWeek.WEDNESDAY, wednesdayCheckBox.isSelected());
-        draft.selectLectureDay(DayOfWeek.THURSDAY, thursdayCheckBox.isSelected());
-        draft.selectLectureDay(DayOfWeek.FRIDAY, fridayCheckBox.isSelected());
     }
 
     /****************************************************************************/
@@ -384,34 +414,52 @@ public class GUI implements DraftDataView {
 
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
-        newDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.NEW_COURSE_ICON, DraftKit_PropertyType.NEW_COURSE_TOOLTIP, false);
-        loadDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.LOAD_COURSE_ICON, DraftKit_PropertyType.LOAD_COURSE_TOOLTIP, false);
-        saveDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.SAVE_COURSE_ICON, DraftKit_PropertyType.SAVE_COURSE_TOOLTIP, true);
+        newDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.NEW_DRAFT_ICON, DraftKit_PropertyType.NEW_DRAFT_TOOLTIP, false);
+        loadDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.LOAD_DRAFT_ICON, DraftKit_PropertyType.LOAD_DRAFT_TOOLTIP, false);
+        saveDraftButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.SAVE_DRAFT_ICON, DraftKit_PropertyType.SAVE_DRAFT_TOOLTIP, true);
         exportSiteButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.EXPORT_PAGE_ICON, DraftKit_PropertyType.EXPORT_PAGE_TOOLTIP, true);
         exitButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.EXIT_ICON, DraftKit_PropertyType.EXIT_TOOLTIP, false);
     }
+    
+    /**
+     * This function initializes all the buttons in the toolbar at the top of
+     * the application window. These are related to file management.
+     */
+    private void initSwitchToolbar() {
+        switchToolbarPane = new FlowPane();
+
+        // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
+        // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
+        playersButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.NEW_DRAFT_ICON, DraftKit_PropertyType.NEW_DRAFT_TOOLTIP, false);
+        teamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.LOAD_DRAFT_ICON, DraftKit_PropertyType.LOAD_DRAFT_TOOLTIP, false);
+        standingsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.SAVE_DRAFT_ICON, DraftKit_PropertyType.SAVE_DRAFT_TOOLTIP, false);
+        summaryButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXPORT_PAGE_ICON, DraftKit_PropertyType.EXPORT_PAGE_TOOLTIP, false);
+        MLBTeamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXIT_ICON, DraftKit_PropertyType.EXIT_TOOLTIP, false);
+    }
+    
+    private void initPlayerScreen() {
+        
+    }
 
     // CREATES AND SETS UP ALL THE CONTROLS TO GO IN THE APP WORKSPACE
-    private void initWorkspace(ArrayList<String> subjects) throws IOException {
+    private void initWorkspace() throws IOException {
         // THE WORKSPACE HAS A FEW REGIONS, THIS 
-        // IS FOR BASIC COURSE EDITING CONTROLS
-        initBasicDraftInfoControls(subjects);
+        // IS FOR BASIC DRAFT EDITING CONTROLS
+        initPlayerScreen();
 
         // THIS IS FOR SELECTING PAGE LINKS TO INCLUDE
-        initPageSelectionControls();
+        initSwitchToolbar();
 
-        // THE TOP WORKSPACE HOLDS BOTH THE BASIC COURSE INFO
+        // THE TOP WORKSPACE HOLDS BOTH THE BASIC DRAFT INFO
         // CONTROLS AS WELL AS THE PAGE SELECTION CONTROLS
-        initTopWorkspace();
 
         // THIS IS FOR MANAGING SCHEDULE EDITING
-        initScheduleItemsControls();
 
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
-        workspacePane.setTop(topWorkspacePane);
-        workspacePane.setCenter(schedulePane);
+        workspacePane.setTop(playerScreen);
+        workspacePane.setCenter(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
         
         // AND NOW PUT IT IN THE WORKSPACE
@@ -421,215 +469,10 @@ public class GUI implements DraftDataView {
 
         // NOTE THAT WE HAVE NOT PUT THE WORKSPACE INTO THE WINDOW,
         // THAT WILL BE DONE WHEN THE USER EITHER CREATES A NEW
-        // COURSE OR LOADS AN EXISTING ONE FOR EDITING
+        // DRAFT OR LOADS AN EXISTING ONE FOR EDITING
         workspaceActivated = false;
     }
     
-    // INITIALIZES THE TOP PORTION OF THE WORKWPACE UI
-    private void initTopWorkspace() {
-        // HERE'S THE SPLIT PANE, ADD THE TWO GROUPS OF CONTROLS
-        topWorkspaceSplitPane = new SplitPane();
-        topWorkspaceSplitPane.getItems().add(draftInfoPane);
-        topWorkspaceSplitPane.getItems().add(pagesSelectionPane);
-
-        // THE TOP WORKSPACE PANE WILL ONLY DIRECTLY HOLD 2 THINGS, A LABEL
-        // AND A SPLIT PANE, WHICH WILL HOLD 2 ADDITIONAL GROUPS OF CONTROLS
-        topWorkspacePane = new VBox();
-        topWorkspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
-
-        // HERE'S THE LABEL
-        draftHeadingLabel = initChildLabel(topWorkspacePane, DraftKit_PropertyType.COURSE_HEADING_LABEL, CLASS_HEADING_LABEL);
-
-        // AND NOW ADD THE SPLIT PANE
-        topWorkspacePane.getChildren().add(topWorkspaceSplitPane);
-    }
-
-    // INITIALIZES THE CONTROLS IN THE LEFT HALF OF THE TOP WORKSPACE
-    private void initBasicDraftInfoControls(ArrayList<String> subjects) throws IOException {
-        // THESE ARE THE CONTROLS FOR THE BASIC SCHEDULE PAGE HEADER INFO
-        // WE'LL ARRANGE THEM IN THE LEFT SIDE IN A VBox
-        draftInfoPane = new GridPane();
-
-        // FIRST THE HEADING LABEL
-        draftInfoLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_INFO_LABEL, CLASS_SUBHEADING_LABEL, 0, 0, 4, 1);
-
-        // THEN CONTROLS FOR CHOOSING THE SUBJECT
-        draftSubjectLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_SUBJECT_LABEL, CLASS_PROMPT_LABEL, 0, 1, 1, 1);
-        draftSubjectComboBox = initGridComboBox(draftInfoPane, 1, 1, 1, 1);
-        loadSubjectComboBox(subjects);
-
-        // THEN CONTROLS FOR UPDATING THE COURSE NUMBER
-        draftNumberLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_NUMBER_LABEL, CLASS_PROMPT_LABEL, 2, 1, 1, 1);
-        draftNumberTextField = initGridTextField(draftInfoPane, SMALL_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 3, 1, 1, 1);
-
-        // THEN THE COURSE SEMESTER
-        draftSemesterLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_SEMESTER_LABEL, CLASS_PROMPT_LABEL, 0, 2, 1, 1);
-        draftSemesterComboBox = initGridComboBox(draftInfoPane, 1, 2, 1, 1);
-        ObservableList<String> semesterChoices = FXCollections.observableArrayList();
-        for (Semester s : Semester.values()) {
-            semesterChoices.add(s.toString());
-        }
-        draftSemesterComboBox.setItems(semesterChoices);
-
-        // THEN THE COURSE YEAR
-        draftYearLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_YEAR_LABEL, CLASS_PROMPT_LABEL, 2, 2, 1, 1);
-        draftYearComboBox = initGridComboBox(draftInfoPane, 3, 2, 1, 1);
-        ObservableList<Integer> yearChoices = FXCollections.observableArrayList();
-        for (int i = LocalDate.now().getYear(); i <= LocalDate.now().getYear() + 1; i++) {
-            yearChoices.add(i);
-        }
-        draftYearComboBox.setItems(yearChoices);
-
-        // THEN THE COURSE TITLE
-        draftTitleLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.COURSE_TITLE_LABEL, CLASS_PROMPT_LABEL, 0, 3, 1, 1);
-        draftTitleTextField = initGridTextField(draftInfoPane, LARGE_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 1, 3, 3, 1);
-
-        // THEN THE INSTRUCTOR NAME
-        instructorNameLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.INSTRUCTOR_NAME_LABEL, CLASS_PROMPT_LABEL, 0, 4, 1, 1);
-        instructorNameTextField = initGridTextField(draftInfoPane, LARGE_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 1, 4, 3, 1);
-
-        // AND THE INSTRUCTOR HOMEPAGE
-        instructorURLLabel = initGridLabel(draftInfoPane, DraftKit_PropertyType.INSTRUCTOR_URL_LABEL, CLASS_PROMPT_LABEL, 0, 5, 1, 1);
-        instructorURLTextField = initGridTextField(draftInfoPane, LARGE_TEXT_FIELD_LENGTH, EMPTY_TEXT, true, 1, 5, 3, 1);
-    }
-
-    // INITIALIZES THE CONTROLS IN THE RIGHT HALF OF THE TOP WORKSPACE
-    private void initPageSelectionControls() {
-        // THESE ARE THE CONTROLS FOR SELECTING WHICH PAGES THE SCHEDULE
-        // PAGE WILL HAVE TO LINK TO
-        pagesSelectionPane = new VBox();
-        pagesSelectionPane.getStyleClass().add(CLASS_SUBJECT_PANE);
-        pagesSelectionLabel = initChildLabel(pagesSelectionPane, DraftKit_PropertyType.PAGES_SELECTION_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
-        indexPageCheckBox = initChildCheckBox(pagesSelectionPane, DraftSiteExporter.INDEX_PAGE);
-        syllabusPageCheckBox = initChildCheckBox(pagesSelectionPane, DraftSiteExporter.SYLLABUS_PAGE);
-        schedulePageCheckBox = initChildCheckBox(pagesSelectionPane, DraftSiteExporter.SCHEDULE_PAGE);
-        hwsPageCheckBox = initChildCheckBox(pagesSelectionPane, DraftSiteExporter.HWS_PAGE);
-        projectsPageCheckBox = initChildCheckBox(pagesSelectionPane, DraftSiteExporter.PROJECTS_PAGE);
-    }
-    
-    // INITIALIZE THE SCHEDULE ITEMS CONTROLS
-    private void initScheduleItemsControls() {
-        // FOR THE LEFT
-        dateBoundariesPane = new GridPane();
-        dateBoundariesLabel = initGridLabel(dateBoundariesPane, DraftKit_PropertyType.DATE_BOUNDARIES_LABEL, CLASS_SUBHEADING_LABEL, 0, 0, 1, 1);
-        startDateLabel = initGridLabel(dateBoundariesPane, DraftKit_PropertyType.STARTING_MONDAY_LABEL, CLASS_PROMPT_LABEL, 0, 1, 1, 1);
-        startDatePicker = initGridDatePicker(dateBoundariesPane, 1, 1, 1, 1);
-        endDateLabel = initGridLabel(dateBoundariesPane, DraftKit_PropertyType.ENDING_FRIDAY_LABEL, CLASS_PROMPT_LABEL, 0, 2, 1, 1);
-        endDatePicker = initGridDatePicker(dateBoundariesPane, 1, 2, 1, 1);
-
-        // THIS ONE IS ON THE RIGHT
-        lectureDaySelectorPane = new VBox();
-        lectureDaySelectLabel = initChildLabel(lectureDaySelectorPane, DraftKit_PropertyType.LECTURE_DAY_SELECT_LABEL, CLASS_SUBHEADING_LABEL);
-        mondayCheckBox = initChildCheckBox(lectureDaySelectorPane, DraftSiteExporter.MONDAY_HEADER);
-        tuesdayCheckBox = initChildCheckBox(lectureDaySelectorPane, DraftSiteExporter.TUESDAY_HEADER);
-        wednesdayCheckBox = initChildCheckBox(lectureDaySelectorPane, DraftSiteExporter.WEDNESDAY_HEADER);
-        thursdayCheckBox = initChildCheckBox(lectureDaySelectorPane, DraftSiteExporter.THURSDAY_HEADER);
-        fridayCheckBox = initChildCheckBox(lectureDaySelectorPane, DraftSiteExporter.FRIDAY_HEADER);
-
-        // THIS SPLITS THE TOP
-        splitScheduleInfoPane = new SplitPane();
-        splitScheduleInfoPane.getItems().add(dateBoundariesPane);
-        splitScheduleInfoPane.getItems().add(lectureDaySelectorPane);
-        
-        // NOW THE CONTROLS FOR ADDING SCHEDULE ITEMS
-        scheduleItemsBox = new VBox();
-        scheduleItemsToolbar = new HBox();
-        scheduleItemsLabel = initLabel(DraftKit_PropertyType.SCHEDULE_ITEMS_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
-        addScheduleItemButton = initChildButton(scheduleItemsToolbar, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_ITEM_TOOLTIP, false);
-        removeScheduleItemButton = initChildButton(scheduleItemsToolbar, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_ITEM_TOOLTIP, false);
-        scheduleItemsTable = new TableView();
-        scheduleItemsBox.getChildren().add(scheduleItemsLabel);
-        scheduleItemsBox.getChildren().add(scheduleItemsToolbar);
-        scheduleItemsBox.getChildren().add(scheduleItemsTable);
-        scheduleItemsBox.getStyleClass().add(CLASS_BORDERED_PANE);
-        
-        // NOW SETUP THE TABLE COLUMNS
-        itemDescriptionsColumn = new TableColumn(COL_DESCRIPTION);
-        itemDatesColumn = new TableColumn(COL_DATE);
-        linkColumn = new TableColumn(COL_LINK);
-        
-        // AND LINK THE COLUMNS TO THE DATA
-        itemDescriptionsColumn.setCellValueFactory(new PropertyValueFactory<String, String>("description"));
-        itemDatesColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("date"));
-        linkColumn.setCellValueFactory(new PropertyValueFactory<URL, String>("link"));
-        scheduleItemsTable.getColumns().add(itemDescriptionsColumn);
-        scheduleItemsTable.getColumns().add(itemDatesColumn);
-        scheduleItemsTable.getColumns().add(linkColumn);
-        scheduleItemsTable.setItems(dataManager.getDraft().getScheduleItems());
-        
-        //NOW THE CONTROLS FOR ADDING LECTURES
-        lectureBox = new VBox();
-        lectureToolbar = new HBox();
-        lectureLabel = initLabel(DraftKit_PropertyType.LECTURES_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
-        addLectureButton = initChildButton(lectureToolbar, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_ITEM_TOOLTIP, false);
-        removeLectureButton = initChildButton(lectureToolbar, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_ITEM_TOOLTIP, false);
-        upButton = initChildButton(lectureToolbar,DraftKit_PropertyType.MOVE_UP_ICON,DraftKit_PropertyType.MOVE_UP_LECTURE_TOOLTIP, false);
-        downButton = initChildButton(lectureToolbar,DraftKit_PropertyType.MOVE_DOWN_ICON,DraftKit_PropertyType.MOVE_DOWN_LECTURE_TOOLTIP,false);
-        lectureTable = new TableView();
-        lectureBox.getChildren().add(lectureLabel);
-        lectureBox.getChildren().add(lectureToolbar);
-        lectureBox.getChildren().add(lectureTable);
-        lectureBox.getStyleClass().add(CLASS_BORDERED_PANE);
-        
-        // NOW SETUP THE TABLE COLUMNS
-        lectureTopicColumn = new TableColumn(COL_TOPIC);
-        numSessionsColumn = new TableColumn(COL_SESSIONS);
-        
-        // AND LINK THE COLUMNS TO THE DATA
-        lectureTopicColumn.setCellValueFactory(new PropertyValueFactory<String, String>("topic"));
-        numSessionsColumn.setCellValueFactory(new PropertyValueFactory<Integer, String>("sessions"));
-        lectureTable.getColumns().add(lectureTopicColumn);
-        lectureTable.getColumns().add(numSessionsColumn);
-        lectureTable.setItems(dataManager.getDraft().getLectures());
-        
-        // NOW THE CONTROLS FOR ADDING HW ITEMS
-        hwBox = new VBox();
-        hwToolbar = new HBox();
-        hwLabel = initLabel(DraftKit_PropertyType.HWS_HEADING_LABEL, CLASS_SUBHEADING_LABEL);
-        addHwButton = initChildButton(hwToolbar, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_ITEM_TOOLTIP, false);
-        removeHwButton = initChildButton(hwToolbar, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_ITEM_TOOLTIP, false);
-        hwTable = new TableView();
-        hwBox.getChildren().add(hwLabel);
-        hwBox.getChildren().add(hwToolbar);
-        hwBox.getChildren().add(hwTable);
-        hwBox.getStyleClass().add(CLASS_BORDERED_PANE);
-        
-        // NOW SETUP THE TABLE COLUMNS
-        hwNameColumn = new TableColumn(COL_NAME);
-        hwTopicColumn = new TableColumn(COL_TOPICS);
-        hwDatesColumn = new TableColumn(COL_DATE);
-        
-        // AND LINK THE COLUMNS TO THE DATA
-        hwNameColumn.setCellValueFactory(new PropertyValueFactory<String, String>("name"));
-        hwTopicColumn.setCellValueFactory(new PropertyValueFactory<LocalDate, String>("topics"));
-        hwDatesColumn.setCellValueFactory(new PropertyValueFactory<URL, String>("date"));
-        hwTable.getColumns().add(hwNameColumn);
-        hwTable.getColumns().add(hwTopicColumn);
-        hwTable.getColumns().add(hwDatesColumn);
-        hwTable.setItems(dataManager.getDraft().getAssignments());
-        
-        // NOW LET'S ASSEMBLE ALL THE CONTAINERS TOGETHER
-
-        // THIS IS FOR STUFF IN THE TOP OF THE SCHEDULE PANE, WE NEED TO PUT TWO THINGS INSIDE
-        scheduleInfoPane = new VBox();
-
-        // FIRST OUR SCHEDULE HEADER
-        scheduleInfoHeadingLabel = initChildLabel(scheduleInfoPane, DraftKit_PropertyType.SCHEDULE_HEADING_LABEL, CLASS_HEADING_LABEL);
-
-        // AND THEN THE SPLIT PANE
-        scheduleInfoPane.getChildren().add(splitScheduleInfoPane);
-
-        // FINALLY, EVERYTHING IN THIS REGION ULTIMATELY GOES INTO schedulePane
-        schedulePane = new VBox();
-        schedulePane.getChildren().add(scheduleInfoPane);
-        schedulePane.getChildren().add(scheduleItemsBox);
-        schedulePane.getChildren().add(lectureBox);
-        schedulePane.getChildren().add(hwBox);
-        schedulePane.getStyleClass().add(CLASS_BORDERED_PANE);
-        
-        
-    }
-
     // INITIALIZE THE WINDOW (i.e. STAGE) PUTTING ALL THE CONTROLS
     // THERE EXCEPT THE WORKSPACE, WHICH WILL BE ADDED THE FIRST
     // TIME A NEW Draft IS CREATED OR LOADED
@@ -649,7 +492,7 @@ public class GUI implements DraftDataView {
 
         // ADD THE TOOLBAR ONLY, NOTE THAT THE WORKSPACE
         // HAS BEEN CONSTRUCTED, BUT WON'T BE ADDED UNTIL
-        // THE USER STARTS EDITING A COURSE
+        // THE USER STARTS EDITING A DRAFT
         draftkitPane = new BorderPane();
         draftkitPane.setTop(fileToolbarPane);
         primaryScene = new Scene(draftkitPane);
@@ -664,7 +507,8 @@ public class GUI implements DraftDataView {
     // INIT ALL THE EVENT HANDLERS
     private void initEventHandlers() throws IOException {
         // FIRST THE FILE CONTROLS
-        fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager, siteExporter);
+        fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager//, siteExporter
+        );
         newDraftButton.setOnAction(e -> {
             fileController.handleNewDraftRequest(this);
         });
@@ -681,135 +525,33 @@ public class GUI implements DraftDataView {
             fileController.handleExitRequest(this);
         });
 
-        // THEN THE COURSE EDITING CONTROLS
-        draftController = new DraftEditController();
-        draftSubjectComboBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        draftSemesterComboBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        draftYearComboBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        indexPageCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        syllabusPageCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        schedulePageCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        hwsPageCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        projectsPageCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
+        // THEN THE DRAFT EDITING CONTROLS
+       
 
         // TEXT FIELDS HAVE A DIFFERENT WAY OF LISTENING FOR TEXT CHANGES
-        registerTextFieldController(draftNumberTextField);
-        registerTextFieldController(draftTitleTextField);
-        registerTextFieldController(instructorNameTextField);
-        registerTextFieldController(instructorURLTextField);
-
-        // THE DATE SELECTION ONES HAVE PARTICULAR CONCERNS, AND SO
-        // GO THROUGH A DIFFERENT METHOD
-        startDatePicker.setOnAction(e -> {
-            draftController.handleDateSelectionRequest(this, startDatePicker, endDatePicker);
-        });
-        endDatePicker.setOnAction(e -> {
-            draftController.handleDateSelectionRequest(this, startDatePicker, endDatePicker);
-        });
-
-        // AND THE LECTURE DAYS CHECKBOXES
-        mondayCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        tuesdayCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        wednesdayCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        thursdayCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        fridayCheckBox.setOnAction(e -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-        
-        // AND NOW THE SCHEDULE ITEM ADDING AND EDITING CONTROLS
-        scheduleController = new ScheduleEditController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
-        addScheduleItemButton.setOnAction(e -> {
-            scheduleController.handleAddScheduleItemRequest(this);
-        });
-        removeScheduleItemButton.setOnAction(e -> {
-            scheduleController.handleRemoveScheduleItemRequest(this, scheduleItemsTable.getSelectionModel().getSelectedItem());
-        });
-        
-        // AND NOW THE SCHEDULE ITEMS TABLE
-        scheduleItemsTable.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                // OPEN UP THE SCHEDULE ITEM EDITOR
-                ScheduleItem si = scheduleItemsTable.getSelectionModel().getSelectedItem();
-                scheduleController.handleEditScheduleItemRequest(this, si);
-            }
-        });
+       
         
         // AND NOW THE LECTURE ADDING AND EDITING CONTROLS
-        lectureController = new LectureEditController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
-        addLectureButton.setOnAction(e -> {
-            lectureController.handleAddLectureRequest(this);
-        });
-        removeLectureButton.setOnAction(e -> {
-            lectureController.handleRemoveLectureRequest(this, lectureTable.getSelectionModel().getSelectedItem());
-        });
-        
-        // AND NOW THE LECTURE MOVING CONTROLS
-        upButton.setOnAction(e -> {
-            lectureController.handleUpRequest(this, lectureTable.getSelectionModel(), lectureTable.getSelectionModel().getSelectedItem());
-        });
-        
-        downButton.setOnAction(e -> {
-            lectureController.handleDownRequest(this, lectureTable.getSelectionModel(), lectureTable.getSelectionModel().getSelectedItem());
-        });
+       
         
         // AND NOW THE LECTURE TABLE
-        lectureTable.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                // OPEN UP THE SCHEDULE ITEM EDITOR
-                Lecture l = lectureTable.getSelectionModel().getSelectedItem();
-                lectureController.handleEditLectureRequest(this, l);
-            }
-        });
+        
         
         // AND NOW THE HW ADDING AND EDITING CONTROLS
-        hwController = new hwEditController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
-        addHwButton.setOnAction(e -> {
-            hwController.handleAddHwRequest(this);
-        });
-        removeHwButton.setOnAction(e -> {
-            hwController.handleRemoveHwRequest(this, hwTable.getSelectionModel().getSelectedItem());
-        });
+        
         
         // AND NOW THE LECTURE TABLE
-        hwTable.setOnMouseClicked(e -> {
-            if (e.getClickCount() == 2) {
-                // OPEN UP THE SCHEDULE ITEM EDITOR
-                Assignment hw = hwTable.getSelectionModel().getSelectedItem();
-                hwController.handleEditHwRequest(this, hw);
-            }
-        });
     }
 
     // REGISTER THE EVENT LISTENER FOR A TEXT FIELD
+    
+    /*
     private void registerTextFieldController(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             draftController.handleDraftChangeRequest(this);
         });
     }
+    */
     
     // INIT A BUTTON AND ADD IT TO A CONTAINER IN A TOOLBAR
     private Button initChildButton(Pane toolbar, DraftKit_PropertyType icon, DraftKit_PropertyType tooltip, boolean disabled) {
@@ -856,11 +598,13 @@ public class GUI implements DraftDataView {
     }
 
     // LOAD THE COMBO BOX TO HOLD Draft SUBJECTS
+    /*
     private void loadSubjectComboBox(ArrayList<String> subjects) {
         for (String s : subjects) {
             draftSubjectComboBox.getItems().add(s);
         }
     }
+    */
 
     // INIT A TEXT FIELD AND PUT IT IN A GridPane
     private TextField initGridTextField(GridPane container, int size, String initText, boolean editable, int col, int row, int colSpan, int rowSpan) {
@@ -871,34 +615,4 @@ public class GUI implements DraftDataView {
         container.add(tf, col, row, colSpan, rowSpan);
         return tf;
     }
-
-    // INIT A DatePicker AND PUT IT IN A GridPane
-    private DatePicker initGridDatePicker(GridPane container, int col, int row, int colSpan, int rowSpan) {
-        DatePicker datePicker = new DatePicker();
-        container.add(datePicker, col, row, colSpan, rowSpan);
-        return datePicker;
-    }
-
-    // INIT A CheckBox AND PUT IT IN A TOOLBAR
-    private CheckBox initChildCheckBox(Pane container, String text) {
-        CheckBox cB = new CheckBox(text);
-        container.getChildren().add(cB);
-        return cB;
-    }
-
-    // INIT A DatePicker AND PUT IT IN A CONTAINER
-    private DatePicker initChildDatePicker(Pane container) {
-        DatePicker dp = new DatePicker();
-        container.getChildren().add(dp);
-        return dp;
-    }
-    
-    // LOADS CHECKBOX DATA INTO A Draft OBJECT REPRESENTING A DraftPage
-    private void updatePageUsingCheckBox(CheckBox cB, Draft draft, DraftPage cP) {
-        if (cB.isSelected()) {
-            draft.selectPage(cP);
-        } else {
-            draft.unselectPage(cP);
-        }
-    }    
 }

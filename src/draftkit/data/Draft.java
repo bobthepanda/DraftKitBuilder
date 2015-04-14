@@ -1,7 +1,7 @@
 package draftkit.data;
 
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * This class represents a draft to be edited and then used to generate a site.
@@ -9,62 +9,63 @@ import javafx.collections.ObservableList;
  * @author Henry Chin 109265023
  */
 public class Draft {
-    private ObservableList<Player> players;
-    private ObservableList<Hitter> hitters;
-    private ObservableList<Pitcher> pitchers;
-    private ObservableList<Team> teams;
+    private ArrayList<Player> players;
+    private ArrayList<Hitter> hitters;
+    private ArrayList<Pitcher> pitchers;
+    private ArrayList<Team> teams;
     
-    public Draft(ObservableList<Hitter> givenHitters, ObservableList<Pitcher> givenPitchers) {
+    public Draft(ArrayList<Hitter> givenHitters, ArrayList<Pitcher> givenPitchers) {
         hitters = givenHitters;
         pitchers = givenPitchers;
+        players = new ArrayList<Player>();
         for (Hitter h: hitters) {
             players.add(h);
         }
         for (Pitcher p: pitchers) {
             players.add(p);
         }
-        teams = FXCollections.observableArrayList();
+        teams = new ArrayList<Team>();
     }
 
     /**
      * @return the players
      */
-    public ObservableList<Player> getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
     /**
      * @param players the players to set
      */
-    public void setPlayers(ObservableList<Player> players) {
+    public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
     /**
      * @return the hitters
      */
-    public ObservableList<Hitter> getHitters() {
+    public ArrayList<Hitter> getHitters() {
         return hitters;
     }
 
     /**
      * @param hitters the hitters to set
      */
-    public void setHitters(ObservableList<Hitter> hitters) {
+    public void setHitters(ArrayList<Hitter> hitters) {
         this.hitters = hitters;
     }
 
     /**
      * @return the pitchers
      */
-    public ObservableList<Pitcher> getPitchers() {
+    public ArrayList<Pitcher> getPitchers() {
         return pitchers;
     }
 
     /**
      * @param pitchers the pitchers to set
      */
-    public void setPitchers(ObservableList<Pitcher> pitchers) {
+    public void setPitchers(ArrayList<Pitcher> pitchers) {
         this.pitchers = pitchers;
     }
     
@@ -88,11 +89,11 @@ public class Draft {
         players.remove(p);
     }
     
-    public ObservableList<Team> getTeams() {
+    public ArrayList<Team> getTeams() {
         return teams;
     }
     
-    public void setTeams(ObservableList<Team> teams) {
+    public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
     }
 }

@@ -7,11 +7,11 @@ import draftkit.data.Hitter;
 import draftkit.data.Pitcher;
 import draftkit.error.ErrorHandler;
 import draftkit.file.JsonDraftFileManager;
-import draftkit.file.DraftSiteExporter;
+//import draftkit.file.DraftSiteExporter;
 import draftkit.gui.GUI;
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import static javafx.application.Application.launch;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
@@ -50,16 +50,17 @@ public class DraftKitBuilder extends Application {
                 JsonDraftFileManager jsonFileManager = new JsonDraftFileManager();
                 
                 // AND THIS ONE WILL DO THE COURSE WEB PAGE EXPORTING
-                DraftSiteExporter exporter = new DraftSiteExporter(PATH_BASE, PATH_SITES);
+                //DraftSiteExporter exporter = new DraftSiteExporter(PATH_BASE, PATH_SITES);
                 
-                ObservableList<Hitter> hitters = jsonFileManager.loadHitters(JSON_FILE_PATH_HITTERS);
-                ObservableList<Pitcher> pitchers = jsonFileManager.loadPitchers(JSON_FILE_PATH_PITCHERS);
+                ArrayList<Hitter> hitters = jsonFileManager.loadHitters(JSON_FILE_PATH_HITTERS);
+                ArrayList<Pitcher> pitchers = jsonFileManager.loadPitchers(JSON_FILE_PATH_PITCHERS);
+                
                                 
                 // AND NOW GIVE ALL OF THIS STUFF TO THE GUI
                 // INITIALIZE THE USER INTERFACE COMPONENTS
                 gui = new GUI(primaryStage);
-                gui.setCourseFileManager(jsonFileManager);
-                gui.setSiteExporter(exporter);
+                gui.setDraftFileManager(jsonFileManager);
+                //gui.setSiteExporter(exporter);
                 
                 // CONSTRUCT THE DATA MANAGER AND GIVE IT TO THE GUI
                 DraftDataManager dataManager = new DraftDataManager(gui, hitters, pitchers); 

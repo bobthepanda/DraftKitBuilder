@@ -1,7 +1,7 @@
 package draftkit.data;
 
 import draftkit.file.DraftFileManager;
-import javafx.collections.ObservableList;
+import java.util.ArrayList;
 
 /**
  * This class manages a Draft, which means it knows how to
@@ -23,8 +23,8 @@ public class DraftDataManager {
     // DEFAULT INITIALIZATION VALUES FOR NEW COURSES
     
     public DraftDataManager(   DraftDataView initView,
-                                ObservableList<Hitter> hitters,
-                                ObservableList<Pitcher> pitchers) {
+                                ArrayList<Hitter> hitters,
+                                ArrayList<Pitcher> pitchers) {
         view = initView;
         draft = new Draft(hitters, pitchers);
     }

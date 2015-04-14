@@ -199,7 +199,7 @@ public class JsonDraftFileManager implements DraftFileManager {
          JsonObject jso = jsonLecturesArray.getJsonObject(i);
          Lecture l = new Lecture();
          l.setTopic(jso.getString(JSON_LECTURE_TOPIC));
-         l.setSessions(jso.getInt(JSON_LECTURE_SESSIONS));
+         l.setSessions(Integer.parseInt(jso.getString(JSON_LECTURE_SESSIONS));
 
          // ADD IT TO THE COURSE
          draftToLoad.addLecture(l);
@@ -233,7 +233,7 @@ public class JsonDraftFileManager implements DraftFileManager {
      * @throws IOException Thrown when I/O fails.
      */
     @Override
-    public void saveHitters(ObservableList<Hitter> hitters, String jsonFilePath) throws IOException {
+    public void saveHitters(List<Hitter> hitters, String jsonFilePath) throws IOException {
         JsonArray hitterArray = makeHittersJsonArray(hitters);
         OutputStream os = new FileOutputStream(jsonFilePath);
         JsonWriter jsonWriter = Json.createWriter(os);
@@ -253,7 +253,7 @@ public class JsonDraftFileManager implements DraftFileManager {
      * @throws IOException Thrown when I/O fails.
      */
     @Override
-    public void savePitchers(ObservableList<Pitcher> pitchers, String jsonFilePath) throws IOException {
+    public void savePitchers(List<Pitcher> pitchers, String jsonFilePath) throws IOException {
         JsonArray pitcherArray = makePitchersJsonArray(pitchers);
         OutputStream os = new FileOutputStream(jsonFilePath);
         JsonWriter jsonWriter = Json.createWriter(os);
@@ -283,16 +283,16 @@ public class JsonDraftFileManager implements DraftFileManager {
             p.setLastName(jso.getString(JSON_LAST_NAME));
             p.setFirstName(jso.getString(JSON_FIRST_NAME));
             p.setIp(Double.parseDouble(jso.getString(JSON_PITCHERS_IP)));
-            p.setEr(jso.getInt(JSON_PITCHERS_ER));
-            p.setR_w(jso.getInt(JSON_PITCHERS_W));
-            p.setW(jso.getInt(JSON_PITCHERS_BB));
-            p.setHr_sv(jso.getInt(JSON_PITCHERS_SV));
-            p.setH(jso.getInt(JSON_PITCHERS_H));
-            p.setRbi_k(jso.getInt(JSON_PITCHERS_K));
+            p.setEr(Integer.parseInt(jso.getString(JSON_PITCHERS_ER)));
+            p.setR_w(Integer.parseInt(jso.getString(JSON_PITCHERS_W)));
+            p.setW(Integer.parseInt(jso.getString(JSON_PITCHERS_BB)));
+            p.setHr_sv(Integer.parseInt(jso.getString(JSON_PITCHERS_SV)));
+            p.setH(Integer.parseInt(jso.getString(JSON_PITCHERS_H)));
+            p.setRbi_k(Integer.parseInt(jso.getString(JSON_PITCHERS_K)));
             p.setSb_era();
             p.setBa_whip();
             p.setNotes(jso.getString(JSON_NOTES));
-            p.setYearOfBirth(jso.getInt(JSON_YEAR_OF_BIRTH));
+            p.setYearOfBirth(Integer.parseInt(jso.getString(JSON_YEAR_OF_BIRTH)));
             p.setNationOfBirth(jso.getString(JSON_NATION_OF_BIRTH));
 
             // ADD IT TO THE DRAFT
@@ -319,15 +319,15 @@ public class JsonDraftFileManager implements DraftFileManager {
             h.setLastName(jso.getString(JSON_LAST_NAME));
             h.setFirstName(jso.getString(JSON_FIRST_NAME));
             h.setPositions_String(jso.getString(JSON_HITTERS_QP));
-            h.setAb(jso.getInt(JSON_HITTERS_AB));
-            h.setR_w(jso.getInt(JSON_HITTERS_R));
-            h.setHr_sv(jso.getInt(JSON_HITTERS_HR));
-            h.setH(jso.getInt(JSON_HITTERS_H));
-            h.setRbi_k(jso.getInt(JSON_HITTERS_RBI));
-            h.setSb_era(jso.getInt(JSON_HITTERS_SB));
+            h.setAb(Integer.parseInt(jso.getString(JSON_HITTERS_AB)));
+            h.setR_w(Integer.parseInt(jso.getString(JSON_HITTERS_R)));
+            h.setHr_sv(Integer.parseInt(jso.getString(JSON_HITTERS_HR)));
+            h.setH(Integer.parseInt(jso.getString(JSON_HITTERS_H)));
+            h.setRbi_k(Integer.parseInt(jso.getString(JSON_HITTERS_RBI)));
+            h.setSb_era(Integer.parseInt(jso.getString(JSON_HITTERS_SB)));
             h.setBa_whip();
             h.setNotes(jso.getString(JSON_NOTES));
-            h.setYearOfBirth(jso.getInt(JSON_YEAR_OF_BIRTH));
+            h.setYearOfBirth(Integer.parseInt(jso.getString(JSON_YEAR_OF_BIRTH)));
             h.setNationOfBirth(jso.getString(JSON_NATION_OF_BIRTH));
 
             // ADD IT TO THE DRAFT
@@ -397,7 +397,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     }
 
     // MAKE AN ARRAY OF SCHEDULE ITEMS
-    private JsonArray makeHittersJsonArray(ObservableList<Hitter> data) {
+    private JsonArray makeHittersJsonArray(List<Hitter> data) {
         JsonArrayBuilder jsb = Json.createArrayBuilder();
         for (Hitter h : data) {
             jsb.add(makeHitterJsonObject(h));
@@ -407,7 +407,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     }
 
     // MAKE AN ARRAY OF LECTURE ITEMS
-    private JsonArray makePitchersJsonArray(ObservableList<Pitcher> data) {
+    private JsonArray makePitchersJsonArray(List<Pitcher> data) {
         JsonArrayBuilder jsb = Json.createArrayBuilder();
         for (Pitcher p : data) {
             jsb.add(makePitcherJsonObject(p));
