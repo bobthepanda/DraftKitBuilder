@@ -15,6 +15,7 @@ import draftkit.data.Draft;
 import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
+import javafx.collections.FXCollections;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -27,6 +28,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -476,18 +478,31 @@ public class GUI implements DraftDataView {
         //SET UP TABLE
         playerTable = new TableView<Player>();
         player_first = new TableColumn(COL_FIRST);
+        player_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         player_last = new TableColumn(COL_LAST);
+        player_last.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
         player_proTeam = new TableColumn(COL_PRO_TEAM);
+        player_proTeam.setCellValueFactory(new PropertyValueFactory<String, String>("proTeam"));
         player_positions = new TableColumn(COL_POSITIONS);
+        player_positions.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
         player_year = new TableColumn(COL_YEAR);
+        player_year.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("yearOfBirth"));
         player_nation = new TableColumn(COL_NATION);
+        player_nation.setCellValueFactory(new PropertyValueFactory<String, String>("nationOfBirth"));
         player_r_w = new TableColumn(COL_R_W);
+        player_r_w.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r_w"));
         player_hr_sv = new TableColumn(COL_HR_SV);
+        player_hr_sv.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("hr_sv"));
         player_rbi_k = new TableColumn(COL_RBI_K);
+        player_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
         player_sb_era = new TableColumn(COL_SB_ERA);
+        player_sb_era.setCellValueFactory(new PropertyValueFactory<Double, Double>("sb_era"));
         player_ba_whip = new TableColumn(COL_BA_WHIP);
+        player_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, Double>("ba_whip"));
         player_est_value = new TableColumn(COL_VALUE);
+        player_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
         player_notes = new TableColumn(COL_NOTES);
+        player_notes.setCellValueFactory(new PropertyValueFactory<String, String>("notes"));
         playerTable.getColumns().add(player_first);
         playerTable.getColumns().add(player_last);
         playerTable.getColumns().add(player_proTeam);
@@ -501,6 +516,7 @@ public class GUI implements DraftDataView {
         playerTable.getColumns().add(player_ba_whip);
         playerTable.getColumns().add(player_est_value);
         playerTable.getColumns().add(player_notes);
+        playerTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getPlayers()));
         playerScreen.getChildren().add(playerTable);
 }
     
@@ -549,7 +565,7 @@ private void initWorkspace() throws IOException {
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
-        workspacePane.setTop(teamScreen);
+        workspacePane.setTop(playerScreen);
         workspacePane.setCenter(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
 

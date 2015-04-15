@@ -68,10 +68,10 @@ public class Pitcher extends Player{
     }
     
     public void setSb_era() {
-        super.setSb_era((er * 9.00) / ip);
+        super.setSb_era(Math.round((er / ip * 9.00) / 1.00));
     }
     
     public void setBa_whip() {
-        super.setBa_whip(((w + h) * 1.00) / ip);
+        super.setBa_whip(Math.round(((w + h) / ip * 1.00) / 1.00));
     }
 }
