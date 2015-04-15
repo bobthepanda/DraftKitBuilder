@@ -16,6 +16,9 @@ import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -516,7 +519,27 @@ public class GUI implements DraftDataView {
         playerTable.getColumns().add(player_ba_whip);
         playerTable.getColumns().add(player_est_value);
         playerTable.getColumns().add(player_notes);
-        playerTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getPlayers()));
+        ObservableList<Player> displayedPlayers = FXCollections.observableArrayList(dataManager.getDraft().getPlayers());
+        FilteredList<Player> filteredData = new FilteredList<Player>(displayedPlayers, p-> true);
+        searchField.textProperty().addListener((observable, oldVlaue, newValue) -> {
+            filteredData.setPredicate(player -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                if ((player.getFirstName() + " " + player.getLastName()).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                
+                return false;
+            });
+        });
+        
+        SortedList<Player> sortedData = new SortedList<Player>(filteredData);
+        sortedData.comparatorProperty().bind(playerTable.comparatorProperty());
+        playerTable.setItems(sortedData);
         playerScreen.getChildren().add(playerTable);
 }
     
