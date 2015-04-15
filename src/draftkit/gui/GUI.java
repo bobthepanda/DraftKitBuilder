@@ -56,7 +56,7 @@ public class GUI implements DraftDataView {
     static final String CLASS_HEADING_LABEL = "heading_label";
     static final String CLASS_SUBHEADING_LABEL = "subheading_label";
     static final String CLASS_PROMPT_LABEL = "prompt_label";
-    static final String CLASS_RADIO_TOOLBAR = "radio_toolbar";
+    static final String CLASS_GENERAL = "general";
     static final String EMPTY_TEXT = "";
     static final int LARGE_TEXT_FIELD_LENGTH = 20;
     static final int SMALL_TEXT_FIELD_LENGTH = 5;
@@ -114,14 +114,15 @@ public class GUI implements DraftDataView {
     Label standingsLabel;
     VBox summaryScreen;
     Label summaryLabel;
-    VBox MLBTeamsScreen;
-    Label MLBTeamsLabel;
+    VBox MLBScreen;
+    Label MLBLabel;
 
     //PLAYER SCREEN CONTROLS
     HBox firstBox;
     Button addPlayerButton;
     Button removePlayerButton;
     Label searchLabel;
+    TextField searchField;
 
     //RADIO BUTTON CONTROLS
     HBox radioBox;
@@ -173,6 +174,7 @@ public class GUI implements DraftDataView {
     static final String COL_PRO_TEAM = "Pro Team";
     static final String COL_POSITIONS = "Positions";
     static final String COL_YEAR = "Year of Birth";
+    static final String COL_NATION = "Nation of Birth";
     static final String COL_R_W = "R/W";
     static final String COL_HR_SV = "HR/SV";
     static final String COL_RBI_K = "RBI/K";
@@ -420,11 +422,17 @@ public class GUI implements DraftDataView {
 
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
-        playersButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.NEW_DRAFT_ICON, DraftKit_PropertyType.NEW_DRAFT_TOOLTIP, false);
-        teamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.LOAD_DRAFT_ICON, DraftKit_PropertyType.LOAD_DRAFT_TOOLTIP, false);
-        standingsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.SAVE_DRAFT_ICON, DraftKit_PropertyType.SAVE_DRAFT_TOOLTIP, false);
-        summaryButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXPORT_PAGE_ICON, DraftKit_PropertyType.EXPORT_PAGE_TOOLTIP, false);
-        MLBTeamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXIT_ICON, DraftKit_PropertyType.EXIT_TOOLTIP, false);
+        teamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.TEAMS_ICON, DraftKit_PropertyType.TEAMS_TOOLTIP, false);
+        playersButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.PLAYERS_ICON, DraftKit_PropertyType.PLAYERS_TOOLTIP, false);
+        standingsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.STANDINGS_ICON, DraftKit_PropertyType.STANDINGS_TOOLTIP, false);
+        summaryButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.SUMMARY_ICON, DraftKit_PropertyType.SUMMARY_TOOLTIP, false);
+        MLBTeamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.MLB_ICON, DraftKit_PropertyType.MLB_TOOLTIP, false);
+    }
+    
+    private void initTeamScreen() {
+        teamScreen = new VBox();
+        teamScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        initChildLabel(teamScreen, DraftKit_PropertyType.FANTASY_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
 
     private void initPlayerScreen() {
@@ -451,9 +459,68 @@ public class GUI implements DraftDataView {
         addRadioButton(radioBox, select, OF, RADIO_OF);
         addRadioButton(radioBox, select, U, RADIO_U);
         addRadioButton(radioBox, select, P, RADIO_P);
-        radioBox.getStyleClass().add(CLASS_RADIO_TOOLBAR);
+        radioBox.getStyleClass().add(CLASS_GENERAL);
         playerScreen.getChildren().add(radioBox);
+        
+        //SET UP NEXT LAYER OF BUTTONS
+        firstBox = new HBox();
+        addPlayerButton = initChildButton(firstBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_PLAYER_TOOLTIP, false);
+        removePlayerButton = initChildButton(firstBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_PLAYER_TOOLTIP, false);
+        searchLabel = initChildLabel(firstBox, DraftKit_PropertyType.SEARCH_LABEL,CLASS_HEADING_LABEL);
+        searchField = new TextField();
+        searchField.setEditable(true);
+        firstBox.getChildren().add(searchField);
+        playerScreen.getChildren().add(firstBox);
+        firstBox.getStyleClass().add(CLASS_GENERAL);
+        
+        //SET UP TABLE
+        playerTable = new TableView<Player>();
+        player_first = new TableColumn(COL_FIRST);
+        player_last = new TableColumn(COL_LAST);
+        player_proTeam = new TableColumn(COL_PRO_TEAM);
+        player_positions = new TableColumn(COL_POSITIONS);
+        player_year = new TableColumn(COL_YEAR);
+        player_nation = new TableColumn(COL_NATION);
+        player_r_w = new TableColumn(COL_R_W);
+        player_hr_sv = new TableColumn(COL_HR_SV);
+        player_rbi_k = new TableColumn(COL_RBI_K);
+        player_sb_era = new TableColumn(COL_SB_ERA);
+        player_ba_whip = new TableColumn(COL_BA_WHIP);
+        player_est_value = new TableColumn(COL_VALUE);
+        player_notes = new TableColumn(COL_NOTES);
+        playerTable.getColumns().add(player_first);
+        playerTable.getColumns().add(player_last);
+        playerTable.getColumns().add(player_proTeam);
+        playerTable.getColumns().add(player_positions);
+        playerTable.getColumns().add(player_year);
+        playerTable.getColumns().add(player_nation);
+        playerTable.getColumns().add(player_r_w);
+        playerTable.getColumns().add(player_hr_sv);
+        playerTable.getColumns().add(player_rbi_k);
+        playerTable.getColumns().add(player_sb_era);
+        playerTable.getColumns().add(player_ba_whip);
+        playerTable.getColumns().add(player_est_value);
+        playerTable.getColumns().add(player_notes);
+        playerScreen.getChildren().add(playerTable);
 }
+    
+    private void initStandingsScreen() {
+        standingsScreen = new VBox();
+        standingsScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
+    }
+    
+    private void initSummaryScreen() {
+        summaryScreen = new VBox();
+        summaryScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
+    }
+    
+    private void initMLBScreen() {
+        MLBScreen = new VBox();
+        MLBScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        initChildLabel(MLBScreen, DraftKit_PropertyType.MLB_TEAMS_LABEL, CLASS_HEADING_LABEL);
+    }
 
 // ADDS RADIO BUTTONS TO A TOOLBAR
 private void addRadioButton(Pane toolbar, ToggleGroup toggle, RadioButton button, String buttonText) {
@@ -467,7 +534,11 @@ private void addRadioButton(Pane toolbar, ToggleGroup toggle, RadioButton button
 private void initWorkspace() throws IOException {
         // THE WORKSPACE HAS A FEW REGIONS, THIS 
         // IS FOR BASIC DRAFT EDITING CONTROLS
+        initTeamScreen();
         initPlayerScreen();
+        initStandingsScreen();
+        initSummaryScreen();
+        initMLBScreen();
 
         // THIS IS FOR SELECTING PAGE LINKS TO INCLUDE
         initSwitchToolbar();
@@ -478,7 +549,7 @@ private void initWorkspace() throws IOException {
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
-        workspacePane.setTop(playerScreen);
+        workspacePane.setTop(teamScreen);
         workspacePane.setCenter(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
 
@@ -545,6 +616,23 @@ private void initWorkspace() throws IOException {
             fileController.handleExitRequest(this);
         });
 
+        // THEN THE SCREEN TOOLBAR CONTROLS
+        teamsButton.setOnAction(e -> {
+            workspacePane.setTop(teamScreen);
+        });
+        playersButton.setOnAction(e -> {
+            workspacePane.setTop(playerScreen);
+        });
+        standingsButton.setOnAction(e -> {
+            workspacePane.setTop(standingsScreen);
+        });
+        summaryButton.setOnAction(e -> {
+            workspacePane.setTop(summaryScreen);
+        });
+        MLBTeamsButton.setOnAction(e -> {
+            workspacePane.setTop(MLBScreen);
+        });
+        
         // THEN THE DRAFT EDITING CONTROLS
         // TEXT FIELDS HAVE A DIFFERENT WAY OF LISTENING FOR TEXT CHANGES
         // AND NOW THE LECTURE ADDING AND EDITING CONTROLS

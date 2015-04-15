@@ -4,7 +4,7 @@
     in the UI must have the same class as those below in 
     order to be rendered using those properties.
 
-    Author     : Richard McKenna
+    Author     : Henry Chin
 */
 
 .progress_bar > .bar{
@@ -50,6 +50,7 @@
 }
 
 // CSS CLASS FOR RADIO BUTTON TOOLBARS
-.radio_toolbar {
+.general {
+    -fx-padding: 15;
     -fx-spacing: 10;
 }
