@@ -7,9 +7,9 @@ import draftkit.data.DraftDataManager;
 import draftkit.data.DraftDataView;
 import draftkit.controller.FileController;
 /*
-import draftkit.controller.TeamEditController;
-import draftkit.controller.PlayerEditController;
-*/
+ import draftkit.controller.TeamEditController;
+ import draftkit.controller.PlayerEditController;
+ */
 import draftkit.data.Player;
 import draftkit.data.Draft;
 import draftkit.file.DraftFileManager;
@@ -50,13 +50,13 @@ public class GUI implements DraftDataView {
 
     // THESE CONSTANTS ARE FOR TYING THE PRESENTATION STYLE OF
     // THIS GUI'S COMPONENTS TO A STYLE SHEET THAT IT USES
-
     static final String PRIMARY_STYLE_SHEET = PATH_CSS + "draftkit_style.css";
     static final String CLASS_BORDERED_PANE = "bordered_pane";
     static final String CLASS_SUBJECT_PANE = "subject_pane";
     static final String CLASS_HEADING_LABEL = "heading_label";
     static final String CLASS_SUBHEADING_LABEL = "subheading_label";
     static final String CLASS_PROMPT_LABEL = "prompt_label";
+    static final String CLASS_RADIO_TOOLBAR = "radio_toolbar";
     static final String EMPTY_TEXT = "";
     static final int LARGE_TEXT_FIELD_LENGTH = 20;
     static final int SMALL_TEXT_FIELD_LENGTH = 5;
@@ -69,22 +69,17 @@ public class GUI implements DraftDataView {
 
     // THIS MANAGES EXPORTING OUR SITE PAGES
     //DraftSiteExporter siteExporter;
-
     // THIS HANDLES INTERACTIONS WITH FILE-RELATED CONTROLS
     FileController fileController;
 
     // THIS HANDLES INTERACTIONS WITH DRAFT INFO CONTROLS
     //DraftEditController draftController;
-    
     // THIS HANDLES REQUESTS TO ADD OR EDIT SCHEDULE STUFF
     //ScheduleEditController scheduleController;
-    
     // THIS HANDLES REQUESTS TO ADD OR EDIT LECTURE STUFF
     //LectureEditController lectureController;
-
     // THIS HANDLES REQUESTS TO ADD OR EDIT HW STUFF
     //hwEditController hwController;
-    
     // THIS IS THE APPLICATION WINDOW
     Stage primaryStage;
 
@@ -94,7 +89,7 @@ public class GUI implements DraftDataView {
     // THIS PANE ORGANIZES THE BIG PICTURE CONTAINERS FOR THE
     // APPLICATION GUI
     BorderPane draftkitPane;
-    
+
     // THIS IS THE TOP TOOLBAR AND ITS CONTROLS
     FlowPane fileToolbarPane;
     Button newDraftButton;
@@ -106,7 +101,7 @@ public class GUI implements DraftDataView {
     // WE'LL ORGANIZE OUR WORKSPACE COMPONENTS USING A BORDER PANE
     BorderPane workspacePane;
     boolean workspaceActivated;
-    
+
     // WE'LL PUT THE WORKSPACE INSIDE A SCROLL PANE
     ScrollPane workspaceScrollPane;
 
@@ -121,13 +116,13 @@ public class GUI implements DraftDataView {
     Label summaryLabel;
     VBox MLBTeamsScreen;
     Label MLBTeamsLabel;
-    
+
     //PLAYER SCREEN CONTROLS
     HBox firstBox;
     Button addPlayerButton;
     Button removePlayerButton;
     Label searchLabel;
-    
+
     //RADIO BUTTON CONTROLS
     HBox radioBox;
     ToggleGroup select;
@@ -142,7 +137,7 @@ public class GUI implements DraftDataView {
     RadioButton OF;
     RadioButton U;
     RadioButton P;
-    
+
     //PLAYER SCREEN CONTROLS
     TableView<Player> playerTable;
     TableColumn player_first;
@@ -158,7 +153,7 @@ public class GUI implements DraftDataView {
     TableColumn player_ba_whip;
     TableColumn player_est_value;
     TableColumn player_notes;
-    
+
     //LABELS FOR RADIO BUTTONS
     static final String RADIO_ALL = "All";
     static final String RADIO_C = "C";
@@ -171,7 +166,7 @@ public class GUI implements DraftDataView {
     static final String RADIO_OF = "OF";
     static final String RADIO_U = "U";
     static final String RADIO_P = "P";
-    
+
     // AND TABLE COLUMNS
     static final String COL_FIRST = "First";
     static final String COL_LAST = "Last";
@@ -194,11 +189,11 @@ public class GUI implements DraftDataView {
     static final String COL_SV = "SV";
     static final String COL_ERA = "ERA";
     static final String COL_WHIP = "WHIP";
-    
+
     // HERE ARE OUR DIALOGS
     MessageDialog messageDialog;
     YesNoCancelDialog yesNoCancelDialog;
-    
+
     // SWITCH SCREEN TOOLBAR
     FlowPane switchToolbarPane;
     Button playersButton;
@@ -206,7 +201,7 @@ public class GUI implements DraftDataView {
     Button standingsButton;
     Button summaryButton;
     Button MLBTeamsButton;
-    
+
     /**
      * Constructor for making this GUI, note that it does not initialize the UI
      * controls. To do that, call initGUI.
@@ -250,11 +245,10 @@ public class GUI implements DraftDataView {
      * @return The DraftSiteExporter used by this UI.
      */
     /*
-    public DraftSiteExporter getSiteExporter() {
-        return siteExporter;
-    }
-    */
-
+     public DraftSiteExporter getSiteExporter() {
+     return siteExporter;
+     }
+     */
     /**
      * Accessor method for the window (i.e. stage).
      *
@@ -263,11 +257,11 @@ public class GUI implements DraftDataView {
     public Stage getWindow() {
         return primaryStage;
     }
-    
+
     public MessageDialog getMessageDialog() {
         return messageDialog;
     }
-    
+
     public YesNoCancelDialog getYesNoCancelDialog() {
         return yesNoCancelDialog;
     }
@@ -296,11 +290,10 @@ public class GUI implements DraftDataView {
      * @param initSiteExporter The DraftSiteExporter to be used by this UI.
      */
     /*
-    public void setSiteExporter(DraftSiteExporter initSiteExporter) {
-        siteExporter = initSiteExporter;
-    }
-    */
-
+     public void setSiteExporter(DraftSiteExporter initSiteExporter) {
+     siteExporter = initSiteExporter;
+     }
+     */
     /**
      * This method fully initializes the user interface for use.
      *
@@ -311,14 +304,13 @@ public class GUI implements DraftDataView {
     public void initGUI(String windowTitle) throws IOException {
         // INIT THE DIALOGS
         initDialogs();
-        
+
         // INIT THE TOOLBARS
         initFileToolbar();
 
         // INIT THE CENTER WORKSPACE CONTROLS BUT DON'T ADD THEM
         // TO THE WINDOW YET
         initWorkspace();
-        
 
         // NOW SETUP THE EVENT HANDLERS
         initEventHandlers();
@@ -328,8 +320,8 @@ public class GUI implements DraftDataView {
     }
 
     /**
-     * When called this function puts the workspace into the window,
-     * revealing the controls for editing a Draft.
+     * When called this function puts the workspace into the window, revealing
+     * the controls for editing a Draft.
      */
     public void activateWorkspace() {
         if (!workspaceActivated) {
@@ -338,11 +330,11 @@ public class GUI implements DraftDataView {
             workspaceActivated = true;
         }
     }
-    
+
     /**
-     * This function takes all of the data out of the draftToReload 
-     * argument and loads its values into the user interface controls.
-     * 
+     * This function takes all of the data out of the draftToReload argument and
+     * loads its values into the user interface controls.
+     *
      * @param draftToReload The Draft whose data we'll load into the GUI.
      */
     @Override
@@ -355,22 +347,17 @@ public class GUI implements DraftDataView {
         // WE DON'T WANT TO RESPOND TO EVENTS FORCED BY
         // OUR INITIALIZATION SELECTIONS
         //draftController.enable(false);
-
         // THE SCHEDULE ITEMS TABLE
-        
-       
         // THE LECTURES TABLE
-        
         // THE HWS TABLE
-
         // NOW WE DO WANT TO RESPOND WHEN THE USER INTERACTS WITH OUR CONTROLS
         //draftController.enable(true);
     }
 
     /**
-     * This method is used to activate/deactivate toolbar buttons when
-     * they can and cannot be used so as to provide foolproof design.
-     * 
+     * This method is used to activate/deactivate toolbar buttons when they can
+     * and cannot be used so as to provide foolproof design.
+     *
      * @param saved Describes whether the loaded Draft has been saved or not.
      */
     public void updateToolbarControls(boolean saved) {
@@ -388,23 +375,26 @@ public class GUI implements DraftDataView {
     }
 
     /**
-     * This function loads all the values currently in the user interface
-     * into the draft argument.
-     * 
+     * This function loads all the values currently in the user interface into
+     * the draft argument.
+     *
      * @param draft The draft to be updated using the data from the UI controls.
      */
     public void updateDraftInfo(Draft draft) {
     }
 
-    /****************************************************************************/
+    /**
+     * *************************************************************************
+     */
     /* BELOW ARE ALL THE PRIVATE HELPER METHODS WE USE FOR INITIALIZING OUR GUI */
-    /****************************************************************************/
-    
+    /**
+     * *************************************************************************
+     */
     private void initDialogs() {
         messageDialog = new MessageDialog(primaryStage, CLOSE_BUTTON_LABEL);
         yesNoCancelDialog = new YesNoCancelDialog(primaryStage);
     }
-    
+
     /**
      * This function initializes all the buttons in the toolbar at the top of
      * the application window. These are related to file management.
@@ -420,7 +410,7 @@ public class GUI implements DraftDataView {
         exportSiteButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.EXPORT_PAGE_ICON, DraftKit_PropertyType.EXPORT_PAGE_TOOLTIP, true);
         exitButton = initChildButton(fileToolbarPane, DraftKit_PropertyType.EXIT_ICON, DraftKit_PropertyType.EXIT_TOOLTIP, false);
     }
-    
+
     /**
      * This function initializes all the buttons in the toolbar at the top of
      * the application window. These are related to file management.
@@ -436,13 +426,45 @@ public class GUI implements DraftDataView {
         summaryButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXPORT_PAGE_ICON, DraftKit_PropertyType.EXPORT_PAGE_TOOLTIP, false);
         MLBTeamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.EXIT_ICON, DraftKit_PropertyType.EXIT_TOOLTIP, false);
     }
-    
-    private void initPlayerScreen() {
-        
-    }
 
-    // CREATES AND SETS UP ALL THE CONTROLS TO GO IN THE APP WORKSPACE
-    private void initWorkspace() throws IOException {
+    private void initPlayerScreen() {
+        //SET UP THE BOX AND LABEL
+        playerScreen = new VBox();
+        playerScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        initChildLabel(playerScreen, DraftKit_PropertyType.AVAILABLE_PLAYERS_LABEL, CLASS_HEADING_LABEL);
+
+        //SET UP TOOLBAR
+        radioBox = new HBox();
+        select = new ToggleGroup();
+        all = new RadioButton();
+        all.setToggleGroup(select);
+        all.setText(RADIO_ALL);
+        all.setSelected(true);
+        radioBox.getChildren().add(all);
+        addRadioButton(radioBox, select, c, RADIO_C);
+        addRadioButton(radioBox, select, cI, RADIO_CI);
+        addRadioButton(radioBox, select, firstB, RADIO_1B);
+        addRadioButton(radioBox, select, secondB, RADIO_2B);
+        addRadioButton(radioBox, select, thirdB, RADIO_3B);
+        addRadioButton(radioBox, select, MI, RADIO_MI);
+        addRadioButton(radioBox, select, SS, RADIO_SS);
+        addRadioButton(radioBox, select, OF, RADIO_OF);
+        addRadioButton(radioBox, select, U, RADIO_U);
+        addRadioButton(radioBox, select, P, RADIO_P);
+        radioBox.getStyleClass().add(CLASS_RADIO_TOOLBAR);
+        playerScreen.getChildren().add(radioBox);
+}
+
+// ADDS RADIO BUTTONS TO A TOOLBAR
+private void addRadioButton(Pane toolbar, ToggleGroup toggle, RadioButton button, String buttonText) {
+    button = new RadioButton();
+    button.setToggleGroup(toggle);
+    button.setText(buttonText);
+    toolbar.getChildren().add(button);
+}
+
+// CREATES AND SETS UP ALL THE CONTROLS TO GO IN THE APP WORKSPACE
+private void initWorkspace() throws IOException {
         // THE WORKSPACE HAS A FEW REGIONS, THIS 
         // IS FOR BASIC DRAFT EDITING CONTROLS
         initPlayerScreen();
@@ -452,16 +474,14 @@ public class GUI implements DraftDataView {
 
         // THE TOP WORKSPACE HOLDS BOTH THE BASIC DRAFT INFO
         // CONTROLS AS WELL AS THE PAGE SELECTION CONTROLS
-
         // THIS IS FOR MANAGING SCHEDULE EDITING
-
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
         workspacePane.setTop(playerScreen);
         workspacePane.setCenter(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
-        
+
         // AND NOW PUT IT IN THE WORKSPACE
         workspaceScrollPane = new ScrollPane();
         workspaceScrollPane.setContent(workspacePane);
@@ -472,7 +492,7 @@ public class GUI implements DraftDataView {
         // DRAFT OR LOADS AN EXISTING ONE FOR EDITING
         workspaceActivated = false;
     }
-    
+
     // INITIALIZE THE WINDOW (i.e. STAGE) PUTTING ALL THE CONTROLS
     // THERE EXCEPT THE WORKSPACE, WHICH WILL BE ADDED THE FIRST
     // TIME A NEW Draft IS CREATED OR LOADED
@@ -526,33 +546,21 @@ public class GUI implements DraftDataView {
         });
 
         // THEN THE DRAFT EDITING CONTROLS
-       
-
         // TEXT FIELDS HAVE A DIFFERENT WAY OF LISTENING FOR TEXT CHANGES
-       
-        
         // AND NOW THE LECTURE ADDING AND EDITING CONTROLS
-       
-        
         // AND NOW THE LECTURE TABLE
-        
-        
         // AND NOW THE HW ADDING AND EDITING CONTROLS
-        
-        
         // AND NOW THE LECTURE TABLE
     }
 
     // REGISTER THE EVENT LISTENER FOR A TEXT FIELD
-    
     /*
-    private void registerTextFieldController(TextField textField) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            draftController.handleDraftChangeRequest(this);
-        });
-    }
-    */
-    
+     private void registerTextFieldController(TextField textField) {
+     textField.textProperty().addListener((observable, oldValue, newValue) -> {
+     draftController.handleDraftChangeRequest(this);
+     });
+     }
+     */
     // INIT A BUTTON AND ADD IT TO A CONTAINER IN A TOOLBAR
     private Button initChildButton(Pane toolbar, DraftKit_PropertyType icon, DraftKit_PropertyType tooltip, boolean disabled) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -566,7 +574,7 @@ public class GUI implements DraftDataView {
         toolbar.getChildren().add(button);
         return button;
     }
-    
+
     // INIT A LABEL AND SET IT'S STYLESHEET CLASS
     private Label initLabel(DraftKit_PropertyType labelProperty, String styleClass) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -599,13 +607,12 @@ public class GUI implements DraftDataView {
 
     // LOAD THE COMBO BOX TO HOLD Draft SUBJECTS
     /*
-    private void loadSubjectComboBox(ArrayList<String> subjects) {
-        for (String s : subjects) {
-            draftSubjectComboBox.getItems().add(s);
-        }
-    }
-    */
-
+     private void loadSubjectComboBox(ArrayList<String> subjects) {
+     for (String s : subjects) {
+     draftSubjectComboBox.getItems().add(s);
+     }
+     }
+     */
     // INIT A TEXT FIELD AND PUT IT IN A GridPane
     private TextField initGridTextField(GridPane container, int size, String initText, boolean editable, int col, int row, int colSpan, int rowSpan) {
         TextField tf = new TextField();
