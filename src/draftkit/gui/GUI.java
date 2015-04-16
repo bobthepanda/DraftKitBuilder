@@ -15,6 +15,7 @@ import draftkit.data.Draft;
 import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -128,6 +129,7 @@ public class GUI implements DraftDataView {
     Button removePlayerButton;
     Label searchLabel;
     TextField searchField;
+    ObservableList<Player> displayedPlayers;
 
     //RADIO BUTTON CONTROLS
     HBox radioBox;
@@ -454,16 +456,16 @@ public class GUI implements DraftDataView {
         all.setText(RADIO_ALL);
         all.setSelected(true);
         radioBox.getChildren().add(all);
-        addRadioButton(radioBox, select, c, RADIO_C);
-        addRadioButton(radioBox, select, cI, RADIO_CI);
-        addRadioButton(radioBox, select, firstB, RADIO_1B);
-        addRadioButton(radioBox, select, secondB, RADIO_2B);
-        addRadioButton(radioBox, select, thirdB, RADIO_3B);
-        addRadioButton(radioBox, select, MI, RADIO_MI);
-        addRadioButton(radioBox, select, SS, RADIO_SS);
-        addRadioButton(radioBox, select, OF, RADIO_OF);
-        addRadioButton(radioBox, select, U, RADIO_U);
-        addRadioButton(radioBox, select, P, RADIO_P);
+        c = addRadioButton(radioBox, select, c, RADIO_C);
+        cI = addRadioButton(radioBox, select, cI, RADIO_CI);
+        firstB = addRadioButton(radioBox, select, firstB, RADIO_1B);
+        secondB = addRadioButton(radioBox, select, secondB, RADIO_2B);
+        thirdB = addRadioButton(radioBox, select, thirdB, RADIO_3B);
+        MI = addRadioButton(radioBox, select, MI, RADIO_MI);
+        SS = addRadioButton(radioBox, select, SS, RADIO_SS);
+        OF = addRadioButton(radioBox, select, OF, RADIO_OF);
+        U = addRadioButton(radioBox, select, U, RADIO_U);
+        P = addRadioButton(radioBox, select, P, RADIO_P);
         radioBox.getStyleClass().add(CLASS_GENERAL);
         playerScreen.getChildren().add(radioBox);
         
@@ -478,7 +480,7 @@ public class GUI implements DraftDataView {
         playerScreen.getChildren().add(firstBox);
         firstBox.getStyleClass().add(CLASS_GENERAL);
         
-        //SET UP TABLE
+        //SETS UP TABLE
         playerTable = new TableView<Player>();
         player_first = new TableColumn(COL_FIRST);
         player_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
@@ -519,7 +521,14 @@ public class GUI implements DraftDataView {
         playerTable.getColumns().add(player_ba_whip);
         playerTable.getColumns().add(player_est_value);
         playerTable.getColumns().add(player_notes);
-        ObservableList<Player> displayedPlayers = FXCollections.observableArrayList(dataManager.getDraft().getPlayers());
+        
+        //SETS UP FILTERING
+        playerTable = setTable(dataManager.getDraft().getPlayers());
+        playerScreen.getChildren().add(playerTable);
+}
+    
+    public TableView<Player> setTable(ArrayList<Player> players) {
+        displayedPlayers = FXCollections.observableArrayList(players);
         FilteredList<Player> filteredData = new FilteredList<Player>(displayedPlayers, p-> true);
         searchField.textProperty().addListener((observable, oldVlaue, newValue) -> {
             filteredData.setPredicate(player -> {
@@ -529,7 +538,8 @@ public class GUI implements DraftDataView {
                 
                 String lowerCaseFilter = newValue.toLowerCase();
                 
-                if ((player.getFirstName() + " " + player.getLastName()).toLowerCase().contains(lowerCaseFilter)) {
+                if ((player.getFirstName() + " " + player.getLastName()).toLowerCase().contains(lowerCaseFilter) || 
+                        (player.getLastName() + " " + player.getFirstName()).toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
                 
@@ -540,8 +550,8 @@ public class GUI implements DraftDataView {
         SortedList<Player> sortedData = new SortedList<Player>(filteredData);
         sortedData.comparatorProperty().bind(playerTable.comparatorProperty());
         playerTable.setItems(sortedData);
-        playerScreen.getChildren().add(playerTable);
-}
+        return playerTable;
+    }
     
     private void initStandingsScreen() {
         standingsScreen = new VBox();
@@ -562,11 +572,12 @@ public class GUI implements DraftDataView {
     }
 
 // ADDS RADIO BUTTONS TO A TOOLBAR
-private void addRadioButton(Pane toolbar, ToggleGroup toggle, RadioButton button, String buttonText) {
+private RadioButton addRadioButton(Pane toolbar, ToggleGroup toggle, RadioButton button, String buttonText) {
     button = new RadioButton();
     button.setToggleGroup(toggle);
     button.setText(buttonText);
     toolbar.getChildren().add(button);
+    return button;
 }
 
 // CREATES AND SETS UP ALL THE CONTROLS TO GO IN THE APP WORKSPACE
@@ -670,6 +681,51 @@ private void initWorkspace() throws IOException {
         });
         MLBTeamsButton.setOnAction(e -> {
             workspacePane.setTop(MLBScreen);
+        });
+        
+        // THEN THE FILTER RADIO BUTTONS
+        all.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getPlayers());
+        });
+        
+        c.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_C));
+        });
+        
+        cI.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_CI));
+        });
+        
+        firstB.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_1B));
+        });
+        
+        secondB.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_2B));
+        });
+        
+        thirdB.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_3B));
+        });
+        
+        MI.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_MI));
+        });
+        
+        SS.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_SS));
+        });
+        
+        OF.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_OF));
+        });
+        
+        U.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_U));
+        });
+        
+        P.setOnAction(e -> {
+            playerTable = setTable(dataManager.getDraft().getPitcherPlayers());
         });
         
         // THEN THE DRAFT EDITING CONTROLS

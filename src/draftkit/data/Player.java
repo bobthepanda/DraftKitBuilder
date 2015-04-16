@@ -93,8 +93,11 @@ public abstract class Player {
     /**
      * @param positions the positions to set
      */
-    public void setPositions(ArrayList<String> positions) {
-        this.positions = positions;
+    public void setPositions() {
+        this.positions = new ArrayList<String>();
+        for (int i = 0; i < positions_String.split("_").length; i++) {
+            positions.add(positions_String.split("_")[i]);
+        }
     }
 
     /**
@@ -235,6 +238,7 @@ public abstract class Player {
      */
     public void setPositions_String(String positions_String) {
         this.positions_String = positions_String;
+        setPositions();
     }
 
     /**

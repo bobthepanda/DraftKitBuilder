@@ -2,6 +2,7 @@ package draftkit.data;
 
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * This class represents a draft to be edited and then used to generate a site.
@@ -40,6 +41,16 @@ public class Draft {
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
+    
+    public ArrayList<Player> getHittersPosition(String s) {
+        ArrayList<Player> hittersWithPosition = new ArrayList<Player>();
+        for (Hitter h: hitters) {
+            if (h.getPositions().contains(s)) {
+                hittersWithPosition.add(h);
+            }
+        }
+        return hittersWithPosition;
+    }
 
     /**
      * @return the hitters
@@ -60,6 +71,14 @@ public class Draft {
      */
     public ArrayList<Pitcher> getPitchers() {
         return pitchers;
+    }
+    
+    public ArrayList<Player> getPitcherPlayers() {
+        ArrayList<Player> pitcherPlayers = new ArrayList<Player>();
+        for (Pitcher p: pitchers) {
+            pitcherPlayers.add(p);
+        }
+        return pitcherPlayers;
     }
 
     /**
