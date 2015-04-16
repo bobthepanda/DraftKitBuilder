@@ -291,6 +291,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             p.setRbi_k(Integer.parseInt(jso.getString(JSON_PITCHERS_K)));
             p.setSb_era();
             p.setBa_whip();
+            p.setPositions_String("P");
             p.setNotes(jso.getString(JSON_NOTES));
             p.setYearOfBirth(Integer.parseInt(jso.getString(JSON_YEAR_OF_BIRTH)));
             p.setNationOfBirth(jso.getString(JSON_NATION_OF_BIRTH));

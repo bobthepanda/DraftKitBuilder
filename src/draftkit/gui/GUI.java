@@ -199,6 +199,7 @@ public class GUI implements DraftDataView {
     static final String COL_BA = "BA";
     static final String COL_W = "W";
     static final String COL_SV = "SV";
+    static final String COL_K = "K";
     static final String COL_ERA = "ERA";
     static final String COL_WHIP = "WHIP";
 
@@ -424,7 +425,7 @@ public class GUI implements DraftDataView {
     }
 
     /**
-     * This function initializes all the buttons in the toolbar at the top of
+     * This function initializes all the buttons in the toolbar at the bottom of
      * the application window. These are related to file management.
      */
     private void initSwitchToolbar() {
@@ -439,14 +440,15 @@ public class GUI implements DraftDataView {
         MLBTeamsButton = initChildButton(switchToolbarPane, DraftKit_PropertyType.MLB_ICON, DraftKit_PropertyType.MLB_TOOLTIP, false);
     }
 
+    // CREATE THE TEAM SCREEN
     private void initTeamScreen() {
         teamScreen = new VBox();
         teamScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(teamScreen, DraftKit_PropertyType.FANTASY_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
 
+    // CREATE THE PLAYER SCREEN
     private void initPlayerScreen() {
-        //SET UP THE BOX AND LABEL
         playerScreen = new VBox();
         playerScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(playerScreen, DraftKit_PropertyType.AVAILABLE_PLAYERS_LABEL, CLASS_HEADING_LABEL);
@@ -532,8 +534,33 @@ public class GUI implements DraftDataView {
         playerTable.setEditable(true);
         playerScreen.getChildren().add(playerTable);
     }
+    
+    // METHODS FOR CHANGING TABLE HEADERS
+    private void setTableColumnsAll() {
+        player_r_w.setText(COL_R_W);
+        player_hr_sv.setText(COL_HR_SV);
+        player_rbi_k.setText(COL_RBI_K);
+        player_sb_era.setText(COL_SB_ERA);
+        player_ba_whip.setText(COL_BA_WHIP);
+    }
+    
+    private void setTableColumnsHitters() {
+        player_r_w.setText(COL_R);
+        player_hr_sv.setText(COL_HR);
+        player_rbi_k.setText(COL_RBI);
+        player_sb_era.setText(COL_SB);
+        player_ba_whip.setText(COL_BA);
+    } 
+    
+    private void setTableColumnsPitchers() {
+        player_r_w.setText(COL_W);
+        player_hr_sv.setText(COL_SV);
+        player_rbi_k.setText(COL_K);
+        player_sb_era.setText(COL_ERA);
+        player_ba_whip.setText(COL_WHIP);
+    } 
 
-    public TableView<Player> setTable(ArrayList<Player> players) {
+    private TableView<Player> setTable(ArrayList<Player> players) {
         displayedPlayers = FXCollections.observableArrayList(players);
         FilteredList<Player> filteredData = new FilteredList<Player>(displayedPlayers, p -> true);
         searchField.textProperty().addListener((observable, oldVlaue, newValue) -> {
@@ -559,18 +586,21 @@ public class GUI implements DraftDataView {
         return playerTable;
     }
 
+    // CREATE STANDINGS SCREEN
     private void initStandingsScreen() {
         standingsScreen = new VBox();
         standingsScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
     }
 
+    // CREATE SUMMARY SCREEN
     private void initSummaryScreen() {
         summaryScreen = new VBox();
         summaryScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
     }
 
+    // CREATE MLB SCREEN
     private void initMLBScreen() {
         MLBScreen = new VBox();
         MLBScreen.getStyleClass().add(CLASS_BORDERED_PANE);
@@ -692,48 +722,60 @@ public class GUI implements DraftDataView {
         // THEN THE FILTER RADIO BUTTONS
         all.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getPlayers());
+            setTableColumnsAll();
         });
 
         c.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_C));
+            setTableColumnsHitters();
         });
 
         cI.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_CI));
+            setTableColumnsHitters();
         });
 
         firstB.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_1B));
+            setTableColumnsHitters();
         });
 
         secondB.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_2B));
+            setTableColumnsHitters();
         });
 
         thirdB.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_3B));
+            setTableColumnsHitters();
         });
 
         MI.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_MI));
+            setTableColumnsHitters();
         });
 
         SS.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_SS));
+            setTableColumnsHitters();
         });
 
         OF.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_OF));
+            setTableColumnsHitters();
         });
 
         U.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_U));
+            setTableColumnsHitters();
         });
 
         P.setOnAction(e -> {
             playerTable = setTable(dataManager.getDraft().getPitcherPlayers());
+            setTableColumnsPitchers();
         });
 
+        // THEN THE EDITABLE NOTES COLUMN
         player_notes.setOnEditCommit(
             new EventHandler<CellEditEvent<String, String>>() {
                 @Override
