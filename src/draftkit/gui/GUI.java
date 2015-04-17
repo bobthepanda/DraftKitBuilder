@@ -43,6 +43,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -208,7 +209,7 @@ public class GUI implements DraftDataView {
     YesNoCancelDialog yesNoCancelDialog;
 
     // SWITCH SCREEN TOOLBAR
-    FlowPane switchToolbarPane;
+    HBox switchToolbarPane;
     Button playersButton;
     Button teamsButton;
     Button standingsButton;
@@ -429,7 +430,7 @@ public class GUI implements DraftDataView {
      * the application window. These are related to file management.
      */
     private void initSwitchToolbar() {
-        switchToolbarPane = new FlowPane();
+        switchToolbarPane = new HBox();
 
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
@@ -443,6 +444,7 @@ public class GUI implements DraftDataView {
     // CREATE THE TEAM SCREEN
     private void initTeamScreen() {
         teamScreen = new VBox();
+        teamScreen.setMaxHeight(Double.MAX_VALUE);
         teamScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(teamScreen, DraftKit_PropertyType.FANTASY_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
@@ -450,9 +452,21 @@ public class GUI implements DraftDataView {
     // CREATE THE PLAYER SCREEN
     private void initPlayerScreen() {
         playerScreen = new VBox();
+        playerScreen.setMaxHeight(Double.MAX_VALUE);
         playerScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(playerScreen, DraftKit_PropertyType.AVAILABLE_PLAYERS_LABEL, CLASS_HEADING_LABEL);
-
+       
+        //SET UP NEXT LAYER OF BUTTONS
+        firstBox = new HBox();
+        addPlayerButton = initChildButton(firstBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_PLAYER_TOOLTIP, false);
+        removePlayerButton = initChildButton(firstBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_PLAYER_TOOLTIP, false);
+        searchLabel = initChildLabel(firstBox, DraftKit_PropertyType.SEARCH_LABEL, CLASS_HEADING_LABEL);
+        searchField = new TextField();
+        searchField.setEditable(true);
+        firstBox.getChildren().add(searchField);
+        playerScreen.getChildren().add(firstBox);
+        firstBox.getStyleClass().add(CLASS_GENERAL);
+        
         //SET UP TOOLBAR
         radioBox = new HBox();
         select = new ToggleGroup();
@@ -473,17 +487,6 @@ public class GUI implements DraftDataView {
         P = addRadioButton(radioBox, select, P, RADIO_P);
         radioBox.getStyleClass().add(CLASS_GENERAL);
         playerScreen.getChildren().add(radioBox);
-
-        //SET UP NEXT LAYER OF BUTTONS
-        firstBox = new HBox();
-        addPlayerButton = initChildButton(firstBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_PLAYER_TOOLTIP, false);
-        removePlayerButton = initChildButton(firstBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_PLAYER_TOOLTIP, false);
-        searchLabel = initChildLabel(firstBox, DraftKit_PropertyType.SEARCH_LABEL, CLASS_HEADING_LABEL);
-        searchField = new TextField();
-        searchField.setEditable(true);
-        firstBox.getChildren().add(searchField);
-        playerScreen.getChildren().add(firstBox);
-        firstBox.getStyleClass().add(CLASS_GENERAL);
 
         //SETS UP TABLE
         playerTable = new TableView<Player>();
@@ -589,6 +592,7 @@ public class GUI implements DraftDataView {
     // CREATE STANDINGS SCREEN
     private void initStandingsScreen() {
         standingsScreen = new VBox();
+        standingsScreen.setMaxHeight(Double.MAX_VALUE);
         standingsScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
     }
@@ -596,6 +600,7 @@ public class GUI implements DraftDataView {
     // CREATE SUMMARY SCREEN
     private void initSummaryScreen() {
         summaryScreen = new VBox();
+        summaryScreen.setMaxHeight(Double.MAX_VALUE);
         summaryScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
     }
@@ -603,6 +608,7 @@ public class GUI implements DraftDataView {
     // CREATE MLB SCREEN
     private void initMLBScreen() {
         MLBScreen = new VBox();
+        MLBScreen.setMaxHeight(Double.MAX_VALUE);
         MLBScreen.getStyleClass().add(CLASS_BORDERED_PANE);
         initChildLabel(MLBScreen, DraftKit_PropertyType.MLB_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
@@ -635,14 +641,15 @@ public class GUI implements DraftDataView {
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
-        workspacePane.setTop(playerScreen);
-        workspacePane.setCenter(switchToolbarPane);
+        workspacePane.setCenter(playerScreen);
+        workspacePane.setBottom(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
 
         // AND NOW PUT IT IN THE WORKSPACE
         workspaceScrollPane = new ScrollPane();
         workspaceScrollPane.setContent(workspacePane);
         workspaceScrollPane.setFitToWidth(true);
+        workspaceScrollPane.setFitToHeight(true);
 
         // NOTE THAT WE HAVE NOT PUT THE WORKSPACE INTO THE WINDOW,
         // THAT WILL BE DONE WHEN THE USER EITHER CREATES A NEW
@@ -704,19 +711,19 @@ public class GUI implements DraftDataView {
 
         // THEN THE SCREEN TOOLBAR CONTROLS
         teamsButton.setOnAction(e -> {
-            workspacePane.setTop(teamScreen);
+            workspacePane.setCenter(teamScreen);
         });
         playersButton.setOnAction(e -> {
-            workspacePane.setTop(playerScreen);
+            workspacePane.setCenter(playerScreen);
         });
         standingsButton.setOnAction(e -> {
-            workspacePane.setTop(standingsScreen);
+            workspacePane.setCenter(standingsScreen);
         });
         summaryButton.setOnAction(e -> {
-            workspacePane.setTop(summaryScreen);
+            workspacePane.setCenter(summaryScreen);
         });
         MLBTeamsButton.setOnAction(e -> {
-            workspacePane.setTop(MLBScreen);
+            workspacePane.setCenter(MLBScreen);
         });
 
         // THEN THE FILTER RADIO BUTTONS
@@ -810,6 +817,7 @@ public class GUI implements DraftDataView {
         Button button = new Button();
         button.setDisable(disabled);
         button.setGraphic(new ImageView(buttonImage));
+        button.setMaxHeight(Double.MAX_VALUE);
         Tooltip buttonTooltip = new Tooltip(props.getProperty(tooltip.toString()));
         button.setTooltip(buttonTooltip);
         toolbar.getChildren().add(button);
