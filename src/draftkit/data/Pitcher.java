@@ -1,11 +1,15 @@
 package draftkit.data;
 
+import java.text.DecimalFormat;
+
 /**
- * Stores the unique characteristics for Pitchers and performs necessary calculations.
- * 
+ * Stores the unique characteristics for Pitchers and performs necessary
+ * calculations.
+ *
  * @author H2
  */
-public class Pitcher extends Player{
+public class Pitcher extends Player {
+
     private double ip;
     private int er;
     private int w;
@@ -66,12 +70,28 @@ public class Pitcher extends Player{
     public void setH(int h) {
         this.h = h;
     }
-    
+
     public void setSb_era() {
-        super.setSb_era(Math.round((er / ip * 9.00) / 1.00));
+        if (ip != 0) {
+            try {
+                super.setSb_era(Double.parseDouble(new DecimalFormat("#.##").format(er * 9.00 / ip)));
+            } catch (Exception e) {
+                super.setSb_era(0);
+            }
+        } else {
+            super.setSb_era(0);
+        }
     }
-    
+
     public void setBa_whip() {
-        super.setBa_whip(Math.round(((w + h) / ip * 1.00) / 1.00));
+        if (ip != 0) {
+            try {
+                super.setBa_whip(Double.parseDouble(new DecimalFormat("#.##").format((w + h) / ip)));
+            } catch (Exception e) {
+                super.setSb_era(0);
+            }
+        } else {
+            super.setSb_era(0);
+        }
     }
 }

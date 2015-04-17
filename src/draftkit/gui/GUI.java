@@ -67,6 +67,7 @@ public class GUI implements DraftDataView {
     static final String CLASS_SUBHEADING_LABEL = "subheading_label";
     static final String CLASS_PROMPT_LABEL = "prompt_label";
     static final String CLASS_GENERAL = "general";
+    static final String CLASS_REGULAR_PANE = "regular_pane";
     static final String EMPTY_TEXT = "";
     static final int LARGE_TEXT_FIELD_LENGTH = 20;
     static final int SMALL_TEXT_FIELD_LENGTH = 5;
@@ -445,7 +446,7 @@ public class GUI implements DraftDataView {
     private void initTeamScreen() {
         teamScreen = new VBox();
         teamScreen.setMaxHeight(Double.MAX_VALUE);
-        teamScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        teamScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(teamScreen, DraftKit_PropertyType.FANTASY_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
 
@@ -453,7 +454,7 @@ public class GUI implements DraftDataView {
     private void initPlayerScreen() {
         playerScreen = new VBox();
         playerScreen.setMaxHeight(Double.MAX_VALUE);
-        playerScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        playerScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(playerScreen, DraftKit_PropertyType.AVAILABLE_PLAYERS_LABEL, CLASS_HEADING_LABEL);
        
         //SET UP NEXT LAYER OF BUTTONS
@@ -490,6 +491,7 @@ public class GUI implements DraftDataView {
 
         //SETS UP TABLE
         playerTable = new TableView<Player>();
+        playerTable.setMaxHeight(Double.MAX_VALUE);
         player_first = new TableColumn(COL_FIRST);
         player_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         player_last = new TableColumn(COL_LAST);
@@ -509,9 +511,9 @@ public class GUI implements DraftDataView {
         player_rbi_k = new TableColumn(COL_RBI_K);
         player_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
         player_sb_era = new TableColumn(COL_SB_ERA);
-        player_sb_era.setCellValueFactory(new PropertyValueFactory<Double, Double>("sb_era"));
+        player_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
         player_ba_whip = new TableColumn(COL_BA_WHIP);
-        player_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, Double>("ba_whip"));
+        player_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
         player_est_value = new TableColumn(COL_VALUE);
         player_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
         player_notes = new TableColumn(COL_NOTES);
@@ -593,7 +595,7 @@ public class GUI implements DraftDataView {
     private void initStandingsScreen() {
         standingsScreen = new VBox();
         standingsScreen.setMaxHeight(Double.MAX_VALUE);
-        standingsScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        standingsScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
     }
 
@@ -601,7 +603,7 @@ public class GUI implements DraftDataView {
     private void initSummaryScreen() {
         summaryScreen = new VBox();
         summaryScreen.setMaxHeight(Double.MAX_VALUE);
-        summaryScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        summaryScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
     }
 
@@ -609,7 +611,7 @@ public class GUI implements DraftDataView {
     private void initMLBScreen() {
         MLBScreen = new VBox();
         MLBScreen.setMaxHeight(Double.MAX_VALUE);
-        MLBScreen.getStyleClass().add(CLASS_BORDERED_PANE);
+        MLBScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(MLBScreen, DraftKit_PropertyType.MLB_TEAMS_LABEL, CLASS_HEADING_LABEL);
     }
 
