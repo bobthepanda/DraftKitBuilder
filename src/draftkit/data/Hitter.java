@@ -44,7 +44,7 @@ public class Hitter extends Player {
     public void setBa_whip() {
         if (ab != 0) {
             try {
-                super.setBa_whip(Double.parseDouble(new DecimalFormat("#.##").format((h * 1.000) / ab)));
+                super.setBa_whip(Double.parseDouble(new DecimalFormat("#.###").format((h * 1.000) / ab)));
             } catch (Exception e) {
                 super.setBa_whip(0);
             }
