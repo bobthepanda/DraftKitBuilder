@@ -45,19 +45,19 @@ public class Draft {
 
     public ArrayList<Player> getHittersPosition(String s) {
         ArrayList<Player> hittersWithPosition = new ArrayList<Player>();
-        if (s == "MI") {
+        if (s.equals("MI")) {
             for (Hitter h : hitters) {
                 if (h.getPositions().contains("2B") || h.getPositions().contains("SS")) {
                     hittersWithPosition.add(h);
                 }
             }
-        } else if (s == "CI") {
+        } else if (s.equals("CI")) {
             for (Hitter h : hitters) {
                 if (h.getPositions().contains("1B") || h.getPositions().contains("3B")) {
                     hittersWithPosition.add(h);
                 }
             }
-        } else if (s == "U") {
+        } else if (s.equals("U")) {
             for (Hitter h : hitters) {
                 hittersWithPosition.add(h);
             }
