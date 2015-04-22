@@ -63,5 +63,7 @@ public enum DraftKit_PropertyType {
         DRAFT_SAVED_MESSAGE,
         SITE_EXPORTED_MESSAGE,
         SAVE_UNSAVED_WORK_MESSAGE,
-        REMOVE_ITEM_MESSAGE
+        REMOVE_ITEM_MESSAGE,
+        
+        ILLEGAL_POSITION_MESSAGE
 }

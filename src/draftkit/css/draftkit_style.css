@@ -54,6 +54,6 @@
 
 // CSS CLASS FOR RADIO BUTTON TOOLBARS
 .general {
-    -fx-padding: 15;
+    -fx-padding: 10;
     -fx-spacing: 10;
 }

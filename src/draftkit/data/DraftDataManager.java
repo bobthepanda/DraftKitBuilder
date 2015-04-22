@@ -1,5 +1,7 @@
 package draftkit.data;
 
+import static draftkit.DraftKit_StartupConstants.JSON_FILE_PATH_HITTERS;
+import static draftkit.DraftKit_StartupConstants.JSON_FILE_PATH_PITCHERS;
 import draftkit.file.DraftFileManager;
 import java.util.ArrayList;
 
@@ -49,8 +51,11 @@ public class DraftDataManager {
      * the UI to reflect these changes.
      */
     public void reset() {
-        draft.getTeams().clear();
-        
+        try {
+            draft = new Draft(fileManager.loadHitters(JSON_FILE_PATH_HITTERS), fileManager.loadPitchers(JSON_FILE_PATH_PITCHERS));
+        }
+        catch (Exception e) {
+        }
         // AND THEN FORCE THE UI TO RELOAD THE UPDATED COURSE
         view.reloadDraft(draft);
     }

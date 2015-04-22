@@ -62,6 +62,7 @@
         <property name="SITE_EXPORTED_MESSAGE"          value="The Draft Site has been Exported"></property>
         <property name="SAVE_UNSAVED_WORK_MESSAGE"      value="Do you want to save your unsaved work first?"></property>
         <property name="REMOVE_ITEM_MESSAGE"            value="Are you sure you wish to remove the item?"></property>
+        <property name="ILLEGAL_POSITION_MESSAGE"       value="ERROR: Hitters and pitchers are mutually exclusive"></property>
     </property_list>
     <property_options_list>
     </property_options_list>

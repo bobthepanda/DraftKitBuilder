@@ -47,13 +47,17 @@ public class Draft {
         ArrayList<Player> hittersWithPosition = new ArrayList<Player>();
         if (s.equals("MI")) {
             for (Hitter h : hitters) {
-                if (h.getPositions().contains("2B") || h.getPositions().contains("SS")) {
+                if (h.getPositions() == null) {
+                }
+                else if (h.getPositions().contains("2B") || h.getPositions().contains("SS")) {
                     hittersWithPosition.add(h);
                 }
             }
         } else if (s.equals("CI")) {
             for (Hitter h : hitters) {
-                if (h.getPositions().contains("1B") || h.getPositions().contains("3B")) {
+                if (h.getPositions() == null) {
+                }
+                else if (h.getPositions().contains("1B") || h.getPositions().contains("3B")) {
                     hittersWithPosition.add(h);
                 }
             }
@@ -63,7 +67,9 @@ public class Draft {
             }
         } else {
             for (Hitter h : hitters) {
-                if (h.getPositions().contains(s)) {
+                if (h.getPositions() == null) {
+                }
+                else if (h.getPositions().contains(s)) {
                     hittersWithPosition.add(h);
                 }
             }
