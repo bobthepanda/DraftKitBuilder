@@ -120,7 +120,7 @@ public class Draft {
     public void removePlayer(Player p) {
         if (p instanceof Hitter) {
             hitters.remove((Hitter) p);
-        } else {
+        } else if (p instanceof Pitcher) {
             pitchers.remove((Pitcher) p);
         }
         players.remove(p);
@@ -132,5 +132,14 @@ public class Draft {
 
     public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
+    }
+    
+    public void addPlayer(Player p) {
+        if (p instanceof Hitter) {
+            addHitter((Hitter)p);
+        }
+        else if (p instanceof Pitcher) {
+            addPitcher((Pitcher) p);
+        }
     }
 }

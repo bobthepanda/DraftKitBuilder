@@ -27,6 +27,8 @@ public abstract class Player {
     private int salary;
     private String contract;
 
+    public Player() {
+    }
     /**
      * @return the firstName
      */

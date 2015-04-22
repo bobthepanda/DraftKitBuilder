@@ -8,8 +8,8 @@ import draftkit.data.DraftDataView;
 import draftkit.controller.FileController;
 /*
  import draftkit.controller.TeamEditController;
- import draftkit.controller.PlayerEditController;
- */
+*/
+import draftkit.controller.PlayerController;
 import draftkit.data.Player;
 import draftkit.data.Draft;
 import draftkit.file.DraftFileManager;
@@ -43,7 +43,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -82,6 +81,7 @@ public class GUI implements DraftDataView {
     //DraftSiteExporter siteExporter;
     // THIS HANDLES INTERACTIONS WITH FILE-RELATED CONTROLS
     FileController fileController;
+    PlayerController playerController;
 
     // THIS HANDLES INTERACTIONS WITH DRAFT INFO CONTROLS
     //DraftEditController draftController;
@@ -535,13 +535,13 @@ public class GUI implements DraftDataView {
         playerTable.getColumns().add(player_notes);
 
         //SETS UP FILTERING
-        playerTable = setTable(dataManager.getDraft().getPlayers());
+        playerTable = setPlayerTable(dataManager.getDraft().getPlayers());
         playerTable.setEditable(true);
         playerScreen.getChildren().add(playerTable);
     }
     
     // METHODS FOR CHANGING TABLE HEADERS
-    private void setTableColumnsAll() {
+    private void setPlayerTableColumnsAll() {
         player_r_w.setText(COL_R_W);
         player_hr_sv.setText(COL_HR_SV);
         player_rbi_k.setText(COL_RBI_K);
@@ -549,7 +549,7 @@ public class GUI implements DraftDataView {
         player_ba_whip.setText(COL_BA_WHIP);
     }
     
-    private void setTableColumnsHitters() {
+    private void setPlayerTableColumnsHitters() {
         player_r_w.setText(COL_R);
         player_hr_sv.setText(COL_HR);
         player_rbi_k.setText(COL_RBI);
@@ -557,7 +557,7 @@ public class GUI implements DraftDataView {
         player_ba_whip.setText(COL_BA);
     } 
     
-    private void setTableColumnsPitchers() {
+    private void setPlayerTableColumnsPitchers() {
         player_r_w.setText(COL_W);
         player_hr_sv.setText(COL_SV);
         player_rbi_k.setText(COL_K);
@@ -565,7 +565,7 @@ public class GUI implements DraftDataView {
         player_ba_whip.setText(COL_WHIP);
     } 
 
-    private TableView<Player> setTable(ArrayList<Player> players) {
+    private TableView<Player> setPlayerTable(ArrayList<Player> players) {
         displayedPlayers = FXCollections.observableArrayList(players);
         FilteredList<Player> filteredData = new FilteredList<Player>(displayedPlayers, p -> true);
         searchField.textProperty().addListener((observable, oldVlaue, newValue) -> {
@@ -695,6 +695,7 @@ public class GUI implements DraftDataView {
         // FIRST THE FILE CONTROLS
         fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager//, siteExporter
         );
+        playerController = new PlayerController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
         newDraftButton.setOnAction(e -> {
             fileController.handleNewDraftRequest(this);
         });
@@ -727,61 +728,70 @@ public class GUI implements DraftDataView {
         MLBTeamsButton.setOnAction(e -> {
             workspacePane.setCenter(MLBScreen);
         });
+        
+        // THEN PLAYER ADDING/REMOVING CONTROLS
+        addPlayerButton.setOnAction(e -> {
+            playerController.handleAddPlayerRequest(this);
+        });
+        
+        removePlayerButton.setOnAction(e -> {
+            
+        });
 
         // THEN THE FILTER RADIO BUTTONS
         all.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getPlayers());
-            setTableColumnsAll();
+            playerTable = setPlayerTable(dataManager.getDraft().getPlayers());
+            setPlayerTableColumnsAll();
         });
 
         c.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_C));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_C));
+            setPlayerTableColumnsHitters();
         });
 
         cI.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_CI));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_CI));
+            setPlayerTableColumnsHitters();
         });
 
         firstB.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_1B));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_1B));
+            setPlayerTableColumnsHitters();
         });
 
         secondB.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_2B));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_2B));
+            setPlayerTableColumnsHitters();
         });
 
         thirdB.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_3B));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_3B));
+            setPlayerTableColumnsHitters();
         });
 
         MI.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_MI));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_MI));
+            setPlayerTableColumnsHitters();
         });
 
         SS.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_SS));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_SS));
+            setPlayerTableColumnsHitters();
         });
 
         OF.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_OF));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_OF));
+            setPlayerTableColumnsHitters();
         });
 
         U.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getHittersPosition(RADIO_U));
-            setTableColumnsHitters();
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(RADIO_U));
+            setPlayerTableColumnsHitters();
         });
 
         P.setOnAction(e -> {
-            playerTable = setTable(dataManager.getDraft().getPitcherPlayers());
-            setTableColumnsPitchers();
+            playerTable = setPlayerTable(dataManager.getDraft().getPitcherPlayers());
+            setPlayerTableColumnsPitchers();
         });
 
         // THEN THE EDITABLE NOTES COLUMN
