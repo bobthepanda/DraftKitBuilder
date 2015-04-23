@@ -8,10 +8,11 @@ import draftkit.data.DraftDataView;
 import draftkit.controller.FileController;
 /*
  import draftkit.controller.TeamEditController;
-*/
+ */
 import draftkit.controller.PlayerController;
 import draftkit.data.Player;
 import draftkit.data.Draft;
+import draftkit.data.Team;
 import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
@@ -129,7 +130,7 @@ public class GUI implements DraftDataView {
     Label MLBLabel;
 
     //PLAYER SCREEN CONTROLS
-    HBox firstBox;
+    HBox playerButtonBox;
     Button addPlayerButton;
     Button removePlayerButton;
     Label searchLabel;
@@ -151,7 +152,7 @@ public class GUI implements DraftDataView {
     RadioButton U;
     RadioButton P;
 
-    //PLAYER SCREEN CONTROLS
+    //PLAYER TABLE
     TableView<Player> playerTable;
     TableColumn player_first;
     TableColumn player_last;
@@ -166,6 +167,55 @@ public class GUI implements DraftDataView {
     TableColumn player_ba_whip;
     TableColumn player_est_value;
     TableColumn player_notes;
+    
+    //LINEUP TABLE
+    TableView<Player> lineupTable;
+    TableColumn lineup_first;
+    TableColumn lineup_last;
+    TableColumn lineup_proTeam;
+    TableColumn lineup_positions;
+    TableColumn lineup_year;
+    TableColumn lineup_nation;
+    TableColumn lineup_r_w;
+    TableColumn lineup_hr_sv;
+    TableColumn lineup_rbi_k;
+    TableColumn lineup_sb_era;
+    TableColumn lineup_ba_whip;
+    TableColumn lineup_est_value;
+    TableColumn lineup_contract;
+    TableColumn lineup_salary;
+    
+    //TAXI TABLE
+    TableView<Player> taxiTable;
+    TableColumn taxi_first;
+    TableColumn taxi_last;
+    TableColumn taxi_proTeam;
+    TableColumn taxi_positions;
+    TableColumn taxi_year;
+    TableColumn taxi_nation;
+    TableColumn taxi_r_w;
+    TableColumn taxi_hr_sv;
+    TableColumn taxi_rbi_k;
+    TableColumn taxi_sb_era;
+    TableColumn taxi_ba_whip;
+    TableColumn taxi_est_value;
+    TableColumn taxi_contract;
+    TableColumn taxi_salary;
+
+    //TEAM SCREEN CONTROLS
+    HBox saveInfo;
+    Label saveLabel;
+    TextField saveField;
+    HBox teamButtonBox;
+    Button addTeamButton;
+    Button removeTeamButton;
+    Button editTeamButton;
+    Label selectLabel;
+    ComboBox teamComboBox;
+    VBox lineupBox;
+    Label lineupLabel;
+    VBox taxiBox;
+    Label taxiLabel;
 
     //LABELS FOR RADIO BUTTONS
     static final String RADIO_ALL = "All";
@@ -204,6 +254,8 @@ public class GUI implements DraftDataView {
     static final String COL_K = "K";
     static final String COL_ERA = "ERA";
     static final String COL_WHIP = "WHIP";
+    static final String COL_CONTRACT = "Contract";
+    static final String COL_SALARY = "Salary";
 
     // HERE ARE OUR DIALOGS
     MessageDialog messageDialog;
@@ -448,6 +500,128 @@ public class GUI implements DraftDataView {
         teamScreen.setMaxHeight(Double.MAX_VALUE);
         teamScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(teamScreen, DraftKit_PropertyType.FANTASY_TEAMS_LABEL, CLASS_HEADING_LABEL);
+
+        //SET UP DRAFT SAVING BUTTONS
+        saveInfo = new HBox();
+        saveLabel = initChildLabel(saveInfo, DraftKit_PropertyType.DRAFT_NAME_LABEL, CLASS_PROMPT_LABEL);
+        saveField = new TextField();
+        saveField.setEditable(true);
+        saveInfo.getChildren().add(saveField);
+        saveInfo.getStyleClass().add(CLASS_GENERAL);
+        teamScreen.getChildren().add(saveInfo);
+
+        //SET UP EDITING BUTTONS
+        teamButtonBox = new HBox();
+        addTeamButton = initChildButton(teamButtonBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_TEAM_TOOLTIP, false);
+        removeTeamButton = initChildButton(teamButtonBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_TEAM_TOOLTIP, false);
+        editTeamButton = initChildButton(teamButtonBox, DraftKit_PropertyType.EDIT_ICON, DraftKit_PropertyType.EDIT_TEAM_TOOLTIP, false);
+        selectLabel = initChildLabel(teamButtonBox, DraftKit_PropertyType.SELECT_FANTASY_TEAM_LABEL, CLASS_PROMPT_LABEL);
+        teamComboBox = new ComboBox(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
+        teamButtonBox.getChildren().add(teamComboBox);
+        teamButtonBox.getStyleClass().add(CLASS_GENERAL);
+        teamScreen.getChildren().add(teamButtonBox);
+
+        //SET UP LINEUP 
+        lineupBox = new VBox();
+        lineupLabel = initChildLabel(lineupBox, DraftKit_PropertyType.STARTING_LINEUP_LABEL, CLASS_HEADING_LABEL);
+        lineupTable = new TableView<Player>();
+        lineupTable.setMaxHeight(Double.MAX_VALUE);
+        lineup_first = new TableColumn(COL_FIRST);
+        lineup_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
+        lineup_last = new TableColumn(COL_LAST);
+        lineup_last.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
+        lineup_proTeam = new TableColumn(COL_PRO_TEAM);
+        lineup_proTeam.setCellValueFactory(new PropertyValueFactory<String, String>("proTeam"));
+        lineup_positions = new TableColumn(COL_POSITIONS);
+        lineup_positions.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
+        lineup_year = new TableColumn(COL_YEAR);
+        lineup_year.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("yearOfBirth"));
+        lineup_nation = new TableColumn(COL_NATION);
+        lineup_nation.setCellValueFactory(new PropertyValueFactory<String, String>("nationOfBirth"));
+        lineup_r_w = new TableColumn(COL_R_W);
+        lineup_r_w.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r_w"));
+        lineup_hr_sv = new TableColumn(COL_HR_SV);
+        lineup_hr_sv.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("hr_sv"));
+        lineup_rbi_k = new TableColumn(COL_RBI_K);
+        lineup_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
+        lineup_sb_era = new TableColumn(COL_SB_ERA);
+        lineup_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
+        lineup_ba_whip = new TableColumn(COL_BA_WHIP);
+        lineup_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
+        lineup_est_value = new TableColumn(COL_VALUE);
+        lineup_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
+        lineup_contract = new TableColumn(COL_CONTRACT);
+        lineup_contract.setCellValueFactory(new PropertyValueFactory<String, String>("contract"));
+        lineup_salary = new TableColumn(COL_SALARY);
+        lineup_salary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
+        lineupTable.getColumns().add(lineup_first);
+        lineupTable.getColumns().add(lineup_last);
+        lineupTable.getColumns().add(lineup_proTeam);
+        lineupTable.getColumns().add(lineup_positions);
+        lineupTable.getColumns().add(lineup_year);
+        lineupTable.getColumns().add(lineup_nation);
+        lineupTable.getColumns().add(lineup_r_w);
+        lineupTable.getColumns().add(lineup_hr_sv);
+        lineupTable.getColumns().add(lineup_rbi_k);
+        lineupTable.getColumns().add(lineup_sb_era);
+        lineupTable.getColumns().add(lineup_ba_whip);
+        lineupTable.getColumns().add(lineup_est_value);
+        lineupTable.getColumns().add(lineup_contract);
+        lineupTable.getColumns().add(lineup_salary);
+        lineupBox.getChildren().add(lineupTable);
+        lineupBox.getStyleClass().add(CLASS_GENERAL);
+        teamScreen.getChildren().add(lineupBox);
+
+        //SET UP TAXI
+        taxiBox = new VBox();
+        taxiLabel = initChildLabel(taxiBox, DraftKit_PropertyType.TAXI_SQUAD_LABEL, CLASS_HEADING_LABEL);
+        taxiTable = new TableView<Player>();
+        taxiTable.setMaxHeight(Double.MAX_VALUE);
+        taxi_first = new TableColumn(COL_FIRST);
+        taxi_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
+        taxi_last = new TableColumn(COL_LAST);
+        taxi_last.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
+        taxi_proTeam = new TableColumn(COL_PRO_TEAM);
+        taxi_proTeam.setCellValueFactory(new PropertyValueFactory<String, String>("proTeam"));
+        taxi_positions = new TableColumn(COL_POSITIONS);
+        taxi_positions.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
+        taxi_year = new TableColumn(COL_YEAR);
+        taxi_year.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("yearOfBirth"));
+        taxi_nation = new TableColumn(COL_NATION);
+        taxi_nation.setCellValueFactory(new PropertyValueFactory<String, String>("nationOfBirth"));
+        taxi_r_w = new TableColumn(COL_R_W);
+        taxi_r_w.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r_w"));
+        taxi_hr_sv = new TableColumn(COL_HR_SV);
+        taxi_hr_sv.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("hr_sv"));
+        taxi_rbi_k = new TableColumn(COL_RBI_K);
+        taxi_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
+        taxi_sb_era = new TableColumn(COL_SB_ERA);
+        taxi_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
+        taxi_ba_whip = new TableColumn(COL_BA_WHIP);
+        taxi_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
+        taxi_est_value = new TableColumn(COL_VALUE);
+        taxi_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
+        taxi_contract = new TableColumn(COL_CONTRACT);
+        taxi_contract.setCellValueFactory(new PropertyValueFactory<String, String>("contract"));
+        taxi_salary = new TableColumn(COL_SALARY);
+        taxi_salary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
+        taxiTable.getColumns().add(taxi_first);
+        taxiTable.getColumns().add(taxi_last);
+        taxiTable.getColumns().add(taxi_proTeam);
+        taxiTable.getColumns().add(taxi_positions);
+        taxiTable.getColumns().add(taxi_year);
+        taxiTable.getColumns().add(taxi_nation);
+        taxiTable.getColumns().add(taxi_r_w);
+        taxiTable.getColumns().add(taxi_hr_sv);
+        taxiTable.getColumns().add(taxi_rbi_k);
+        taxiTable.getColumns().add(taxi_sb_era);
+        taxiTable.getColumns().add(taxi_ba_whip);
+        taxiTable.getColumns().add(taxi_est_value);
+        taxiTable.getColumns().add(taxi_contract);
+        taxiTable.getColumns().add(taxi_salary);
+        taxiBox.getChildren().add(taxiTable);
+        taxiBox.getStyleClass().add(CLASS_GENERAL);
+        teamScreen.getChildren().add(taxiBox);
     }
 
     // CREATE THE PLAYER SCREEN
@@ -456,18 +630,18 @@ public class GUI implements DraftDataView {
         playerScreen.setMaxHeight(Double.MAX_VALUE);
         playerScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(playerScreen, DraftKit_PropertyType.AVAILABLE_PLAYERS_LABEL, CLASS_HEADING_LABEL);
-       
+
         //SET UP NEXT LAYER OF BUTTONS
-        firstBox = new HBox();
-        addPlayerButton = initChildButton(firstBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_PLAYER_TOOLTIP, false);
-        removePlayerButton = initChildButton(firstBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_PLAYER_TOOLTIP, false);
-        searchLabel = initChildLabel(firstBox, DraftKit_PropertyType.SEARCH_LABEL, CLASS_HEADING_LABEL);
+        playerButtonBox = new HBox();
+        addPlayerButton = initChildButton(playerButtonBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.ADD_PLAYER_TOOLTIP, false);
+        removePlayerButton = initChildButton(playerButtonBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_PLAYER_TOOLTIP, false);
+        searchLabel = initChildLabel(playerButtonBox, DraftKit_PropertyType.SEARCH_LABEL, CLASS_HEADING_LABEL);
         searchField = new TextField();
         searchField.setEditable(true);
-        firstBox.getChildren().add(searchField);
-        playerScreen.getChildren().add(firstBox);
-        firstBox.getStyleClass().add(CLASS_GENERAL);
-        
+        playerButtonBox.getChildren().add(searchField);
+        playerScreen.getChildren().add(playerButtonBox);
+        playerButtonBox.getStyleClass().add(CLASS_GENERAL);
+
         //SET UP TOOLBAR
         radioBox = new HBox();
         select = new ToggleGroup();
@@ -539,7 +713,7 @@ public class GUI implements DraftDataView {
         playerTable.setEditable(true);
         playerScreen.getChildren().add(playerTable);
     }
-    
+
     // METHODS FOR CHANGING TABLE HEADERS
     private void setPlayerTableColumnsAll() {
         player_r_w.setText(COL_R_W);
@@ -548,22 +722,22 @@ public class GUI implements DraftDataView {
         player_sb_era.setText(COL_SB_ERA);
         player_ba_whip.setText(COL_BA_WHIP);
     }
-    
+
     private void setPlayerTableColumnsHitters() {
         player_r_w.setText(COL_R);
         player_hr_sv.setText(COL_HR);
         player_rbi_k.setText(COL_RBI);
         player_sb_era.setText(COL_SB);
         player_ba_whip.setText(COL_BA);
-    } 
-    
+    }
+
     private void setPlayerTableColumnsPitchers() {
         player_r_w.setText(COL_W);
         player_hr_sv.setText(COL_SV);
         player_rbi_k.setText(COL_K);
         player_sb_era.setText(COL_ERA);
         player_ba_whip.setText(COL_WHIP);
-    } 
+    }
 
     private TableView<Player> setPlayerTable(ArrayList<Player> players) {
         displayedPlayers = FXCollections.observableArrayList(players);
@@ -728,14 +902,14 @@ public class GUI implements DraftDataView {
         MLBTeamsButton.setOnAction(e -> {
             workspacePane.setCenter(MLBScreen);
         });
-        
+
         // THEN PLAYER ADDING/REMOVING CONTROLS
         addPlayerButton.setOnAction(e -> {
             playerController.handleAddPlayerRequest(this);
         });
-        
+
         removePlayerButton.setOnAction(e -> {
-            
+
         });
 
         // THEN THE FILTER RADIO BUTTONS
@@ -796,13 +970,13 @@ public class GUI implements DraftDataView {
 
         // THEN THE EDITABLE NOTES COLUMN
         player_notes.setOnEditCommit(
-            new EventHandler<CellEditEvent<String, String>>() {
-                @Override
-                public void handle(CellEditEvent<String, String> t) {
-                    ((Player) playerTable.getItems().get(
-                        t.getTablePosition().getRow())).setNotes(t.getNewValue());
+                new EventHandler<CellEditEvent<String, String>>() {
+                    @Override
+                    public void handle(CellEditEvent<String, String> t) {
+                        ((Player) playerTable.getItems().get(
+                                t.getTablePosition().getRow())).setNotes(t.getNewValue());
+                    }
                 }
-            }
         );
 
         // THEN THE DRAFT EDITING CONTROLS

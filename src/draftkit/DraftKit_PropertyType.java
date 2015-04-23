@@ -23,6 +23,7 @@ public enum DraftKit_PropertyType {
         EXIT_ICON,
         ADD_ICON,
         MINUS_ICON,
+        EDIT_ICON,
         
         // APPLICATION TOOLTIPS FOR BUTTONS
         NEW_DRAFT_TOOLTIP,
@@ -36,6 +37,7 @@ public enum DraftKit_PropertyType {
         REMOVE_PLAYER_TOOLTIP,
         ADD_TEAM_TOOLTIP,
         REMOVE_TEAM_TOOLTIP,
+        EDIT_TEAM_TOOLTIP,
         
         //FOR SCREEN SWITCH TOOLBAR
         TEAMS_ICON,
@@ -56,6 +58,12 @@ public enum DraftKit_PropertyType {
         FANTASY_STANDINGS_LABEL,
         DRAFT_SUMMARY_LABEL,
         MLB_TEAMS_LABEL,
+        
+        // FOR FANTASY TEAM SCREEN
+        DRAFT_NAME_LABEL,
+        SELECT_FANTASY_TEAM_LABEL,
+        STARTING_LINEUP_LABEL,
+        TAXI_SQUAD_LABEL,
         
         // AND VERIFICATION MESSAGES
         NEW_DRAFT_CREATED_MESSAGE,
