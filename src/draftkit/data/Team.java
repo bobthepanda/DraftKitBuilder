@@ -12,6 +12,7 @@ package draftkit.data;
 public abstract class Team {
 
     private String name;
+    private String owner;
     private int cash;
     private int playersNeeded;
     private double points;
@@ -70,6 +71,20 @@ public abstract class Team {
      */
     public void setPoints(double points) {
         this.points = points;
+    }
+
+    /**
+     * @return the owner
+     */
+    public String getOwner() {
+        return owner;
+    }
+
+    /**
+     * @param owner the owner to set
+     */
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
 }

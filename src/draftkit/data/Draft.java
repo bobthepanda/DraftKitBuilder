@@ -140,6 +140,23 @@ public class Draft {
         this.teams = teams;
     }
     
+    public void addTeam(Team t) {
+        teams.add(t);
+    }
+    
+    public void removeTeam(Team t) {
+        teams.remove(t);
+    }
+    
+    public Team getTeam(String s) {
+        for (Team t: teams) {
+            if (t.getName().equals(s)) {
+                return t;
+            }
+        }
+        return null;
+    }
+    
     public void addPlayer(Player p) {
         if (p instanceof Hitter) {
             addHitter((Hitter)p);

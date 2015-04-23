@@ -10,6 +10,7 @@ import draftkit.controller.FileController;
  import draftkit.controller.TeamEditController;
  */
 import draftkit.controller.PlayerController;
+import draftkit.controller.TeamController;
 import draftkit.data.Player;
 import draftkit.data.Draft;
 import draftkit.data.Team;
@@ -83,6 +84,7 @@ public class GUI implements DraftDataView {
     // THIS HANDLES INTERACTIONS WITH FILE-RELATED CONTROLS
     FileController fileController;
     PlayerController playerController;
+    TeamController teamController;
 
     // THIS HANDLES INTERACTIONS WITH DRAFT INFO CONTROLS
     //DraftEditController draftController;
@@ -516,7 +518,8 @@ public class GUI implements DraftDataView {
         removeTeamButton = initChildButton(teamButtonBox, DraftKit_PropertyType.MINUS_ICON, DraftKit_PropertyType.REMOVE_TEAM_TOOLTIP, false);
         editTeamButton = initChildButton(teamButtonBox, DraftKit_PropertyType.EDIT_ICON, DraftKit_PropertyType.EDIT_TEAM_TOOLTIP, false);
         selectLabel = initChildLabel(teamButtonBox, DraftKit_PropertyType.SELECT_FANTASY_TEAM_LABEL, CLASS_PROMPT_LABEL);
-        teamComboBox = new ComboBox(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
+        teamComboBox = new ComboBox();
+        updateTeamComboBox();
         teamButtonBox.getChildren().add(teamComboBox);
         teamButtonBox.getStyleClass().add(CLASS_GENERAL);
         teamScreen.getChildren().add(teamButtonBox);
@@ -622,6 +625,13 @@ public class GUI implements DraftDataView {
         taxiBox.getChildren().add(taxiTable);
         taxiBox.getStyleClass().add(CLASS_GENERAL);
         teamScreen.getChildren().add(taxiBox);
+    }
+    
+    private void updateTeamComboBox() {
+        teamComboBox.getItems().clear();
+        for (Team t: dataManager.getDraft().getTeams()) {
+            teamComboBox.getItems().add(t.getName());
+        }
     }
 
     // CREATE THE PLAYER SCREEN
@@ -863,6 +873,19 @@ public class GUI implements DraftDataView {
         primaryStage.setScene(primaryScene);
         primaryStage.show();
     }
+    
+    private void updatePlayerTable() {
+        String selected = ((RadioButton)select.getSelectedToggle()).getText();
+        if (selected.equals(RADIO_ALL)) {
+            playerTable = setPlayerTable(dataManager.getDraft().getPlayers());
+        }
+        else if (selected.equals("P")) {
+            playerTable = setPlayerTable(dataManager.getDraft().getPitcherPlayers());
+        }
+        else {
+            playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(selected));
+        }
+    }
 
     // INIT ALL THE EVENT HANDLERS
     private void initEventHandlers() throws IOException {
@@ -870,6 +893,7 @@ public class GUI implements DraftDataView {
         fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager//, siteExporter
         );
         playerController = new PlayerController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
+        teamController = new TeamController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
         newDraftButton.setOnAction(e -> {
             fileController.handleNewDraftRequest(this);
         });
@@ -906,11 +930,30 @@ public class GUI implements DraftDataView {
         // THEN PLAYER ADDING/REMOVING CONTROLS
         addPlayerButton.setOnAction(e -> {
             playerController.handleAddPlayerRequest(this);
+            updatePlayerTable();
         });
 
         removePlayerButton.setOnAction(e -> {
-
+            playerController.handleRemovePlayerRequest(this, playerTable.getSelectionModel().getSelectedItem());
+            updatePlayerTable();
         });
+        
+        // THEN TEAM ADDING/REMOVING/EDITING CONTROLS
+        addTeamButton.setOnAction(e -> {
+            teamController.handleAddTeamRequest(this);
+            updateTeamComboBox();
+        });
+        
+        editTeamButton.setOnAction(e -> {
+            teamController.handleEditTeamRequest(this, dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()));
+            updateTeamComboBox();
+        });
+        
+        removeTeamButton.setOnAction(e -> {
+            teamController.handleRemoveTeamRequest(this, dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()));
+            updateTeamComboBox();
+        });
+        
 
         // THEN THE FILTER RADIO BUTTONS
         all.setOnAction(e -> {
