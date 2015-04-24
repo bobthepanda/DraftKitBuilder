@@ -169,7 +169,7 @@ public class GUI implements DraftDataView {
     TableColumn player_ba_whip;
     TableColumn player_est_value;
     TableColumn player_notes;
-    
+
     //LINEUP TABLE
     TableView<Player> lineupTable;
     TableColumn lineup_position;
@@ -185,7 +185,7 @@ public class GUI implements DraftDataView {
     TableColumn lineup_est_value;
     TableColumn lineup_contract;
     TableColumn lineup_salary;
-    
+
     //TAXI TABLE
     TableView<Player> taxiTable;
     TableColumn taxi_position;
@@ -617,10 +617,10 @@ public class GUI implements DraftDataView {
         taxiBox.getStyleClass().add(CLASS_GENERAL);
         teamScreen.getChildren().add(taxiBox);
     }
-    
+
     private void updateTeamComboBox() {
         teamComboBox.getItems().clear();
-        for (Team t: dataManager.getDraft().getTeams()) {
+        for (Team t : dataManager.getDraft().getTeams()) {
             teamComboBox.getItems().add(t.getName());
         }
     }
@@ -864,16 +864,14 @@ public class GUI implements DraftDataView {
         primaryStage.setScene(primaryScene);
         primaryStage.show();
     }
-    
+
     private void updatePlayerTable() {
-        String selected = ((RadioButton)select.getSelectedToggle()).getText();
+        String selected = ((RadioButton) select.getSelectedToggle()).getText();
         if (selected.equals(RADIO_ALL)) {
             playerTable = setPlayerTable(dataManager.getDraft().getPlayers());
-        }
-        else if (selected.equals("P")) {
+        } else if (selected.equals("P")) {
             playerTable = setPlayerTable(dataManager.getDraft().getPitcherPlayers());
-        }
-        else {
+        } else {
             playerTable = setPlayerTable(dataManager.getDraft().getHittersPosition(selected));
         }
     }
@@ -904,6 +902,9 @@ public class GUI implements DraftDataView {
         // THEN THE SCREEN TOOLBAR CONTROLS
         teamsButton.setOnAction(e -> {
             workspacePane.setCenter(teamScreen);
+            if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
+                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
+            }
         });
         playersButton.setOnAction(e -> {
             workspacePane.setCenter(playerScreen);
@@ -923,12 +924,13 @@ public class GUI implements DraftDataView {
             playerController.handleAddPlayerRequest(this);
             updatePlayerTable();
         });
-        
+
         playerTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 Player p = playerTable.getSelectionModel().getSelectedItem();
                 playerController.handleEditPlayerRequest(this, p);
+                updatePlayerTable();
             }
         });
 
@@ -936,23 +938,47 @@ public class GUI implements DraftDataView {
             playerController.handleRemovePlayerRequest(this, playerTable.getSelectionModel().getSelectedItem());
             updatePlayerTable();
         });
-        
+
         // THEN TEAM ADDING/REMOVING/EDITING CONTROLS
         addTeamButton.setOnAction(e -> {
             teamController.handleAddTeamRequest(this);
             updateTeamComboBox();
         });
-        
+
         editTeamButton.setOnAction(e -> {
             teamController.handleEditTeamRequest(this, dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()));
             updateTeamComboBox();
         });
-        
+
         removeTeamButton.setOnAction(e -> {
             teamController.handleRemoveTeamRequest(this, dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()));
             updateTeamComboBox();
         });
+
+        teamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
+                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
+                taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
+            }
+        });
         
+        lineupTable.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // OPEN UP THE SCHEDULE ITEM EDITOR
+                Player p = lineupTable.getSelectionModel().getSelectedItem();
+                playerController.handleEditPlayerRequest(this, p);
+                updatePlayerTable();
+            }
+        });
+        
+        taxiTable.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // OPEN UP THE SCHEDULE ITEM EDITOR
+                Player p = taxiTable.getSelectionModel().getSelectedItem();
+                playerController.handleEditPlayerRequest(this, p);
+                updatePlayerTable();
+            }
+        });
 
         // THEN THE FILTER RADIO BUTTONS
         all.setOnAction(e -> {

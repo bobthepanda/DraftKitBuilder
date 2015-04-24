@@ -1,5 +1,7 @@
 package draftkit.data;
 
+import java.util.ArrayList;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -12,6 +14,7 @@ public class DraftTeam extends Team {
     private ObservableList<Hitter> hitters;
     private ObservableList<Pitcher> pitchers;
     private ObservableList<Player> taxi;
+    private ObservableList<Player> lineup;
     private int r;
     private int hr;
     private int rbi;
@@ -26,6 +29,10 @@ public class DraftTeam extends Team {
     public DraftTeam() {
         setCash(260);
         setPlayersNeeded(31);
+        hitters = FXCollections.observableArrayList(new ArrayList<Hitter>());
+        pitchers = FXCollections.observableArrayList(new ArrayList<Pitcher>());
+        taxi = FXCollections.observableArrayList(new ArrayList<Player>());
+        lineup = FXCollections.observableArrayList(new ArrayList<Player>());
     }
 
     public boolean addPlayer(Player p) {
@@ -48,23 +55,39 @@ public class DraftTeam extends Team {
             }
         }
         if (added) {
+            lineup.add(p);
             setPlayersNeeded(getPlayersNeeded() - 1);
             updateTeamStats();
         }
         return added;
     }
+    
+    public void removePlayer(Player p) {
+        if (hitters.contains((Hitter) p)) {
+            hitters.remove((Hitter) p);
+        }
+        else if (pitchers.contains((Pitcher) p)) {
+            pitchers.remove((Pitcher) p);
+        }
+        else if (taxi.contains(p)) {
+            taxi.remove(p);
+        }
+        if (lineup.contains(p)) {
+            lineup.remove(p);
+        }
+    }
 
     //HELPER METHODS
     private boolean isHittersFull() {
-        return getHitters().size() <= 14;
+        return getHitters().size() > 14;
     }
 
     private boolean isPitchersFull() {
-        return getPitchers().size() <= 9;
+        return getPitchers().size() > 9;
     }
 
     private boolean isTaxiFull() {
-        return getTaxi().size() <= 8;
+        return getTaxi().size() > 8;
     }
 
     /*private boolean isValidPosition(String s){
@@ -271,5 +294,27 @@ public class DraftTeam extends Team {
         setSv();
         setW();
         setWhip();
+    }
+
+    /**
+     * @return the lineup
+     */
+    public ObservableList<Player> getLineup() {
+        return lineup;
+    }
+
+    /**
+     * @param lineup the lineup to set
+     */
+    public void setLineup(ObservableList<Player> lineup) {
+        this.lineup = lineup;
+    }
+    
+    public ObservableList<Player> getPlayers() {
+        return getLineup();
+    }
+    
+    public void setPlayers(ObservableList<Player> lineup) {
+        setLineup(lineup);
     }
 }

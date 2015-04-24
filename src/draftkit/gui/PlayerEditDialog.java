@@ -107,26 +107,53 @@ public class PlayerEditDialog extends Stage {
         fantasyTeamLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         fantasyTeamComboBox = new ComboBox();
         fantasyTeamComboBox.setItems(FXCollections.observableArrayList(teamNames));
+        if (player.getTeam() != null) {
+            fantasyTeamComboBox.getItems().remove(player.getTeam());
+            fantasyTeamComboBox.getItems().add("Free Agent");
+        }
         fantasyTeamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            player.setTeam(newValue.toString());
+            if (newValue.toString().equals("Free Agent")) {
+                player.setTeam(null);
+                positionComboBox.setValue(null);
+                player.setPosition(null);
+                contractComboBox.setValue(null);
+                player.setContract(null);
+                salaryTextField.setText(null);
+                player.setSalary(0);
+            }
+            else {
+                player.setTeam(newValue.toString());
+            }
         });
 
-        // AND THE LAST NAME
+        // AND THE POSITION
         positionLabel = new Label(POSITION_PROMPT);
         positionLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         positionComboBox = new ComboBox();
         positionComboBox.setItems(FXCollections.observableArrayList(positionsList));
         positionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (player.getTeam() == null) {
+                player.setPosition(null);
+                positionComboBox.setValue(null);
+            }
+            else {
             player.setPosition(newValue.toString());
+            }
         });
 
-        // AND THE PRO TEAM
+        // AND THE CONTRACT
         contractLabel = new Label(CONTRACT_PROMPT);
         contractLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         contractComboBox = new ComboBox();
         contractComboBox.setItems(FXCollections.observableArrayList(contractsList));
         contractComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            player.setContract(newValue.toString());
+            if (player.getTeam() == null) {
+                player.setContract(null);
+                contractComboBox.setValue(null);
+            }
+            else {
+                player.setContract(newValue.toString());
+            }
         });
 
         // AND THE SALARY
@@ -134,10 +161,17 @@ public class PlayerEditDialog extends Stage {
         salaryLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         salaryTextField = new TextField();
         salaryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                player.setSalary(Integer.parseInt(newValue.toString()));
-            } catch (NumberFormatException e) {
-
+            if (player.getTeam() == null) {
+                player.setSalary(0);
+                salaryTextField.setText(null);
+            }
+            else {
+                try {
+                    player.setSalary(Integer.parseInt(newValue.toString()));
+                }
+                catch (NumberFormatException e) {
+                    
+                }
             }
         });
 

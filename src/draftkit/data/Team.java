@@ -5,6 +5,8 @@
  */
 package draftkit.data;
 
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author H2
@@ -86,5 +88,11 @@ public abstract class Team {
     public void setOwner(String owner) {
         this.owner = owner;
     }
-
+    
+    public abstract boolean addPlayer(Player p);
+    public abstract void removePlayer(Player p);
+    public abstract ObservableList<Player> getPlayers();
+    public abstract void setPlayers(ObservableList<Player> players);
+    public abstract ObservableList<Player> getTaxi();
+    public abstract void setTaxi(ObservableList<Player> players);
 }
