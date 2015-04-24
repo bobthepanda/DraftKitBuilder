@@ -31,7 +31,7 @@ import properties_manager.PropertiesManager;
  *
  * @author McKillaGorilla
  */
-public class PlayerDialog extends Stage {
+public class PlayerAddDialog extends Stage {
 
     // THIS IS THE OBJECT DATA BEHIND THIS UI
     Player player;
@@ -83,7 +83,7 @@ public class PlayerDialog extends Stage {
      *
      * @param primaryStage The owner of this modal dialog.
      */
-    public PlayerDialog(Stage primaryStage, Draft draft, MessageDialog messageDialog) {
+    public PlayerAddDialog(Stage primaryStage, Draft draft, MessageDialog messageDialog) {
         // MAKE THIS DIALOG MODAL, MEANING OTHERS WILL WAIT
         // FOR IT WHEN IT IS DISPLAYED
         initModality(Modality.WINDOW_MODAL);
@@ -265,8 +265,8 @@ public class PlayerDialog extends Stage {
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
             Button sourceButton = (Button) ae.getSource();
-            PlayerDialog.this.selection = sourceButton.getText();
-            PlayerDialog.this.hide();
+            PlayerAddDialog.this.selection = sourceButton.getText();
+            PlayerAddDialog.this.hide();
         };
         completeButton.setOnAction(completeCancelHandler);
         cancelButton.setOnAction(completeCancelHandler);
@@ -330,7 +330,6 @@ public class PlayerDialog extends Stage {
         // LOAD THE UI STUFF
         firstNameTextField.setText(player.getFirstName());
         lastNameTextField.setText(player.getFirstName());
-        //proTeamComboBox.setText(player.getLink());       
     }
 
     public boolean wasCompleteSelected() {
@@ -356,21 +355,4 @@ public class PlayerDialog extends Stage {
             player.setProTeam(proTeamComboBox.getSelectionModel().getSelectedItem().toString());
         }
     }
-
-    /*public void showEditPlayerDialog(Player itemToEdit) {
-     // SET THE DIALOG TITLE
-     setTitle(EDIT_PLAYER_TITLE);
-        
-     // LOAD THE SCHEDULE ITEM INTO OUR LOCAL OBJECT
-     player = new Player();
-     player.setFirstName(itemToEdit.getFirstName());
-     player.setDate(itemToEdit.getFirstName());
-     player.setLink(itemToEdit.getLink());
-        
-     // AND THEN INTO OUR GUI
-     loadGUIData();
-               
-     // AND OPEN IT UP
-     this.showAndWait();
-     }*/
 }

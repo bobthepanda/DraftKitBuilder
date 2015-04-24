@@ -172,12 +172,11 @@ public class GUI implements DraftDataView {
     
     //LINEUP TABLE
     TableView<Player> lineupTable;
+    TableColumn lineup_position;
     TableColumn lineup_first;
     TableColumn lineup_last;
     TableColumn lineup_proTeam;
     TableColumn lineup_positions;
-    TableColumn lineup_year;
-    TableColumn lineup_nation;
     TableColumn lineup_r_w;
     TableColumn lineup_hr_sv;
     TableColumn lineup_rbi_k;
@@ -189,12 +188,11 @@ public class GUI implements DraftDataView {
     
     //TAXI TABLE
     TableView<Player> taxiTable;
+    TableColumn taxi_position;
     TableColumn taxi_first;
     TableColumn taxi_last;
     TableColumn taxi_proTeam;
     TableColumn taxi_positions;
-    TableColumn taxi_year;
-    TableColumn taxi_nation;
     TableColumn taxi_r_w;
     TableColumn taxi_hr_sv;
     TableColumn taxi_rbi_k;
@@ -237,6 +235,7 @@ public class GUI implements DraftDataView {
     static final String COL_LAST = "Last";
     static final String COL_PRO_TEAM = "Pro Team";
     static final String COL_POSITIONS = "Positions";
+    static final String COL_POSITION = "Position";
     static final String COL_YEAR = "Year of Birth";
     static final String COL_NATION = "Nation of Birth";
     static final String COL_R_W = "R/W";
@@ -529,6 +528,8 @@ public class GUI implements DraftDataView {
         lineupLabel = initChildLabel(lineupBox, DraftKit_PropertyType.STARTING_LINEUP_LABEL, CLASS_HEADING_LABEL);
         lineupTable = new TableView<Player>();
         lineupTable.setMaxHeight(Double.MAX_VALUE);
+        lineup_position = new TableColumn(COL_POSITION);
+        lineup_position.setCellValueFactory(new PropertyValueFactory<String, String>("position"));
         lineup_first = new TableColumn(COL_FIRST);
         lineup_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         lineup_last = new TableColumn(COL_LAST);
@@ -537,10 +538,6 @@ public class GUI implements DraftDataView {
         lineup_proTeam.setCellValueFactory(new PropertyValueFactory<String, String>("proTeam"));
         lineup_positions = new TableColumn(COL_POSITIONS);
         lineup_positions.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
-        lineup_year = new TableColumn(COL_YEAR);
-        lineup_year.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("yearOfBirth"));
-        lineup_nation = new TableColumn(COL_NATION);
-        lineup_nation.setCellValueFactory(new PropertyValueFactory<String, String>("nationOfBirth"));
         lineup_r_w = new TableColumn(COL_R_W);
         lineup_r_w.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r_w"));
         lineup_hr_sv = new TableColumn(COL_HR_SV);
@@ -561,8 +558,6 @@ public class GUI implements DraftDataView {
         lineupTable.getColumns().add(lineup_last);
         lineupTable.getColumns().add(lineup_proTeam);
         lineupTable.getColumns().add(lineup_positions);
-        lineupTable.getColumns().add(lineup_year);
-        lineupTable.getColumns().add(lineup_nation);
         lineupTable.getColumns().add(lineup_r_w);
         lineupTable.getColumns().add(lineup_hr_sv);
         lineupTable.getColumns().add(lineup_rbi_k);
@@ -580,6 +575,8 @@ public class GUI implements DraftDataView {
         taxiLabel = initChildLabel(taxiBox, DraftKit_PropertyType.TAXI_SQUAD_LABEL, CLASS_HEADING_LABEL);
         taxiTable = new TableView<Player>();
         taxiTable.setMaxHeight(Double.MAX_VALUE);
+        taxi_position = new TableColumn(COL_POSITION);
+        taxi_position.setCellValueFactory(new PropertyValueFactory<String, String>("position"));
         taxi_first = new TableColumn(COL_FIRST);
         taxi_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         taxi_last = new TableColumn(COL_LAST);
@@ -588,10 +585,6 @@ public class GUI implements DraftDataView {
         taxi_proTeam.setCellValueFactory(new PropertyValueFactory<String, String>("proTeam"));
         taxi_positions = new TableColumn(COL_POSITIONS);
         taxi_positions.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
-        taxi_year = new TableColumn(COL_YEAR);
-        taxi_year.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("yearOfBirth"));
-        taxi_nation = new TableColumn(COL_NATION);
-        taxi_nation.setCellValueFactory(new PropertyValueFactory<String, String>("nationOfBirth"));
         taxi_r_w = new TableColumn(COL_R_W);
         taxi_r_w.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r_w"));
         taxi_hr_sv = new TableColumn(COL_HR_SV);
@@ -612,8 +605,6 @@ public class GUI implements DraftDataView {
         taxiTable.getColumns().add(taxi_last);
         taxiTable.getColumns().add(taxi_proTeam);
         taxiTable.getColumns().add(taxi_positions);
-        taxiTable.getColumns().add(taxi_year);
-        taxiTable.getColumns().add(taxi_nation);
         taxiTable.getColumns().add(taxi_r_w);
         taxiTable.getColumns().add(taxi_hr_sv);
         taxiTable.getColumns().add(taxi_rbi_k);
@@ -931,6 +922,14 @@ public class GUI implements DraftDataView {
         addPlayerButton.setOnAction(e -> {
             playerController.handleAddPlayerRequest(this);
             updatePlayerTable();
+        });
+        
+        playerTable.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                // OPEN UP THE SCHEDULE ITEM EDITOR
+                Player p = playerTable.getSelectionModel().getSelectedItem();
+                playerController.handleEditPlayerRequest(this, p);
+            }
         });
 
         removePlayerButton.setOnAction(e -> {
