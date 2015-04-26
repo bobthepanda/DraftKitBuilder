@@ -264,9 +264,14 @@ public class PlayerAddDialog extends Stage {
 
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
-            Button sourceButton = (Button) ae.getSource();
+            if (firstNameTextField.getText() == null || lastNameTextField.getText() == null) {
+                messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_NAME_MESSAGE));
+            }
+            else {
+                Button sourceButton = (Button) ae.getSource();
             PlayerAddDialog.this.selection = sourceButton.getText();
             PlayerAddDialog.this.hide();
+            }
         };
         completeButton.setOnAction(completeCancelHandler);
         cancelButton.setOnAction(completeCancelHandler);
@@ -333,7 +338,12 @@ public class PlayerAddDialog extends Stage {
     }
 
     public boolean wasCompleteSelected() {
-        return selection.equals(COMPLETE);
+        try {
+            return selection.equals(COMPLETE);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     private void updatePositionString() {

@@ -62,13 +62,16 @@
         <property name="CLOSE_BUTTON_TEXT"              value="Close"></property>
 
         <!-- VERIFICATION MESSAGES -->
-        <property name="NEW_DRAFT_CREATED_MESSAGE"      value="New Draft Created but not yet Saved"></property>
-        <property name="DRAFT_LOADED_MESSAGE"           value="The Draft has been Loaded"></property>
-        <property name="DRAFT_SAVED_MESSAGE"            value="The Draft has been Saved"></property>
-        <property name="SITE_EXPORTED_MESSAGE"          value="The Draft Site has been Exported"></property>
-        <property name="SAVE_UNSAVED_WORK_MESSAGE"      value="Do you want to save your unsaved work first?"></property>
-        <property name="REMOVE_ITEM_MESSAGE"            value="Are you sure you wish to remove the item?"></property>
-        <property name="ILLEGAL_POSITION_MESSAGE"       value="ERROR: Hitters and pitchers are mutually exclusive"></property>
+        <property name="NEW_DRAFT_CREATED_MESSAGE"          value="New Draft Created but not yet Saved"></property>
+        <property name="DRAFT_LOADED_MESSAGE"               value="The Draft has been Loaded"></property>
+        <property name="DRAFT_SAVED_MESSAGE"                value="The Draft has been Saved"></property>
+        <property name="SITE_EXPORTED_MESSAGE"              value="The Draft Site has been Exported"></property>
+        <property name="SAVE_UNSAVED_WORK_MESSAGE"          value="Do you want to save your unsaved work first?"></property>
+        <property name="REMOVE_ITEM_MESSAGE"                value="Are you sure you wish to remove the item?"></property>
+        <property name="ILLEGAL_POSITION_MESSAGE"           value="ERROR: Hitters and pitchers are mutually exclusive"></property>
+        <property name="ILLEGAL_SALARY_MESSAGE"             value="ERROR: Please enter a whole number for salary"></property>
+        <property name="INSUFFICIENT_INFORMATION_MESSAGE"   value="ERROR: Please fill in all fields with appropriate information"></property>
+        <property name="ILLEGAL_NAME_MESSAGE"               value="ERROR: Players must have a first and last name"></property>
     </property_list>
     <property_options_list>
     </property_options_list>

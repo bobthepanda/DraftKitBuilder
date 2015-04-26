@@ -1,5 +1,8 @@
 package draftkit.gui;
 
+import draftkit.DraftKit_PropertyType;
+import static draftkit.DraftKit_StartupConstants.PATH_FLAGS;
+import static draftkit.DraftKit_StartupConstants.PATH_PLAYERS;
 import draftkit.data.Draft;
 import draftkit.data.Player;
 import draftkit.data.Team;
@@ -17,7 +20,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
@@ -35,6 +41,11 @@ public class PlayerEditDialog extends Stage {
     GridPane gridPane;
     Scene dialogScene;
     Label headingLabel;
+    ImageView faceImage;
+    VBox infoPane;
+    ImageView countryImage;
+    Label nameLabel;
+    Label positionsLabel;
     Label fantasyTeamLabel;
     ComboBox fantasyTeamComboBox;
     Label positionLabel;
@@ -101,6 +112,33 @@ public class PlayerEditDialog extends Stage {
         // ON WHETHER WE'RE ADDING OR EDITING
         headingLabel = new Label(PLAYER_HEADING);
         headingLabel.getStyleClass().add(CLASS_HEADING_LABEL);
+        
+        // NOW THE IMAGES
+        String facePath = "file:" + PATH_PLAYERS + player.getLastName() + player.getFirstName() + ".jpg";
+        Image face;
+        try {
+            face = new Image(facePath);
+        }
+        catch (IllegalArgumentException e) {
+            face = new Image("file:" + PATH_PLAYERS + "AAA_PhotoMissing.jpg");
+        }
+        faceImage = new ImageView(face);
+        
+        infoPane = new VBox();
+        String countryPath = "file:" + PATH_FLAGS + player.getNationOfBirth() + ".png";
+        Image country;
+        try {
+            country = new Image(countryPath);
+        }
+        catch (IllegalArgumentException e) {
+            country = new Image("file:" + PATH_FLAGS + "USA.png");
+        }
+        countryImage = new ImageView(country);
+        nameLabel = new Label(player.getFirstName() + " " + player.getLastName());
+        positionsLabel = new Label(player.getPositions_String());
+        infoPane.getChildren().add(countryImage);
+        infoPane.getChildren().add(nameLabel);
+        infoPane.getChildren().add(positionsLabel);
 
         // NOW THE FIRST NAME
         fantasyTeamLabel = new Label(FANTASY_TEAM_PROMPT);
@@ -120,9 +158,15 @@ public class PlayerEditDialog extends Stage {
                 player.setContract(null);
                 salaryTextField.setText(null);
                 player.setSalary(0);
-            }
-            else {
+            } else {
                 player.setTeam(newValue.toString());
+                positionComboBox.setItems(FXCollections.observableArrayList(player.getPositions()));
+                for (String s : player.getPositions()) {
+                    if (draft.getTeam(player.getTeam()).isPositionFull(s)) {
+                        positionComboBox.getItems().remove(s);
+                    }
+                }
+                contractComboBox.setItems(FXCollections.observableArrayList(contractsList));
             }
         });
 
@@ -130,14 +174,12 @@ public class PlayerEditDialog extends Stage {
         positionLabel = new Label(POSITION_PROMPT);
         positionLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         positionComboBox = new ComboBox();
-        positionComboBox.setItems(FXCollections.observableArrayList(positionsList));
         positionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (player.getTeam() == null) {
                 player.setPosition(null);
                 positionComboBox.setValue(null);
-            }
-            else {
-            player.setPosition(newValue.toString());
+            } else {
+                player.setPosition(newValue.toString());
             }
         });
 
@@ -145,13 +187,11 @@ public class PlayerEditDialog extends Stage {
         contractLabel = new Label(CONTRACT_PROMPT);
         contractLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
         contractComboBox = new ComboBox();
-        contractComboBox.setItems(FXCollections.observableArrayList(contractsList));
         contractComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (player.getTeam() == null) {
                 player.setContract(null);
                 contractComboBox.setValue(null);
-            }
-            else {
+            } else {
                 player.setContract(newValue.toString());
             }
         });
@@ -164,13 +204,13 @@ public class PlayerEditDialog extends Stage {
             if (player.getTeam() == null) {
                 player.setSalary(0);
                 salaryTextField.setText(null);
-            }
-            else {
+            } else {
                 try {
                     player.setSalary(Integer.parseInt(newValue.toString()));
-                }
-                catch (NumberFormatException e) {
-                    
+                } catch (NumberFormatException e) {
+                    messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_SALARY_MESSAGE));
+                    player.setSalary(0);
+                    salaryTextField.setText(null);
                 }
             }
         });
@@ -181,25 +221,32 @@ public class PlayerEditDialog extends Stage {
 
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
+            if (fantasyTeamComboBox.getValue() != null && (positionComboBox.getValue() == null || contractComboBox.getValue() == null || salaryTextField.getText() == null)) {
+                messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
+            }
+            else {
             Button sourceButton = (Button) ae.getSource();
             PlayerEditDialog.this.selection = sourceButton.getText();
             PlayerEditDialog.this.hide();
+            }
         };
         completeButton.setOnAction(completeCancelHandler);
         cancelButton.setOnAction(completeCancelHandler);
 
         // NOW LET'S ARRANGE THEM ALL AT ONCE
         gridPane.add(headingLabel, 0, 0, 2, 1);
-        gridPane.add(fantasyTeamLabel, 0, 1, 1, 1);
-        gridPane.add(fantasyTeamComboBox, 1, 1, 1, 1);
-        gridPane.add(positionLabel, 0, 2, 1, 1);
-        gridPane.add(positionComboBox, 1, 2, 1, 1);
-        gridPane.add(contractLabel, 0, 3, 1, 1);
-        gridPane.add(contractComboBox, 1, 3, 1, 1);
-        gridPane.add(salaryLabel, 0, 4, 1, 1);
-        gridPane.add(salaryTextField, 1, 4, 1, 1);
-        gridPane.add(completeButton, 0, 5, 1, 1);
-        gridPane.add(cancelButton, 1, 5, 1, 1);
+        gridPane.add(faceImage, 0, 1, 1, 1);
+        gridPane.add(infoPane, 1, 1, 1, 1);
+        gridPane.add(fantasyTeamLabel, 0, 2, 1, 1);
+        gridPane.add(fantasyTeamComboBox, 1, 2, 1, 1);
+        gridPane.add(positionLabel, 0, 3, 1, 1);
+        gridPane.add(positionComboBox, 1, 3, 1, 1);
+        gridPane.add(contractLabel, 0, 4, 1, 1);
+        gridPane.add(contractComboBox, 1, 4, 1, 1);
+        gridPane.add(salaryLabel, 0, 5, 1, 1);
+        gridPane.add(salaryTextField, 1, 5, 1, 1);
+        gridPane.add(completeButton, 0, 6, 1, 1);
+        gridPane.add(cancelButton, 1, 6, 1, 1);
 
         // AND PUT THE GRID PANE IN THE WINDOW
         dialogScene = new Scene(gridPane);
@@ -245,7 +292,15 @@ public class PlayerEditDialog extends Stage {
 
     public void loadGUIData() {
         // LOAD THE UI STUFF
-        positionComboBox.setItems(FXCollections.observableArrayList(player.getPositions()));
+        if (player.getTeam() != null) {
+            positionComboBox.setItems(FXCollections.observableArrayList(player.getPositions()));
+            contractComboBox.setItems(FXCollections.observableArrayList(contractsList));
+            for (String s : player.getPositions()) {
+                if (draft.getTeam(player.getTeam()).isPositionFull(s)) {
+                    positionComboBox.getItems().remove(s);
+                }
+            }
+        }
         if (player.getTeam() != null) {
             fantasyTeamComboBox.setValue(player.getTeam());
             positionComboBox.setValue(player.getPosition());
@@ -255,6 +310,11 @@ public class PlayerEditDialog extends Stage {
     }
 
     public boolean wasCompleteSelected() {
-        return selection.equals(COMPLETE);
+        try {
+            return selection.equals(COMPLETE);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 }

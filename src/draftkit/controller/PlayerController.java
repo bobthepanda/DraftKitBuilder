@@ -62,7 +62,21 @@ public class PlayerController {
         if (ped.wasCompleteSelected()) {
             // UPDATE THE PLAYER
             Player p = ped.getPlayer();
-            
+
+            // MOVE PLAYER FILES IN THE MODEL
+            if (s == null && p.getTeam() == null) {
+            } else if (s == null) {
+                draft.removePlayer(playerToEdit);
+                draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
+            } else if (p.getTeam() == null) {
+                draft.getTeam(s).removePlayer(playerToEdit);
+                draft.addPlayer(playerToEdit);
+            } else if (s.equals(p.getTeam())) {
+            } else {
+                draft.getTeam(s).removePlayer(playerToEdit);
+                draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
+            }
+
             // SET VALUES FOR PLAYER
             playerToEdit.setTeam(p.getTeam());
             if (p.getTeam() != null) {
@@ -70,29 +84,10 @@ public class PlayerController {
                 playerToEdit.setContract(p.getContract());
                 playerToEdit.setSalary(p.getSalary());
                 draft.getTeam(playerToEdit.getTeam()).setCash(draft.getTeam(playerToEdit.getTeam()).getCash() - playerToEdit.getSalary());
-            }
-            else {
+            } else {
                 playerToEdit.setPosition(null);
                 playerToEdit.setContract(null);
                 playerToEdit.setSalary(0);
-            }
-            
-            // MOVE PLAYER FILES IN THE MODEL
-            if (s == null && p.getTeam() == null) {
-            }
-            else if (s == null) {
-                draft.getPlayers().remove(playerToEdit);
-                draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
-            }
-            else if (p.getTeam() == null) {
-                draft.getTeam(s).removePlayer(playerToEdit);
-                draft.getPlayers().add(playerToEdit);
-            }
-            else if (s.equals(p.getTeam())) {
-            }
-            else {
-                draft.getTeam(s).removePlayer(playerToEdit);
-                draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
             }
 
             // AND ALLOW SAVING

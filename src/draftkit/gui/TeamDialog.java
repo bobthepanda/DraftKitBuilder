@@ -158,7 +158,12 @@ public class TeamDialog  extends Stage {
     }
     
     public boolean wasCompleteSelected() {
-        return selection.equals(COMPLETE);
+        try {
+            return selection.equals(COMPLETE);
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
     
     public void showEditTeamDialog(Team itemToEdit) {

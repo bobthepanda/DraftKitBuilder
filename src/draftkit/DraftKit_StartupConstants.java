@@ -18,6 +18,8 @@ public class DraftKit_StartupConstants {
     public static final String PATH_DATA = "./data/";
     public static final String PATH_DRAFTS = PATH_DATA + "drafts/";
     public static final String PATH_IMAGES = "./images/";
+    public static final String PATH_FLAGS = "./images/flags/";
+    public static final String PATH_PLAYERS = "./images/players/";
     public static final String PATH_CSS = "draftkit/css/";
     public static final String PATH_SITES = "sites/";
     public static final String PATH_BASE = PATH_SITES + "base/";

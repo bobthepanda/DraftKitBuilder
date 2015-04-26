@@ -95,4 +95,5 @@ public abstract class Team {
     public abstract void setPlayers(ObservableList<Player> players);
     public abstract ObservableList<Player> getTaxi();
     public abstract void setTaxi(ObservableList<Player> players);
+    public abstract boolean isPositionFull(String s);
 }
