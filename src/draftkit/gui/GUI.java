@@ -929,6 +929,7 @@ public class GUI implements DraftDataView {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 Player p = playerTable.getSelectionModel().getSelectedItem();
+                playerTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
             }
@@ -966,6 +967,7 @@ public class GUI implements DraftDataView {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 Player p = lineupTable.getSelectionModel().getSelectedItem();
+                lineupTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
             }
@@ -975,6 +977,7 @@ public class GUI implements DraftDataView {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
                 Player p = taxiTable.getSelectionModel().getSelectedItem();
+                taxiTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
             }
