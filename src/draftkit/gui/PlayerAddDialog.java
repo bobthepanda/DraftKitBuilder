@@ -264,13 +264,14 @@ public class PlayerAddDialog extends Stage {
 
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
-            if (firstNameTextField.getText() == null || lastNameTextField.getText() == null) {
+            if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
+                    (firstNameTextField.getText() == null || lastNameTextField.getText() == null)) {
                 messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_NAME_MESSAGE));
             }
             else {
                 Button sourceButton = (Button) ae.getSource();
-            PlayerAddDialog.this.selection = sourceButton.getText();
-            PlayerAddDialog.this.hide();
+                PlayerAddDialog.this.selection = sourceButton.getText();
+                PlayerAddDialog.this.hide();
             }
         };
         completeButton.setOnAction(completeCancelHandler);

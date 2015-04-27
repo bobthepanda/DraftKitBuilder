@@ -221,7 +221,9 @@ public class PlayerEditDialog extends Stage {
 
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
-            if (fantasyTeamComboBox.getValue() != null && (positionComboBox.getValue() == null || contractComboBox.getValue() == null || salaryTextField.getText() == null)) {
+            if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
+                    (fantasyTeamComboBox.getValue() != null && 
+                    (positionComboBox.getValue() == null || contractComboBox.getValue() == null || salaryTextField.getText() == null))) {
                 messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
             }
             else {

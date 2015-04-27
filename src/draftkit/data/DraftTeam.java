@@ -54,31 +54,31 @@ public class DraftTeam extends Team {
     }
     
     public boolean isPositionFull(String s) {
-        if (s .equals("C")) {
+        if (s.equals("C")) {
             return c == 0;
         }
-        else if (s .equals("CI")) {
+        else if (s.equals("CI")) {
             return ci == 0;
         }
-        else if (s .equals("1B")) {
+        else if (s.equals("1B")) {
             return oneB == 0;
         }
-        else if (s .equals("21B")) {
+        else if (s.equals("2B")) {
             return twoB == 0;
         }
-        else if (s .equals("3B")) {
+        else if (s.equals("3B")) {
             return threeB == 0;
         }
-        else if (s .equals("MI")) {
+        else if (s.equals("MI")) {
             return mi == 0;
         }
-        else if (s .equals("SS")) {
+        else if (s.equals("SS")) {
             return ss == 0;
         }
-        else if (s .equals("U")) {
+        else if (s.equals("U")) {
             return u == 0;
         }
-        else if (s .equals("OF")) {
+        else if (s.equals("OF")) {
             return of == 0;
         }
         return true;
