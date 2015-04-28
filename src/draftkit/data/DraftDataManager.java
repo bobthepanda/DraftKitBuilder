@@ -57,6 +57,6 @@ public class DraftDataManager {
         catch (Exception e) {
         }
         // AND THEN FORCE THE UI TO RELOAD THE UPDATED COURSE
-        view.reloadDraft(draft);
+        view.reloadDraft(draft, null);
     }
 }

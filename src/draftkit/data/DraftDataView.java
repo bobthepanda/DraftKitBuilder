@@ -8,5 +8,5 @@ package draftkit.data;
  * @author Henry Chin 109265023
  */
 public interface DraftDataView {
-    public void reloadDraft(Draft draftToReload);
+    public void reloadDraft(Draft draftToReload, String s);
 }

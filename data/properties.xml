@@ -72,6 +72,7 @@
         <property name="ILLEGAL_SALARY_MESSAGE"             value="ERROR: Please enter a whole number for salary"></property>
         <property name="INSUFFICIENT_INFO_MESSAGE"   value="ERROR: Please fill in all fields with appropriate information"></property>
         <property name="ILLEGAL_NAME_MESSAGE"               value="ERROR: Players must have a first and last name"></property>
+        <property name="NO_SAVE_NAME_MESSAGE"               value="ERROR: No draft name to save as"></property>
     </property_list>
     <property_options_list>
     </property_options_list>

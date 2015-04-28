@@ -299,8 +299,11 @@ public class FileController {
         if (selectedFile != null) {
             try {
                 Draft draftToLoad = gui.getDataManager().getDraft();
+                String s = selectedFile.getAbsolutePath();
+                String[] list = s.split("\\" + "\\");
+                s = list[list.length-1].substring(0, list[list.length-1].length()-5);
                 draftIO.loadDraft(draftToLoad, selectedFile.getAbsolutePath());
-                gui.reloadDraft(draftToLoad);
+                gui.reloadDraft(draftToLoad,s);
                 saved = true;
                 gui.updateToolbarControls(saved);
             } catch (Exception e) {

@@ -407,13 +407,14 @@ public class GUI implements DraftDataView {
      * @param draftToReload The Draft whose data we'll load into the GUI.
      */
     @Override
-    public void reloadDraft(Draft draftToReload) {
+    public void reloadDraft(Draft draftToReload, String s) {
         // FIRST ACTIVATE THE WORKSPACE IF NECESSARY
         if (!workspaceActivated) {
             activateWorkspace();
         }
         
         updateTeamComboBox();
+        setSaveName(s);
     }
 
     /**
@@ -548,6 +549,7 @@ public class GUI implements DraftDataView {
         lineup_contract.setCellValueFactory(new PropertyValueFactory<String, String>("contract"));
         lineup_salary = new TableColumn(COL_SALARY);
         lineup_salary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
+        lineupTable.getColumns().add(lineup_position);
         lineupTable.getColumns().add(lineup_first);
         lineupTable.getColumns().add(lineup_last);
         lineupTable.getColumns().add(lineup_proTeam);
@@ -595,6 +597,7 @@ public class GUI implements DraftDataView {
         taxi_contract.setCellValueFactory(new PropertyValueFactory<String, String>("contract"));
         taxi_salary = new TableColumn(COL_SALARY);
         taxi_salary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
+        taxiTable.getColumns().add(taxi_position);
         taxiTable.getColumns().add(taxi_first);
         taxiTable.getColumns().add(taxi_last);
         taxiTable.getColumns().add(taxi_proTeam);
@@ -872,6 +875,8 @@ public class GUI implements DraftDataView {
 
     // INIT ALL THE EVENT HANDLERS
     private void initEventHandlers() throws IOException {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+        
         // FIRST THE FILE CONTROLS
         fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager//, siteExporter
         );
@@ -886,7 +891,14 @@ public class GUI implements DraftDataView {
             fileController.handleLoadDraftRequest(this);
         });
         saveDraftButton.setOnAction(e -> {
-            fileController.handleSaveDraftRequest(this, dataManager.getDraft(), saveField.getText());
+            if (saveField.getText() == null) {
+                messageDialog.show(props.getProperty(DraftKit_PropertyType.NO_SAVE_NAME_MESSAGE));
+            }
+            else {
+                String s = saveField.getText();
+                //s = s.replace(' ', '_');
+                fileController.handleSaveDraftRequest(this, dataManager.getDraft(), s);
+            }
         });
         exportSiteButton.setOnAction(e -> {
             fileController.handleExportDraftRequest(this);
@@ -934,6 +946,10 @@ public class GUI implements DraftDataView {
         removePlayerButton.setOnAction(e -> {
             playerController.handleRemovePlayerRequest(this, playerTable.getSelectionModel().getSelectedItem());
             updatePlayerTable();
+        });
+        
+        saveField.textProperty().addListener((observable, oldValue, newValue) -> {
+            getFileController().markAsEdited(this);
         });
 
         // THEN TEAM ADDING/REMOVING/EDITING CONTROLS
@@ -1110,5 +1126,9 @@ public class GUI implements DraftDataView {
     
     public String getSaveName() {
         return saveField.getText();
+    }
+    
+    public void setSaveName(String s) {
+        saveField.setText(s);
     }
 }
