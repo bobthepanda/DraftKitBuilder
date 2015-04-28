@@ -15,10 +15,8 @@ import java.util.List;
  * @author Richard McKenna
  */
 public interface DraftFileManager {
-    public void                 saveDraft(Draft courseToSave) throws IOException;
-    public void                 loadDraft(Draft courseToLoad, String coursePath) throws IOException;
-    public void                 saveHitters(List<Hitter> hitters, String filePath) throws IOException;    
+    public void                 saveDraft(Draft courseToSave, String filePath) throws IOException;
+    public void                 loadDraft(Draft courseToLoad, String filePath) throws IOException;
     public ArrayList<Hitter>    loadHitters(String filePath) throws IOException;
-    public void                 savePitchers(List<Pitcher> pitchers, String filePath) throws IOException;
     public ArrayList<Pitcher>   loadPitchers(String filePath) throws IOException;
 }

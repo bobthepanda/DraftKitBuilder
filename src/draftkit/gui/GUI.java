@@ -30,6 +30,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -411,15 +412,8 @@ public class GUI implements DraftDataView {
         if (!workspaceActivated) {
             activateWorkspace();
         }
-
-        // WE DON'T WANT TO RESPOND TO EVENTS FORCED BY
-        // OUR INITIALIZATION SELECTIONS
-        //draftController.enable(false);
-        // THE SCHEDULE ITEMS TABLE
-        // THE LECTURES TABLE
-        // THE HWS TABLE
-        // NOW WE DO WANT TO RESPOND WHEN THE USER INTERACTS WITH OUR CONTROLS
-        //draftController.enable(true);
+        
+        updateTeamComboBox();
     }
 
     /**
@@ -818,7 +812,7 @@ public class GUI implements DraftDataView {
         // THIS HOLDS ALL OUR WORKSPACE COMPONENTS, SO NOW WE MUST
         // ADD THE COMPONENTS WE'VE JUST INITIALIZED
         workspacePane = new BorderPane();
-        workspacePane.setCenter(playerScreen);
+        workspacePane.setCenter(teamScreen);
         workspacePane.setBottom(switchToolbarPane);
         workspacePane.getStyleClass().add(CLASS_BORDERED_PANE);
 
@@ -883,6 +877,8 @@ public class GUI implements DraftDataView {
         );
         playerController = new PlayerController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
         teamController = new TeamController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
+        
+        // FILE SAVING BUTTONS
         newDraftButton.setOnAction(e -> {
             fileController.handleNewDraftRequest(this);
         });
@@ -890,7 +886,7 @@ public class GUI implements DraftDataView {
             fileController.handleLoadDraftRequest(this);
         });
         saveDraftButton.setOnAction(e -> {
-            fileController.handleSaveDraftRequest(this, dataManager.getDraft());
+            fileController.handleSaveDraftRequest(this, dataManager.getDraft(), saveField.getText());
         });
         exportSiteButton.setOnAction(e -> {
             fileController.handleExportDraftRequest(this);
@@ -1057,15 +1053,7 @@ public class GUI implements DraftDataView {
         // AND NOW THE HW ADDING AND EDITING CONTROLS
         // AND NOW THE LECTURE TABLE
     }
-
-    // REGISTER THE EVENT LISTENER FOR A TEXT FIELD
-    /*
-     private void registerTextFieldController(TextField textField) {
-     textField.textProperty().addListener((observable, oldValue, newValue) -> {
-     draftController.handleDraftChangeRequest(this);
-     });
-     }
-     */
+    
     // INIT A BUTTON AND ADD IT TO A CONTAINER IN A TOOLBAR
     private Button initChildButton(Pane toolbar, DraftKit_PropertyType icon, DraftKit_PropertyType tooltip, boolean disabled) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -1111,15 +1099,6 @@ public class GUI implements DraftDataView {
         return comboBox;
     }
 
-    // LOAD THE COMBO BOX TO HOLD Draft SUBJECTS
-    /*
-     private void loadSubjectComboBox(ArrayList<String> subjects) {
-     for (String s : subjects) {
-     draftSubjectComboBox.getItems().add(s);
-     }
-     }
-     */
-    // INIT A TEXT FIELD AND PUT IT IN A GridPane
     private TextField initGridTextField(GridPane container, int size, String initText, boolean editable, int col, int row, int colSpan, int rowSpan) {
         TextField tf = new TextField();
         tf.setPrefColumnCount(size);
@@ -1127,5 +1106,9 @@ public class GUI implements DraftDataView {
         tf.setEditable(editable);
         container.add(tf, col, row, colSpan, rowSpan);
         return tf;
+    }
+    
+    public String getSaveName() {
+        return saveField.getText();
     }
 }

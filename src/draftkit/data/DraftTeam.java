@@ -52,66 +52,58 @@ public class DraftTeam extends Team {
         u = 1;
         of = 5;
     }
-    
+
     public boolean isPositionFull(String s) {
         if (s.equals("C")) {
-            return c == 0;
-        }
-        else if (s.equals("CI")) {
-            return ci == 0;
-        }
-        else if (s.equals("1B")) {
-            return oneB == 0;
-        }
-        else if (s.equals("2B")) {
-            return twoB == 0;
-        }
-        else if (s.equals("3B")) {
-            return threeB == 0;
-        }
-        else if (s.equals("MI")) {
-            return mi == 0;
-        }
-        else if (s.equals("SS")) {
-            return ss == 0;
-        }
-        else if (s.equals("U")) {
-            return u == 0;
-        }
-        else if (s.equals("OF")) {
-            return of == 0;
+            return getC() == 0;
+        } else if (s.equals("CI")) {
+            return getCi() == 0;
+        } else if (s.equals("1B")) {
+            return getOneB() == 0;
+        } else if (s.equals("2B")) {
+            return getTwoB() == 0;
+        } else if (s.equals("3B")) {
+            return getThreeB() == 0;
+        } else if (s.equals("MI")) {
+            return getMi() == 0;
+        } else if (s.equals("SS")) {
+            return getSs() == 0;
+        } else if (s.equals("U")) {
+            return getU() == 0;
+        } else if (s.equals("OF")) {
+            return getOf() == 0;
         }
         return true;
     }
-    
+
     public void changePositionNum(String s, int i) {
         switch (s) {
             case "C":
-                c += i;
+                setC(getC() + i);
                 break;
             case "CI":
-                ci += i;
+                setCi(getCi() + i);
                 break;
             case "1B":
-                oneB += i;
+                setOneB(getOneB() + i);
                 break;
             case "2B":
-                twoB += i;
+                setTwoB(getTwoB() + i);
                 break;
             case "3B":
-                threeB += i;
+                setThreeB(getThreeB() + i);
                 break;
             case "MI":
-                mi += i;
+                setMi(getMi() + i);
                 break;
             case "SS":
-                ss += i;
+                setSs(getSs() + i);
                 break;
             case "U":
-                u += i;
+                setU(getU() + i);
                 break;
             case "OF":
-                of += i;
+                setOf(getOf() + i);
                 break;
         }
     }
@@ -137,26 +129,24 @@ public class DraftTeam extends Team {
             }
         }
         if (added) {
-            lineup.add(p);
+            getLineup().add(p);
             changePositionNum(p.getPosition(), -1);
             setPlayersNeeded(getPlayersNeeded() - 1);
             updateTeamStats();
         }
         return added;
     }
-    
+
     public void removePlayer(Player p) {
-        if (hitters.contains((Hitter) p)) {
-            hitters.remove((Hitter) p);
+        if (getHitters().contains((Hitter) p)) {
+            getHitters().remove((Hitter) p);
+        } else if (getPitchers().contains((Pitcher) p)) {
+            getPitchers().remove((Pitcher) p);
+        } else if (getTaxi().contains(p)) {
+            getTaxi().remove(p);
         }
-        else if (pitchers.contains((Pitcher) p)) {
-            pitchers.remove((Pitcher) p);
-        }
-        else if (taxi.contains(p)) {
-            taxi.remove(p);
-        }
-        if (lineup.contains(p)) {
-            lineup.remove(p);
+        if (getLineup().contains(p)) {
+            getLineup().remove(p);
             changePositionNum(p.getPosition(), 1);
         }
     }
@@ -227,9 +217,9 @@ public class DraftTeam extends Team {
     }
 
     public void setR() {
-        r = 0;
-        for (Hitter h : hitters) {
-            r += h.getR_w();
+        setR(0);
+        for (Hitter h : getHitters()) {
+            setR(getR() + h.getR_w());
         }
     }
 
@@ -241,9 +231,9 @@ public class DraftTeam extends Team {
     }
 
     public void setHr() {
-        hr = 0;
-        for (Hitter h : hitters) {
-            hr += h.getHr_sv();
+        setHr(0);
+        for (Hitter h : getHitters()) {
+            setHr(getHr() + h.getHr_sv());
         }
     }
 
@@ -252,9 +242,9 @@ public class DraftTeam extends Team {
     }
 
     public void setRbi() {
-        rbi = 0;
-        for (Hitter h : hitters) {
-            rbi += h.getRbi_k();
+        setRbi(0);
+        for (Hitter h : getHitters()) {
+            setRbi(getRbi() + h.getRbi_k());
         }
     }
 
@@ -266,9 +256,9 @@ public class DraftTeam extends Team {
     }
 
     public void setSb() {
-        sb = 0;
-        for (Hitter h : hitters) {
-            sb += h.getSb_era();
+        setSb(0);
+        for (Hitter h : getHitters()) {
+            setSb((int) (getSb() + h.getSb_era()));
         }
     }
 
@@ -282,11 +272,13 @@ public class DraftTeam extends Team {
     public void setBa() {
         int hits = 0;
         int ab = 0;
-        for (Hitter h : hitters) {
+        for (Hitter h : getHitters()) {
             hits += h.getH();
             ab += h.getAb();
         }
-        ba = (hits * 1.00) / ab;
+        if (ab != 0) {
+            setBa((hits * 1.00) / ab);
+        }
     }
 
     /**
@@ -297,9 +289,9 @@ public class DraftTeam extends Team {
     }
 
     public void setW() {
-        w = 0;
-        for (Pitcher p : pitchers) {
-            w += p.getR_w();
+        setW(0);
+        for (Pitcher p : getPitchers()) {
+            setW(getW() + p.getR_w());
         }
     }
 
@@ -311,9 +303,9 @@ public class DraftTeam extends Team {
     }
 
     public void setK() {
-        k = 0;
-        for (Pitcher p : pitchers) {
-            k += p.getRbi_k();
+        setK(0);
+        for (Pitcher p : getPitchers()) {
+            setK(getK() + p.getRbi_k());
         }
     }
 
@@ -325,9 +317,9 @@ public class DraftTeam extends Team {
     }
 
     public void setSv() {
-        sv = 0;
-        for (Pitcher p : pitchers) {
-            sv += p.getHr_sv();
+        setSv(0);
+        for (Pitcher p : getPitchers()) {
+            setSv(getSv() + p.getHr_sv());
         }
     }
 
@@ -341,11 +333,13 @@ public class DraftTeam extends Team {
     public void setEra() {
         int er = 0;
         double ip = 0;
-        for (Pitcher p : pitchers) {
+        for (Pitcher p : getPitchers()) {
             er += p.getEr();
             ip += p.getIp();
         }
-        era = (er * 1.00) / ip;
+        if (ip != 0) {
+            setEra((er * 1.00) / ip);
+        }
     }
 
     /**
@@ -359,12 +353,14 @@ public class DraftTeam extends Team {
         int walks = 0;
         int h = 0;
         double ip = 0;
-        for (Pitcher p : pitchers) {
+        for (Pitcher p : getPitchers()) {
             walks += p.getW();
             h += p.getH();
             ip += p.getIp();
         }
-        whip = ((h + walks) * 1.00) / ip;
+        if (ip != 0) {
+            setWhip(((h + walks) * 1.00) / ip);
+        }
     }
 
     private void updateTeamStats() {
@@ -393,12 +389,208 @@ public class DraftTeam extends Team {
     public void setLineup(ObservableList<Player> lineup) {
         this.lineup = lineup;
     }
-    
+
     public ObservableList<Player> getPlayers() {
         return getLineup();
     }
-    
+
     public void setPlayers(ObservableList<Player> lineup) {
         setLineup(lineup);
+    }
+
+    /**
+     * @param r the r to set
+     */
+    public void setR(int r) {
+        this.r = r;
+    }
+
+    /**
+     * @param hr the hr to set
+     */
+    public void setHr(int hr) {
+        this.hr = hr;
+    }
+
+    /**
+     * @param rbi the rbi to set
+     */
+    public void setRbi(int rbi) {
+        this.rbi = rbi;
+    }
+
+    /**
+     * @param sb the sb to set
+     */
+    public void setSb(int sb) {
+        this.sb = sb;
+    }
+
+    /**
+     * @param ba the ba to set
+     */
+    public void setBa(double ba) {
+        this.ba = ba;
+    }
+
+    /**
+     * @param w the w to set
+     */
+    public void setW(int w) {
+        this.w = w;
+    }
+
+    /**
+     * @param k the k to set
+     */
+    public void setK(int k) {
+        this.k = k;
+    }
+
+    /**
+     * @param sv the sv to set
+     */
+    public void setSv(int sv) {
+        this.sv = sv;
+    }
+
+    /**
+     * @param era the era to set
+     */
+    public void setEra(double era) {
+        this.era = era;
+    }
+
+    /**
+     * @param whip the whip to set
+     */
+    public void setWhip(double whip) {
+        this.whip = whip;
+    }
+
+    /**
+     * @return the c
+     */
+    public int getC() {
+        return c;
+    }
+
+    /**
+     * @param c the c to set
+     */
+    public void setC(int c) {
+        this.c = c;
+    }
+
+    /**
+     * @return the ci
+     */
+    public int getCi() {
+        return ci;
+    }
+
+    /**
+     * @param ci the ci to set
+     */
+    public void setCi(int ci) {
+        this.ci = ci;
+    }
+
+    /**
+     * @return the oneB
+     */
+    public int getOneB() {
+        return oneB;
+    }
+
+    /**
+     * @param oneB the oneB to set
+     */
+    public void setOneB(int oneB) {
+        this.oneB = oneB;
+    }
+
+    /**
+     * @return the twoB
+     */
+    public int getTwoB() {
+        return twoB;
+    }
+
+    /**
+     * @param twoB the twoB to set
+     */
+    public void setTwoB(int twoB) {
+        this.twoB = twoB;
+    }
+
+    /**
+     * @return the threeB
+     */
+    public int getThreeB() {
+        return threeB;
+    }
+
+    /**
+     * @param threeB the threeB to set
+     */
+    public void setThreeB(int threeB) {
+        this.threeB = threeB;
+    }
+
+    /**
+     * @return the mi
+     */
+    public int getMi() {
+        return mi;
+    }
+
+    /**
+     * @param mi the mi to set
+     */
+    public void setMi(int mi) {
+        this.mi = mi;
+    }
+
+    /**
+     * @return the ss
+     */
+    public int getSs() {
+        return ss;
+    }
+
+    /**
+     * @param ss the ss to set
+     */
+    public void setSs(int ss) {
+        this.ss = ss;
+    }
+
+    /**
+     * @return the u
+     */
+    public int getU() {
+        return u;
+    }
+
+    /**
+     * @param u the u to set
+     */
+    public void setU(int u) {
+        this.u = u;
+    }
+
+    /**
+     * @return the of
+     */
+    public int getOf() {
+        return of;
+    }
+
+    /**
+     * @param of the of to set
+     */
+    public void setOf(int of) {
+        this.of = of;
     }
 }

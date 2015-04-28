@@ -1,5 +1,6 @@
 package draftkit.gui;
 
+import draftkit.DraftKit_PropertyType;
 import draftkit.data.Draft;
 import draftkit.data.DraftTeam;
 import draftkit.data.Team;
@@ -16,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import properties_manager.PropertiesManager;
 
 /**
  *
@@ -53,7 +55,8 @@ public class TeamDialog  extends Stage {
      * 
      * @param primaryStage The owner of this modal dialog.
      */
-    public TeamDialog(Stage primaryStage, Draft draft,  MessageDialog messageDialog) {       
+    public TeamDialog(Stage primaryStage, Draft draft,  MessageDialog messageDialog) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
         // MAKE THIS DIALOG MODAL, MEANING OTHERS WILL WAIT
         // FOR IT WHEN IT IS DISPLAYED
         initModality(Modality.WINDOW_MODAL);
@@ -92,9 +95,15 @@ public class TeamDialog  extends Stage {
         
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
+            if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
+                    (nameTextField.getText() == null || ownerTextField.getText() == null)) {
+                messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
+            }
+            else {
             Button sourceButton = (Button)ae.getSource();
             TeamDialog.this.selection = sourceButton.getText();
             TeamDialog.this.hide();
+            }
         };
         completeButton.setOnAction(completeCancelHandler);
         cancelButton.setOnAction(completeCancelHandler);

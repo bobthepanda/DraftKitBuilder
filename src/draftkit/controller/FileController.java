@@ -167,10 +167,10 @@ public class FileController {
      * 
      * @param draftToSave The draft being edited that is to be saved to a file.
      */
-    public void handleSaveDraftRequest(GUI gui, Draft draftToSave) {
+    public void handleSaveDraftRequest(GUI gui, Draft draftToSave, String filePath) {
         try {
             // SAVE IT TO A FILE
-            draftIO.saveDraft(draftToSave);
+            draftIO.saveDraft(draftToSave, filePath);
 
             // MARK IT AS SAVED
             saved = true;
@@ -268,7 +268,7 @@ public class FileController {
         if (selection.equals(YesNoCancelDialog.YES)) {
             // SAVE THE DRAFT
             DraftDataManager dataManager = gui.getDataManager();
-            draftIO.saveDraft(dataManager.getDraft());
+            draftIO.saveDraft(dataManager.getDraft(), gui.getSaveName());
             saved = true;
             
         } // IF THE USER SAID CANCEL, THEN WE'LL TELL WHOEVER
