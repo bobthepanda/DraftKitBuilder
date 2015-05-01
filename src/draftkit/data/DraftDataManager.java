@@ -52,6 +52,7 @@ public class DraftDataManager {
      */
     public void reset() {
         try {
+            draft.setTeams(new ArrayList<Team>());
             draft = new Draft(fileManager.loadHitters(JSON_FILE_PATH_HITTERS), fileManager.loadPitchers(JSON_FILE_PATH_PITCHERS));
         }
         catch (Exception e) {

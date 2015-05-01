@@ -68,13 +68,16 @@ public class PlayerController {
             } else if (s == null) {
                 draft.removePlayer(playerToEdit);
                 draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
+                gui.sortLineupTable();
             } else if (p.getTeam() == null) {
                 draft.getTeam(s).removePlayer(playerToEdit);
                 draft.addPlayer(playerToEdit);
+                gui.sortLineupTable();
             } else if (s.equals(p.getTeam())) {
             } else {
                 draft.getTeam(s).removePlayer(playerToEdit);
                 draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
+                gui.sortLineupTable();
             }
 
             // SET VALUES FOR PLAYER

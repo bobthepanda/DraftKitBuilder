@@ -1,5 +1,6 @@
 package draftkit.gui;
 
+import com.sun.javafx.scene.control.Logging;
 import static draftkit.DraftKit_StartupConstants.*;
 import draftkit.DraftKit_PropertyType;
 //import draftkit.controller.DraftEditController;
@@ -13,11 +14,13 @@ import draftkit.controller.PlayerController;
 import draftkit.controller.TeamController;
 import draftkit.data.Player;
 import draftkit.data.Draft;
+import draftkit.data.PositionComparator;
 import draftkit.data.Team;
 import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -30,13 +33,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
@@ -49,6 +52,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import properties_manager.PropertiesManager;
 
 /**
@@ -87,14 +91,6 @@ public class GUI implements DraftDataView {
     PlayerController playerController;
     TeamController teamController;
 
-    // THIS HANDLES INTERACTIONS WITH DRAFT INFO CONTROLS
-    //DraftEditController draftController;
-    // THIS HANDLES REQUESTS TO ADD OR EDIT SCHEDULE STUFF
-    //ScheduleEditController scheduleController;
-    // THIS HANDLES REQUESTS TO ADD OR EDIT LECTURE STUFF
-    //LectureEditController lectureController;
-    // THIS HANDLES REQUESTS TO ADD OR EDIT HW STUFF
-    //hwEditController hwController;
     // THIS IS THE APPLICATION WINDOW
     Stage primaryStage;
 
@@ -412,7 +408,7 @@ public class GUI implements DraftDataView {
         if (!workspaceActivated) {
             activateWorkspace();
         }
-        
+
         updateTeamComboBox();
         setSaveName(s);
     }
@@ -522,9 +518,12 @@ public class GUI implements DraftDataView {
         lineupBox = new VBox();
         lineupLabel = initChildLabel(lineupBox, DraftKit_PropertyType.STARTING_LINEUP_LABEL, CLASS_HEADING_LABEL);
         lineupTable = new TableView<Player>();
+
         lineupTable.setMaxHeight(Double.MAX_VALUE);
         lineup_position = new TableColumn(COL_POSITION);
         lineup_position.setCellValueFactory(new PropertyValueFactory<String, String>("position"));
+        lineup_position.setComparator(new PositionComparator());
+        sortLineupTable();
         lineup_first = new TableColumn(COL_FIRST);
         lineup_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         lineup_last = new TableColumn(COL_LAST);
@@ -562,6 +561,7 @@ public class GUI implements DraftDataView {
         lineupTable.getColumns().add(lineup_est_value);
         lineupTable.getColumns().add(lineup_contract);
         lineupTable.getColumns().add(lineup_salary);
+        setLineupTableSortProperty();
         lineupBox.getChildren().add(lineupTable);
         lineupBox.getStyleClass().add(CLASS_GENERAL);
         teamScreen.getChildren().add(lineupBox);
@@ -573,6 +573,8 @@ public class GUI implements DraftDataView {
         taxiTable.setMaxHeight(Double.MAX_VALUE);
         taxi_position = new TableColumn(COL_POSITION);
         taxi_position.setCellValueFactory(new PropertyValueFactory<String, String>("position"));
+        taxi_position.setComparator(new PositionComparator());
+        taxi_position.setSortType(SortType.ASCENDING);
         taxi_first = new TableColumn(COL_FIRST);
         taxi_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         taxi_last = new TableColumn(COL_LAST);
@@ -876,13 +878,13 @@ public class GUI implements DraftDataView {
     // INIT ALL THE EVENT HANDLERS
     private void initEventHandlers() throws IOException {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
-        
+
         // FIRST THE FILE CONTROLS
         fileController = new FileController(messageDialog, yesNoCancelDialog, draftFileManager//, siteExporter
         );
         playerController = new PlayerController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
         teamController = new TeamController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
-        
+
         // FILE SAVING BUTTONS
         newDraftButton.setOnAction(e -> {
             fileController.handleNewDraftRequest(this);
@@ -893,8 +895,7 @@ public class GUI implements DraftDataView {
         saveDraftButton.setOnAction(e -> {
             if (saveField.getText() == null) {
                 messageDialog.show(props.getProperty(DraftKit_PropertyType.NO_SAVE_NAME_MESSAGE));
-            }
-            else {
+            } else {
                 String s = saveField.getText();
                 //s = s.replace(' ', '_');
                 fileController.handleSaveDraftRequest(this, dataManager.getDraft(), s);
@@ -947,7 +948,7 @@ public class GUI implements DraftDataView {
             playerController.handleRemovePlayerRequest(this, playerTable.getSelectionModel().getSelectedItem());
             updatePlayerTable();
         });
-        
+
         saveField.textProperty().addListener((observable, oldValue, newValue) -> {
             getFileController().markAsEdited(this);
         });
@@ -974,7 +975,7 @@ public class GUI implements DraftDataView {
                 taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
             }
         });
-        
+
         lineupTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
@@ -984,7 +985,7 @@ public class GUI implements DraftDataView {
                 updatePlayerTable();
             }
         });
-        
+
         taxiTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 // OPEN UP THE SCHEDULE ITEM EDITOR
@@ -1069,7 +1070,7 @@ public class GUI implements DraftDataView {
         // AND NOW THE HW ADDING AND EDITING CONTROLS
         // AND NOW THE LECTURE TABLE
     }
-    
+
     // INIT A BUTTON AND ADD IT TO A CONTAINER IN A TOOLBAR
     private Button initChildButton(Pane toolbar, DraftKit_PropertyType icon, DraftKit_PropertyType tooltip, boolean disabled) {
         PropertiesManager props = PropertiesManager.getPropertiesManager();
@@ -1123,12 +1124,49 @@ public class GUI implements DraftDataView {
         container.add(tf, col, row, colSpan, rowSpan);
         return tf;
     }
-    
+
     public String getSaveName() {
         return saveField.getText();
     }
-    
+
     public void setSaveName(String s) {
         saveField.setText(s);
+    }
+
+    public void sortLineupTable() {
+        lineupTable.getSortOrder().add(lineup_position);
+        lineup_position.setSortType(SortType.ASCENDING);
+        lineup_position.setSortable(true);
+        lineup_position.setSortable(false);
+        lineupTable.setSortPolicy(null);
+    }
+
+    public void sortTaxiTable() {
+        taxiTable.getSortOrder().add(taxi_position);
+        taxi_position.setSortType(SortType.ASCENDING);
+        taxi_position.setSortable(true);
+        taxi_position.setSortable(false);
+    }
+
+    private void setLineupTableSortProperty() {
+        lineupTable.setSortPolicy(new Callback<TableView<Player>, Boolean>() {
+            @Override
+            public Boolean call(TableView table) {
+                try {
+                    ObservableList<?> itemsList = table.getItems();
+                    Comparator comparator = table.getComparator();
+                    if (comparator == null) {
+                        return true;
+                    }
+
+                    FXCollections.sort(itemsList, comparator);
+                    FXCollections.sort(itemsList, lineup_position.getComparator());
+                    return true;
+                } catch (UnsupportedOperationException e) {
+                    return false;
+                }
+            }
+        }
+        );
     }
 }

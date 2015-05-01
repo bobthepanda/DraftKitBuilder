@@ -264,12 +264,21 @@ public class PlayerAddDialog extends Stage {
 
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
-            if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
-                    (firstNameTextField.getText() == null || lastNameTextField.getText() == null)) {
+            if (((Button) ae.getSource()).getText().equals(COMPLETE)
+                    && (firstNameTextField.getText() == null || lastNameTextField.getText() == null)) {
                 messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_NAME_MESSAGE));
-            }
-            else {
+            } else {
                 Button sourceButton = (Button) ae.getSource();
+                if (positions.contains("2B") || positions.contains("SS")) {
+                    positions.add("MI");
+                }
+                if (positions.contains("1B") || positions.contains("3B")) {
+                    positions.add("CI");
+                }
+                if (!positions.contains("P")) {
+                    positions.add("U");
+                }
+                updatePositionString();
                 PlayerAddDialog.this.selection = sourceButton.getText();
                 PlayerAddDialog.this.hide();
             }
@@ -302,7 +311,6 @@ public class PlayerAddDialog extends Stage {
      * @return Either YES, NO, or CANCEL, depending on which button the user
      * selected when this dialog was presented.
      */
-
     public String getSelection() {
         return selection;
     }
@@ -341,8 +349,7 @@ public class PlayerAddDialog extends Stage {
     public boolean wasCompleteSelected() {
         try {
             return selection.equals(COMPLETE);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -354,11 +361,11 @@ public class PlayerAddDialog extends Stage {
             position += positions.get(i) + "_";
         }
         if (!positions.isEmpty()) {
-        position += positions.get(i);
+            position += positions.get(i);
         }
         player.setPositions_String(position);
     }
-    
+
     private void updatePlayer() {
         player.setFirstName(firstNameTextField.getText());
         player.setLastName(lastNameTextField.getText());
