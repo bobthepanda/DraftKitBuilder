@@ -1159,8 +1159,8 @@ public class GUI implements DraftDataView {
                         return true;
                     }
 
-                    FXCollections.sort(itemsList, comparator);
                     FXCollections.sort(itemsList, lineup_position.getComparator());
+                    FXCollections.sort(itemsList, comparator);
                     return true;
                 } catch (UnsupportedOperationException e) {
                     return false;
