@@ -561,7 +561,9 @@ public class GUI implements DraftDataView {
         lineupTable.getColumns().add(lineup_est_value);
         lineupTable.getColumns().add(lineup_contract);
         lineupTable.getColumns().add(lineup_salary);
-        setLineupTableSortProperty();
+        for (TableColumn t: lineupTable.getColumns()) {
+            t.setSortable(false);
+        }
         lineupBox.getChildren().add(lineupTable);
         lineupBox.getStyleClass().add(CLASS_GENERAL);
         teamScreen.getChildren().add(lineupBox);
@@ -1138,7 +1140,6 @@ public class GUI implements DraftDataView {
         lineup_position.setSortType(SortType.ASCENDING);
         lineup_position.setSortable(true);
         lineup_position.setSortable(false);
-        lineupTable.setSortPolicy(null);
     }
 
     public void sortTaxiTable() {
@@ -1146,27 +1147,5 @@ public class GUI implements DraftDataView {
         taxi_position.setSortType(SortType.ASCENDING);
         taxi_position.setSortable(true);
         taxi_position.setSortable(false);
-    }
-
-    private void setLineupTableSortProperty() {
-        lineupTable.setSortPolicy(new Callback<TableView<Player>, Boolean>() {
-            @Override
-            public Boolean call(TableView table) {
-                try {
-                    ObservableList<?> itemsList = table.getItems();
-                    Comparator comparator = table.getComparator();
-                    if (comparator == null) {
-                        return true;
-                    }
-
-                    FXCollections.sort(itemsList, lineup_position.getComparator());
-                    FXCollections.sort(itemsList, comparator);
-                    return true;
-                } catch (UnsupportedOperationException e) {
-                    return false;
-                }
-            }
-        }
-        );
     }
 }
