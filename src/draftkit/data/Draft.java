@@ -1,6 +1,7 @@
 package draftkit.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -48,16 +49,14 @@ public class Draft {
         if (s.equals("MI")) {
             for (Hitter h : hitters) {
                 if (h.getPositions() == null) {
-                }
-                else if (h.getPositions().contains("2B") || h.getPositions().contains("SS")) {
+                } else if (h.getPositions().contains("2B") || h.getPositions().contains("SS")) {
                     hittersWithPosition.add(h);
                 }
             }
         } else if (s.equals("CI")) {
             for (Hitter h : hitters) {
                 if (h.getPositions() == null) {
-                }
-                else if (h.getPositions().contains("1B") || h.getPositions().contains("3B")) {
+                } else if (h.getPositions().contains("1B") || h.getPositions().contains("3B")) {
                     hittersWithPosition.add(h);
                 }
             }
@@ -68,8 +67,7 @@ public class Draft {
         } else {
             for (Hitter h : hitters) {
                 if (h.getPositions() == null) {
-                }
-                else if (h.getPositions().contains(s)) {
+                } else if (h.getPositions().contains(s)) {
                     hittersWithPosition.add(h);
                 }
             }
@@ -89,6 +87,7 @@ public class Draft {
      */
     public void setHitters(ArrayList<Hitter> hitters) {
         this.hitters = hitters;
+        setHitterEstValues();
     }
 
     /**
@@ -111,6 +110,7 @@ public class Draft {
      */
     public void setPitchers(ArrayList<Pitcher> pitchers) {
         this.pitchers = pitchers;
+        setPitcherEstValues();
     }
 
     public void addPitcher(Pitcher p) {
@@ -130,6 +130,8 @@ public class Draft {
             pitchers.remove((Pitcher) p);
         }
         players.remove(p);
+        setHitterEstValues();
+        setPitcherEstValues();
     }
 
     public ArrayList<Team> getTeams() {
@@ -138,31 +140,230 @@ public class Draft {
 
     public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
+        setHitterEstValues();
+        setPitcherEstValues();
     }
-    
+
     public void addTeam(Team t) {
         teams.add(t);
+        setHitterEstValues();
+        setPitcherEstValues();
     }
-    
+
     public void removeTeam(Team t) {
         teams.remove(t);
+        setHitterEstValues();
+        setPitcherEstValues();
     }
-    
+
     public Team getTeam(String s) {
-        for (Team t: teams) {
+        for (Team t : teams) {
             if (t.getName().equals(s)) {
                 return t;
             }
         }
         return null;
     }
-    
+
     public void addPlayer(Player p) {
         if (p instanceof Hitter) {
-            addHitter((Hitter)p);
-        }
-        else if (p instanceof Pitcher) {
+            addHitter((Hitter) p);
+        } else if (p instanceof Pitcher) {
             addPitcher((Pitcher) p);
+        }
+        setHitterEstValues();
+        setPitcherEstValues();
+    }
+
+    public int getCashLeft() {
+        int cash = 0;
+        for (Team t : teams) {
+            cash += t.getCash();
+        }
+        return cash;
+    }
+
+    public void setHitterEstValues() {
+        if (teams != null && hitters != null) {
+            ObservableList<Hitter> tempHitters = FXCollections.observableArrayList(hitters);
+            FXCollections.sort(tempHitters, new Comparator<Hitter>() {
+                public int compare(Hitter a, Hitter b) {
+                    if (a.getR_w() < b.getR_w()) {
+                        return -1;
+                    } else if (a.getR_w() > b.getR_w()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempHitters.size(); i++) {
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() + tempHitters.size() - i);
+            }
+            FXCollections.sort(tempHitters, new Comparator<Hitter>() {
+                public int compare(Hitter a, Hitter b) {
+                    if (a.getHr_sv() < b.getHr_sv()) {
+                        return -1;
+                    } else if (a.getHr_sv() > b.getHr_sv()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempHitters.size(); i++) {
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() + tempHitters.size() - i);
+            }
+            FXCollections.sort(tempHitters, new Comparator<Hitter>() {
+                public int compare(Hitter a, Hitter b) {
+                    if (a.getRbi_k() < b.getRbi_k()) {
+                        return -1;
+                    } else if (a.getRbi_k() > b.getRbi_k()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempHitters.size(); i++) {
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() + tempHitters.size() - i);
+            }
+            FXCollections.sort(tempHitters, new Comparator<Hitter>() {
+                public int compare(Hitter a, Hitter b) {
+                    if (a.getSb_era() < b.getSb_era()) {
+                        return -1;
+                    } else if (a.getSb_era() > b.getSb_era()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempHitters.size(); i++) {
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() + tempHitters.size() - i);
+            }
+            FXCollections.sort(tempHitters, new Comparator<Hitter>() {
+                public int compare(Hitter a, Hitter b) {
+                    if (a.getBa_whip() < b.getBa_whip()) {
+                        return -1;
+                    } else if (a.getBa_whip() > b.getBa_whip()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempHitters.size(); i++) {
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() + tempHitters.size() - i);
+                tempHitters.get(i).setRank(tempHitters.get(i).getRank() / 5);
+            }
+
+            int hittersNeeded = 0;
+            for (Team t : teams) {
+                hittersNeeded += t.getHittersNeeded();
+            }
+
+            int medianSalary = getCashLeft() / (2 * hittersNeeded);
+            for (Hitter h : tempHitters) {
+                h.setEstimatedValue(medianSalary * hittersNeeded * 2 / h.getRank());
+            }
+        }
+        else {
+            for (Hitter h: hitters) {
+                h.setEstimatedValue(0);
+            }
+        }
+    }
+
+    public void setPitcherEstValues() {
+        if (teams != null && pitchers != null) {
+            ObservableList<Pitcher> tempPitchers = FXCollections.observableArrayList(pitchers);
+            FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
+                public int compare(Pitcher a, Pitcher b) {
+                    if (a.getR_w() < b.getR_w()) {
+                        return -1;
+                    } else if (a.getR_w() > b.getR_w()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempPitchers.size(); i++) {
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() + tempPitchers.size() - i);
+            }
+            FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
+                public int compare(Pitcher a, Pitcher b) {
+                    if (a.getHr_sv() < b.getHr_sv()) {
+                        return -1;
+                    } else if (a.getHr_sv() > b.getHr_sv()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempPitchers.size(); i++) {
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() + tempPitchers.size() - i);
+            }
+            FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
+                public int compare(Pitcher a, Pitcher b) {
+                    if (a.getRbi_k() < b.getRbi_k()) {
+                        return -1;
+                    } else if (a.getRbi_k() > b.getRbi_k()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempPitchers.size(); i++) {
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() + tempPitchers.size() - i);
+            }
+            FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
+                public int compare(Pitcher a, Pitcher b) {
+                    if (a.getSb_era() < b.getSb_era()) {
+                        return -1;
+                    } else if (a.getSb_era() > b.getSb_era()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempPitchers.size(); i++) {
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() + tempPitchers.size() - i);
+            }
+            FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
+                public int compare(Pitcher a, Pitcher b) {
+                    if (a.getBa_whip() < b.getBa_whip()) {
+                        return -1;
+                    } else if (a.getBa_whip() > b.getBa_whip()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            for (int i = 0; i < tempPitchers.size(); i++) {
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() + tempPitchers.size() - i);
+                tempPitchers.get(i).setRank(tempPitchers.get(i).getRank() / 5);
+            }
+
+            int pitchersNeeded = 0;
+            for (Team t : teams) {
+                pitchersNeeded += t.getPitchersNeeded();
+            }
+
+            int medianSalary = getCashLeft() / (2 * pitchersNeeded);
+            for (Pitcher h : tempPitchers) {
+                h.setEstimatedValue(medianSalary * pitchersNeeded * 2 / h.getRank());
+            }
+        }
+        else {
+            for (Pitcher p: pitchers) {
+                p.setEstimatedValue(0);
+            }
         }
     }
 }

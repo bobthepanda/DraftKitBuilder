@@ -53,6 +53,9 @@ public abstract class Team {
     public int getPlayersNeeded() {
         return playersNeeded;
     }
+    
+    public abstract int getHittersNeeded();
+    public abstract int getPitchersNeeded();
 
     /**
      * @param playersNeeded the playersNeeded to set

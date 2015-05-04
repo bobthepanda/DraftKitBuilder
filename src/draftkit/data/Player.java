@@ -22,6 +22,7 @@ public abstract class Player {
     private int rbi_k;
     private double sb_era;
     private double ba_whip;
+    private int rank;
     private int estimatedValue;
     private String notes;
     private int salary;
@@ -283,6 +284,20 @@ public abstract class Player {
      */
     public void setContract(String contract) {
         this.contract = contract;
+    }
+
+    /**
+     * @return the rank
+     */
+    public int getRank() {
+        return rank;
+    }
+
+    /**
+     * @param rank the rank to set
+     */
+    public void setRank(int rank) {
+        this.rank = rank;
     }
     
     

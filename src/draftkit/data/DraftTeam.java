@@ -593,4 +593,12 @@ public class DraftTeam extends Team {
     public void setOf(int of) {
         this.of = of;
     }
+    
+    public int getHittersNeeded() {
+        return 14 - hitters.size();
+    }
+    
+    public int getPitchersNeeded() {
+        return 9 - pitchers.size();
+    }
 }
