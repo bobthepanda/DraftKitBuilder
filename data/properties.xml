@@ -53,6 +53,7 @@
         <property name="FANTASY_STANDINGS_LABEL"        value="Fantasy Standings"></property>
         <property name="DRAFT_SUMMARY_LABEL"            value="Draft Summary"></property>
         <property name="MLB_TEAMS_LABEL"                value = "MLB Teams"></property>
+        <property name="PRO_TEAM_LABEL"                value = "MLB Team: "></property>
         <property name="DRAFT_NAME_LABEL"               value="Draft Name"></property>
         <property name="SELECT_FANTASY_TEAM_LABEL"      value="Select Fantasy Team"></property>
         <property name="STARTING_LINEUP_LABEL"          value="Starting Lineup"></property>

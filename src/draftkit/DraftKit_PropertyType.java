@@ -65,6 +65,9 @@ public enum DraftKit_PropertyType {
         STARTING_LINEUP_LABEL,
         TAXI_SQUAD_LABEL,
         
+        //FOR STANDINGS SCREEN
+        PRO_TEAM_LABEL,
+        
         // AND VERIFICATION MESSAGES
         NEW_DRAFT_CREATED_MESSAGE,
         DRAFT_LOADED_MESSAGE,

@@ -20,6 +20,7 @@ import draftkit.file.DraftFileManager;
 //import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -213,6 +214,17 @@ public class GUI implements DraftDataView {
     Label lineupLabel;
     VBox taxiBox;
     Label taxiLabel;
+    
+    //STANDINGS SCREEN CONTROLS
+    HBox selectTeamBox;
+    Label selectTeamLabel;
+    ComboBox proTeamComboBox;
+    TableView<Player> proTeamTable;
+    TableColumn proTeam_firstName;
+    TableColumn proTeam_lastName;
+    TableColumn proTeam_QP;
+    String teams = "ATL,AZ,CHC,CIN,COL,LAD,MIA,MIL,NYM,PHI,PIT,SD,SF,STL,WAS";
+    ArrayList<String> teamsList = new ArrayList<String>(Arrays.asList(teams.split(",")));
 
     //LABELS FOR RADIO BUTTONS
     static final String RADIO_ALL = "All";
@@ -789,6 +801,27 @@ public class GUI implements DraftDataView {
         MLBScreen.setMaxHeight(Double.MAX_VALUE);
         MLBScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(MLBScreen, DraftKit_PropertyType.MLB_TEAMS_LABEL, CLASS_HEADING_LABEL);
+        
+                
+        selectTeamBox = new HBox();
+        selectTeamLabel = initChildLabel(selectTeamBox, DraftKit_PropertyType.PRO_TEAM_LABEL, CLASS_HEADING_LABEL);
+        proTeamComboBox = new ComboBox(FXCollections.observableArrayList(teamsList));
+        selectTeamBox.getChildren().add(proTeamComboBox);
+        
+        proTeamTable = new TableView<Player>();
+        proTeam_firstName = new TableColumn(COL_FIRST);
+        proTeam_firstName.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
+        proTeam_lastName = new TableColumn(COL_LAST);
+        proTeam_lastName.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
+        proTeam_QP = new TableColumn(COL_POSITIONS);
+        proTeam_QP.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
+        
+        proTeamTable.getColumns().add(proTeam_firstName);
+        proTeamTable.getColumns().add(proTeam_lastName);
+        proTeamTable.getColumns().add(proTeam_QP);
+        
+        MLBScreen.getChildren().add(selectTeamBox);
+        MLBScreen.getChildren().add(proTeamTable);
     }
 
 // ADDS RADIO BUTTONS TO A TOOLBAR
@@ -975,6 +1008,12 @@ public class GUI implements DraftDataView {
             if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
                 lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
                 taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
+            }
+        });
+        
+        proTeamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (proTeamComboBox.getSelectionModel().getSelectedItem() != null) {
+                proTeamTable.setItems(dataManager.getDraft().getProTeam(newValue.toString()));
             }
         });
 

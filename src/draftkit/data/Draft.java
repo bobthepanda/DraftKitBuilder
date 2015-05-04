@@ -366,4 +366,14 @@ public class Draft {
             }
         }
     }
+    
+    public ObservableList<Player> getProTeam(String s) {
+        ObservableList<Player> proTeam = FXCollections.observableArrayList(new ArrayList());
+        for (Player p : players) {
+            if (p.getProTeam().equals(s)) {
+                proTeam.add(p);
+            }
+        }
+        return proTeam;
+    }
 }
