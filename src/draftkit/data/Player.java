@@ -27,6 +27,7 @@ public abstract class Player {
     private String notes;
     private int salary;
     private String contract;
+    private String oldPosition;
 
     public Player() {
     }
@@ -255,6 +256,7 @@ public abstract class Player {
      * @param position the position to set
      */
     public void setPosition(String position) {
+        this.setOldPosition(position);
         this.position = position;
     }
 
@@ -298,6 +300,20 @@ public abstract class Player {
      */
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    /**
+     * @return the oldPosition
+     */
+    public String getOldPosition() {
+        return oldPosition;
+    }
+
+    /**
+     * @param oldPosition the oldPosition to set
+     */
+    public void setOldPosition(String oldPosition) {
+        this.oldPosition = oldPosition;
     }
     
     

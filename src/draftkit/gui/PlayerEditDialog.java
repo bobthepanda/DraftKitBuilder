@@ -207,10 +207,10 @@ public class PlayerEditDialog extends Stage {
             } else {
                 try {
                     player.setSalary(Integer.parseInt(newValue.toString()));
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_SALARY_MESSAGE));
                     player.setSalary(0);
-                    salaryTextField.setText(null);
+                    salaryTextField.setText("0");
                 }
             }
         });
@@ -222,7 +222,7 @@ public class PlayerEditDialog extends Stage {
         // REGISTER EVENT HANDLERS FOR OUR BUTTONS
         EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
             if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
-                    (fantasyTeamComboBox.getValue() != null && 
+                    (!fantasyTeamComboBox.getValue().equals("Free Agent") && 
                     (positionComboBox.getValue() == null || contractComboBox.getValue() == null || salaryTextField.getText() == null))) {
                 messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
             }

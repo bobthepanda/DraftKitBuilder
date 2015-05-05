@@ -158,9 +158,9 @@ public class JsonDraftFileManager implements DraftFileManager {
         JsonObject json = loadJSONFile(jsonFilePath);
 
         // NOW LOAD THE COURSE
+        draftToLoad.setTeams(loadTeams(json));
         draftToLoad.setPitchers(loadPitchers(json));
         draftToLoad.setHitters(loadHitters(json));
-        draftToLoad.setTeams(loadTeams(json));
         draftToLoad.setPlayers(loadPlayers(json, JSON_PLAYERS));
     }
 
@@ -443,13 +443,13 @@ public class JsonDraftFileManager implements DraftFileManager {
                 h.setFirstName(jso.getString(JSON_FIRST_NAME));
                 String position = jso.getString(JSON_HITTERS_QP);
                 if (position.contains("2B") || position.contains("SS")) {
-                position = position.concat("_MI");
-            }
-            if (position.contains("1B") || position.contains("3B")) {
-                position = position.concat("_CI");
-            }
-            position = position.concat("_U");
-            h.setPositions_String(position);
+                    position = position.concat("_MI");
+                }
+                if (position.contains("1B") || position.contains("3B")) {
+                    position = position.concat("_CI");
+                }
+                position = position.concat("_U");
+                h.setPositions_String(position);
                 h.setAb(Integer.parseInt(jso.getString(JSON_HITTERS_AB)));
                 h.setR_w(Integer.parseInt(jso.getString(JSON_HITTERS_R)));
                 h.setHr_sv(Integer.parseInt(jso.getString(JSON_HITTERS_HR)));
@@ -589,7 +589,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             h.setLastName(jso.getString(JSON_LAST_NAME));
             h.setFirstName(jso.getString(JSON_FIRST_NAME));
             String position = jso.getString(JSON_HITTERS_QP);
-                if (position.contains("2B") || position.contains("SS")) {
+            if (position.contains("2B") || position.contains("SS")) {
                 position = position.concat("_MI");
             }
             if (position.contains("1B") || position.contains("3B")) {

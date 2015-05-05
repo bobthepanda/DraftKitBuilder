@@ -184,7 +184,7 @@ public class Draft {
     }
 
     public void setHitterEstValues() {
-        if (teams != null && hitters != null) {
+        if (teams.size() > 0 && pitchers.size() > 0) {
             ObservableList<Hitter> tempHitters = FXCollections.observableArrayList(hitters);
             FXCollections.sort(tempHitters, new Comparator<Hitter>() {
                 public int compare(Hitter a, Hitter b) {
@@ -276,7 +276,7 @@ public class Draft {
     }
 
     public void setPitcherEstValues() {
-        if (teams != null && pitchers != null) {
+        if (teams.size() > 0 && pitchers.size() > 0) {
             ObservableList<Pitcher> tempPitchers = FXCollections.observableArrayList(pitchers);
             FXCollections.sort(tempPitchers, new Comparator<Pitcher>() {
                 public int compare(Pitcher a, Pitcher b) {
@@ -372,6 +372,18 @@ public class Draft {
         for (Player p : players) {
             if (p.getProTeam().equals(s)) {
                 proTeam.add(p);
+            }
+        }
+        for (Team t: teams) {
+            for (Player p: t.getPlayers()) {
+                if (p.getProTeam().equals(s)) {
+                    proTeam.add(p);
+                }
+            }
+            for (Player p: t.getTaxi()) {
+                if (p.getProTeam().equals(s)) {
+                    proTeam.add(p);
+                }
             }
         }
         return proTeam;

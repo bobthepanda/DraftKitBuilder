@@ -138,16 +138,21 @@ public class DraftTeam extends Team {
     }
 
     public void removePlayer(Player p) {
-        if (getHitters().contains((Hitter) p)) {
-            getHitters().remove((Hitter) p);
-        } else if (getPitchers().contains((Pitcher) p)) {
-            getPitchers().remove((Pitcher) p);
-        } else if (getTaxi().contains(p)) {
+        if (p instanceof Hitter) {
+            if (getHitters().contains((Hitter) p)) {
+                getHitters().remove((Hitter) p);
+            }
+        } else if (p instanceof Pitcher) {
+            if (getPitchers().contains((Pitcher) p)) {
+                getPitchers().remove((Pitcher) p);
+            }
+        }
+        if (getTaxi().contains(p)) {
             getTaxi().remove(p);
         }
         if (getLineup().contains(p)) {
             getLineup().remove(p);
-            changePositionNum(p.getPosition(), 1);
+            changePositionNum(p.getOldPosition(), 1);
         }
     }
 
@@ -593,11 +598,11 @@ public class DraftTeam extends Team {
     public void setOf(int of) {
         this.of = of;
     }
-    
+
     public int getHittersNeeded() {
         return 14 - hitters.size();
     }
-    
+
     public int getPitchersNeeded() {
         return 9 - pitchers.size();
     }

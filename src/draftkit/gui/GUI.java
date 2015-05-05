@@ -214,7 +214,7 @@ public class GUI implements DraftDataView {
     Label lineupLabel;
     VBox taxiBox;
     Label taxiLabel;
-    
+
     //STANDINGS SCREEN CONTROLS
     HBox selectTeamBox;
     Label selectTeamLabel;
@@ -422,6 +422,18 @@ public class GUI implements DraftDataView {
         }
 
         updateTeamComboBox();
+        if (playerTable.getItems() != null) {
+            playerTable.setItems(FXCollections.observableArrayList(draftToReload.getPlayers()));
+        }
+        if (lineupTable.getItems() != null) {
+            lineupTable.setItems(null);
+        }
+        if (taxiTable.getItems() != null) {
+            taxiTable.setItems(null);
+        }
+        if (proTeamTable.getItems() != null) {
+            proTeamTable.setItems(null);
+        }
         setSaveName(s);
     }
 
@@ -573,7 +585,7 @@ public class GUI implements DraftDataView {
         lineupTable.getColumns().add(lineup_est_value);
         lineupTable.getColumns().add(lineup_contract);
         lineupTable.getColumns().add(lineup_salary);
-        for (TableColumn t: lineupTable.getColumns()) {
+        for (TableColumn t : lineupTable.getColumns()) {
             t.setSortable(false);
         }
         lineupBox.getChildren().add(lineupTable);
@@ -801,13 +813,12 @@ public class GUI implements DraftDataView {
         MLBScreen.setMaxHeight(Double.MAX_VALUE);
         MLBScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(MLBScreen, DraftKit_PropertyType.MLB_TEAMS_LABEL, CLASS_HEADING_LABEL);
-        
-                
+
         selectTeamBox = new HBox();
         selectTeamLabel = initChildLabel(selectTeamBox, DraftKit_PropertyType.PRO_TEAM_LABEL, CLASS_HEADING_LABEL);
         proTeamComboBox = new ComboBox(FXCollections.observableArrayList(teamsList));
         selectTeamBox.getChildren().add(proTeamComboBox);
-        
+
         proTeamTable = new TableView<Player>();
         proTeam_firstName = new TableColumn(COL_FIRST);
         proTeam_firstName.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
@@ -815,11 +826,11 @@ public class GUI implements DraftDataView {
         proTeam_lastName.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
         proTeam_QP = new TableColumn(COL_POSITIONS);
         proTeam_QP.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
-        
+
         proTeamTable.getColumns().add(proTeam_firstName);
         proTeamTable.getColumns().add(proTeam_lastName);
         proTeamTable.getColumns().add(proTeam_QP);
-        
+
         MLBScreen.getChildren().add(selectTeamBox);
         MLBScreen.getChildren().add(proTeamTable);
     }
@@ -1010,7 +1021,7 @@ public class GUI implements DraftDataView {
                 taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
             }
         });
-        
+
         proTeamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (proTeamComboBox.getSelectionModel().getSelectedItem() != null) {
                 proTeamTable.setItems(dataManager.getDraft().getProTeam(newValue.toString()));
