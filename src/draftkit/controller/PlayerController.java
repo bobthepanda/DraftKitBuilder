@@ -69,15 +69,18 @@ public class PlayerController {
                 draft.removePlayer(playerToEdit);
                 draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
                 gui.sortLineupTable();
+                draft.setTeamPoints();
             } else if (p.getTeam() == null) {
                 draft.getTeam(s).removePlayer(playerToEdit);
                 draft.addPlayer(playerToEdit);
                 gui.sortLineupTable();
+                draft.setTeamPoints();
             } else if (s.equals(p.getTeam())) {
             } else {
                 draft.getTeam(s).removePlayer(playerToEdit);
                 draft.getTeam(p.getTeam()).addPlayer(playerToEdit);
                 gui.sortLineupTable();
+                draft.setTeamPoints();
             }
 
             // SET VALUES FOR PLAYER
@@ -86,7 +89,6 @@ public class PlayerController {
                 playerToEdit.setPosition(p.getPosition());
                 playerToEdit.setContract(p.getContract());
                 playerToEdit.setSalary(p.getSalary());
-                draft.getTeam(playerToEdit.getTeam()).setCash(draft.getTeam(playerToEdit.getTeam()).getCash() - playerToEdit.getSalary());
             } else {
                 playerToEdit.setPosition(null);
                 playerToEdit.setContract(null);

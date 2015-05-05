@@ -345,8 +345,6 @@ public class JsonDraftFileManager implements DraftFileManager {
                 .add(JSON_TEAMS_CASH, d.getCash() + "")
                 .add(JSON_TEAMS_PLAYERS_NEEDED, d.getPlayersNeeded() + "")
                 .add(JSON_TEAMS_POINTS, d.getPoints() + "")
-                .add(JSON_TEAMS_HITTERS, makeHittersJsonArray(d.getHitters()))
-                .add(JSON_TEAMS_PITCHERS, makePitchersJsonArray(d.getPitchers()))
                 .add(JSON_TEAMS_LINEUP, makePlayersJsonArray(d.getLineup()))
                 .add(JSON_TEAMS_TAXI, makePlayersJsonArray(d.getTaxi()))
                 .add(JSON_TEAMS_R, d.getR() + "")
@@ -443,10 +441,19 @@ public class JsonDraftFileManager implements DraftFileManager {
                 h.setFirstName(jso.getString(JSON_FIRST_NAME));
                 String position = jso.getString(JSON_HITTERS_QP);
                 if (position.contains("2B") || position.contains("SS")) {
+                    while (position.contains("_MI")) {
+                        position = position.replace("_MI", "");
+                    }
                     position = position.concat("_MI");
                 }
                 if (position.contains("1B") || position.contains("3B")) {
+                    while (position.contains("_CI")) {
+                        position = position.replace("_CI", "");
+                    }
                     position = position.concat("_CI");
+                }
+                while (position.contains("_U")) {
+                    position = position.replace("_U", "");
                 }
                 position = position.concat("_U");
                 h.setPositions_String(position);
@@ -541,9 +548,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             t.setOwner(jso.getString(JSON_TEAMS_OWNER));
             t.setCash(Integer.parseInt(jso.getString(JSON_TEAMS_CASH)));
             t.setPlayersNeeded(Integer.parseInt(jso.getString(JSON_TEAMS_PLAYERS_NEEDED)));
-            t.setPoints(Double.parseDouble(jso.getString(JSON_TEAMS_POINTS)));
-            t.setHitters(FXCollections.observableArrayList(loadHitters(jso)));
-            t.setPitchers(FXCollections.observableArrayList(loadPitchers(jso)));
+            t.setPoints(Integer.parseInt(jso.getString(JSON_TEAMS_POINTS)));
             t.setLineup(FXCollections.observableArrayList(loadPlayers(jso, JSON_TEAMS_LINEUP)));
             t.setTaxi(FXCollections.observableArrayList(loadPlayers(jso, JSON_TEAMS_TAXI)));
             t.setR(Integer.parseInt(jso.getString(JSON_TEAMS_R)));
@@ -590,10 +595,19 @@ public class JsonDraftFileManager implements DraftFileManager {
             h.setFirstName(jso.getString(JSON_FIRST_NAME));
             String position = jso.getString(JSON_HITTERS_QP);
             if (position.contains("2B") || position.contains("SS")) {
+                while (position.contains("_MI")) {
+                    position = position.replace("_MI", "");
+                }
                 position = position.concat("_MI");
             }
             if (position.contains("1B") || position.contains("3B")) {
+                while (position.contains("_CI")) {
+                    position = position.replace("_CI", "");
+                }
                 position = position.concat("_CI");
+            }
+            while (position.contains("_U")) {
+                position = position.replace("_U", "");
             }
             position = position.concat("_U");
             h.setPositions_String(position);

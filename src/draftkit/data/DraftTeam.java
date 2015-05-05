@@ -11,8 +11,6 @@ import javafx.collections.ObservableList;
  */
 public class DraftTeam extends Team {
 
-    private ObservableList<Hitter> hitters;
-    private ObservableList<Pitcher> pitchers;
     private ObservableList<Player> taxi;
     private ObservableList<Player> lineup;
     private int r;
@@ -34,12 +32,13 @@ public class DraftTeam extends Team {
     private int ss;
     private int u;
     private int of;
+    private int p;
+    private int hitters;
+    private int pitchers;
 
     public DraftTeam() {
         setCash(260);
         setPlayersNeeded(31);
-        hitters = FXCollections.observableArrayList(new ArrayList<Hitter>());
-        pitchers = FXCollections.observableArrayList(new ArrayList<Pitcher>());
         taxi = FXCollections.observableArrayList(new ArrayList<Player>());
         lineup = FXCollections.observableArrayList(new ArrayList<Player>());
         c = 2;
@@ -51,6 +50,9 @@ public class DraftTeam extends Team {
         ss = 1;
         u = 1;
         of = 5;
+        p = 9;
+        hitters = 14;
+        pitchers = 9;
     }
 
     public boolean isPositionFull(String s) {
@@ -72,6 +74,8 @@ public class DraftTeam extends Team {
             return getU() == 0;
         } else if (s.equals("OF")) {
             return getOf() == 0;
+        } else if (s.equals("P")) {
+            return getP() == 0;
         }
         return true;
     }
@@ -109,95 +113,75 @@ public class DraftTeam extends Team {
     }
 
     public boolean addPlayer(Player p) {
+
         boolean added = false;
         if (p instanceof Hitter) {
             if (!isHittersFull()) {
-                getHitters().add((Hitter) p);
-                added = true;
+                if (!isPositionFull(p.getPosition())) {
+                    hitters--;
+                    getLineup().add(p);
+                    changePositionNum(p.getPosition(), -1);
+                    setPlayersNeeded(getPlayersNeeded() - 1);
+                    updateTeamStats();
+                    setCash(getCash() - p.getSalary());
+                    added = true;
+                }
+                else {
+                    added = false;
+                }
             } else if (!isTaxiFull()) {
                 getTaxi().add(p);
                 added = true;
+                setCash(getCash() - p.getSalary());
             }
         } else {
             if (!isPitchersFull()) {
-                getPitchers().add((Pitcher) p);
+                pitchers--;
                 added = true;
                 changePositionNum(p.getPosition(), 1);
+                getLineup().add(p);
+                changePositionNum(p.getPosition(), -1);
+                setPlayersNeeded(getPlayersNeeded() - 1);
+                updateTeamStats();
+                setCash(getCash() - p.getSalary());
             } else if (!isTaxiFull()) {
                 getTaxi().add(p);
                 added = true;
+                setCash(getCash() - p.getSalary());
             }
-        }
-        if (added) {
-            getLineup().add(p);
-            changePositionNum(p.getPosition(), -1);
-            setPlayersNeeded(getPlayersNeeded() - 1);
-            updateTeamStats();
         }
         return added;
     }
 
     public void removePlayer(Player p) {
-        if (p instanceof Hitter) {
-            if (getHitters().contains((Hitter) p)) {
-                getHitters().remove((Hitter) p);
-            }
-        } else if (p instanceof Pitcher) {
-            if (getPitchers().contains((Pitcher) p)) {
-                getPitchers().remove((Pitcher) p);
-            }
-        }
         if (getTaxi().contains(p)) {
             getTaxi().remove(p);
+            setCash(getCash() + p.getSalary());
         }
         if (getLineup().contains(p)) {
             getLineup().remove(p);
             changePositionNum(p.getOldPosition(), 1);
+            setCash(getCash() + p.getSalary());
+            if (p instanceof Hitter) {
+                hitters++;
+            }
+            else {
+                pitchers++;
+            }
         }
     }
 
     //HELPER METHODS
     private boolean isHittersFull() {
-        return getHitters().size() >= 14;
+        return hitters == 0;
     }
 
     private boolean isPitchersFull() {
-        return getPitchers().size() >= 9;
+        return pitchers == 0;
     }
 
     private boolean isTaxiFull() {
         return getTaxi().size() >= 8;
-    }
-
-    /*private boolean isValidPosition(String s){
-        
-     }*/
-    /**
-     * @return the hitters
-     */
-    public ObservableList<Hitter> getHitters() {
-        return hitters;
-    }
-
-    /**
-     * @param hitters the hitters to set
-     */
-    public void setHitters(ObservableList<Hitter> hitters) {
-        this.hitters = hitters;
-    }
-
-    /**
-     * @return the pitchers
-     */
-    public ObservableList<Pitcher> getPitchers() {
-        return pitchers;
-    }
-
-    /**
-     * @param pitchers the pitchers to set
-     */
-    public void setPitchers(ObservableList<Pitcher> pitchers) {
-        this.pitchers = pitchers;
     }
 
     /**
@@ -223,8 +207,10 @@ public class DraftTeam extends Team {
 
     public void setR() {
         setR(0);
-        for (Hitter h : getHitters()) {
-            setR(getR() + h.getR_w());
+        for (Player p : getLineup()) {
+            if (p instanceof Hitter) {
+                setR(getR() + p.getR_w());
+            }
         }
     }
 
@@ -237,8 +223,10 @@ public class DraftTeam extends Team {
 
     public void setHr() {
         setHr(0);
-        for (Hitter h : getHitters()) {
-            setHr(getHr() + h.getHr_sv());
+        for (Player p : getLineup()) {
+            if (p instanceof Hitter) {
+            setHr(getHr() + p.getHr_sv());
+            }
         }
     }
 
@@ -248,8 +236,10 @@ public class DraftTeam extends Team {
 
     public void setRbi() {
         setRbi(0);
-        for (Hitter h : getHitters()) {
-            setRbi(getRbi() + h.getRbi_k());
+        for (Player p : getLineup()) {
+            if (p instanceof Hitter) {
+            setRbi(getRbi() + p.getRbi_k());
+            }
         }
     }
 
@@ -262,8 +252,10 @@ public class DraftTeam extends Team {
 
     public void setSb() {
         setSb(0);
-        for (Hitter h : getHitters()) {
-            setSb((int) (getSb() + h.getSb_era()));
+        for (Player p : getLineup()) {
+            if (p instanceof Hitter) {
+            setSb((int) (getSb() + p.getSb_era()));
+        }
         }
     }
 
@@ -277,9 +269,11 @@ public class DraftTeam extends Team {
     public void setBa() {
         int hits = 0;
         int ab = 0;
-        for (Hitter h : getHitters()) {
-            hits += h.getH();
-            ab += h.getAb();
+        for (Player p : getLineup()) {
+            if (p instanceof Hitter) {
+            hits += ((Hitter)p).getH();
+            ab += ((Hitter)p).getAb();
+            }
         }
         if (ab != 0) {
             setBa((hits * 1.00) / ab);
@@ -295,8 +289,10 @@ public class DraftTeam extends Team {
 
     public void setW() {
         setW(0);
-        for (Pitcher p : getPitchers()) {
+        for (Player p : getLineup()) {
+            if (p instanceof Pitcher) {
             setW(getW() + p.getR_w());
+        }
         }
     }
 
@@ -309,8 +305,10 @@ public class DraftTeam extends Team {
 
     public void setK() {
         setK(0);
-        for (Pitcher p : getPitchers()) {
+        for (Player p : getLineup()) {
+            if (p instanceof Pitcher) {
             setK(getK() + p.getRbi_k());
+        }
         }
     }
 
@@ -323,8 +321,10 @@ public class DraftTeam extends Team {
 
     public void setSv() {
         setSv(0);
-        for (Pitcher p : getPitchers()) {
+        for (Player p : getLineup()) {
+            if (p instanceof Pitcher) {
             setSv(getSv() + p.getHr_sv());
+        }
         }
     }
 
@@ -338,9 +338,11 @@ public class DraftTeam extends Team {
     public void setEra() {
         int er = 0;
         double ip = 0;
-        for (Pitcher p : getPitchers()) {
-            er += p.getEr();
-            ip += p.getIp();
+        for (Player p : getLineup()) {
+            if (p instanceof Pitcher) {
+            er += ((Pitcher)p).getEr();
+            ip += ((Pitcher)p).getIp();
+        }
         }
         if (ip != 0) {
             setEra((er * 1.00) / ip);
@@ -358,10 +360,12 @@ public class DraftTeam extends Team {
         int walks = 0;
         int h = 0;
         double ip = 0;
-        for (Pitcher p : getPitchers()) {
-            walks += p.getW();
-            h += p.getH();
-            ip += p.getIp();
+        for (Player p : getLineup()) {
+            if (p instanceof Pitcher) {
+            walks += ((Pitcher)p).getW();
+            h += ((Pitcher)p).getH();
+            ip += ((Pitcher)p).getIp();
+        }
         }
         if (ip != 0) {
             setWhip(((h + walks) * 1.00) / ip);
@@ -393,6 +397,14 @@ public class DraftTeam extends Team {
      */
     public void setLineup(ObservableList<Player> lineup) {
         this.lineup = lineup;
+        for (Player p: lineup) {
+            if (p instanceof Hitter) {
+                hitters--;
+            }
+            else {
+                pitchers--;
+            }
+        }
     }
 
     public ObservableList<Player> getPlayers() {
@@ -401,6 +413,14 @@ public class DraftTeam extends Team {
 
     public void setPlayers(ObservableList<Player> lineup) {
         setLineup(lineup);
+        for (Player p: lineup) {
+            if (p instanceof Hitter) {
+                hitters--;
+            }
+            else {
+                pitchers--;
+            }
+        }
     }
 
     /**
@@ -600,10 +620,28 @@ public class DraftTeam extends Team {
     }
 
     public int getHittersNeeded() {
-        return 14 - hitters.size();
+        return hitters;
     }
 
     public int getPitchersNeeded() {
-        return 9 - pitchers.size();
+        return pitchers;
+    }
+    
+    public boolean isTeamFull() {
+        return isHittersFull() && isPitchersFull();
+    }
+
+    /**
+     * @return the p
+     */
+    public int getP() {
+        return p;
+    }
+
+    /**
+     * @param p the p to set
+     */
+    public void setP(int p) {
+        this.p = p;
     }
 }

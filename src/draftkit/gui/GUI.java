@@ -214,8 +214,26 @@ public class GUI implements DraftDataView {
     Label lineupLabel;
     VBox taxiBox;
     Label taxiLabel;
-
+    
     //STANDINGS SCREEN CONTROLS
+    TableView<Team> fantasyTeamTable;
+    TableColumn teamName;
+    TableColumn playersNeeded;
+    TableColumn cashLeft;
+    TableColumn cashPP;
+    TableColumn teamR;
+    TableColumn teamHR;
+    TableColumn teamRBI;
+    TableColumn teamSB;
+    TableColumn teamBA;
+    TableColumn teamW;
+    TableColumn teamSV;
+    TableColumn teamK;
+    TableColumn teamERA;
+    TableColumn teamWHIP;
+    TableColumn teamTotalPts;
+
+    //MLB SCREEN CONTROLS
     HBox selectTeamBox;
     Label selectTeamLabel;
     ComboBox proTeamComboBox;
@@ -266,6 +284,11 @@ public class GUI implements DraftDataView {
     static final String COL_WHIP = "WHIP";
     static final String COL_CONTRACT = "Contract";
     static final String COL_SALARY = "Salary";
+    static final String COL_TEAM_NAME = "Team Name";
+    static final String COL_PLAYERS_NEEDED = "Players Needed";
+    static final String COL_CASH_LEFT = "$ Left";
+    static final String COL_CASH_PP = "$ PP";
+    static final String COL_TOTAL_PTS = "Total Points";
 
     // HERE ARE OUR DIALOGS
     MessageDialog messageDialog;
@@ -797,6 +820,43 @@ public class GUI implements DraftDataView {
         standingsScreen.setMaxHeight(Double.MAX_VALUE);
         standingsScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
+        
+        fantasyTeamTable = new TableView<Team>();
+        fantasyTeamTable.setMaxHeight(Double.MAX_VALUE);
+        teamName = new TableColumn(COL_TEAM_NAME);
+        teamName.setCellValueFactory(new PropertyValueFactory<String, String>("name"));
+        playersNeeded = new TableColumn(COL_PLAYERS_NEEDED);
+        playersNeeded.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("playersNeeded"));
+        cashLeft = new TableColumn(COL_CASH_LEFT);
+        cashLeft.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("cash"));
+        cashPP = new TableColumn(COL_CASH_PP);
+        cashPP.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("cashPP"));
+        teamR = new TableColumn(COL_R);
+        teamR.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("r"));
+        teamHR = new TableColumn(COL_HR);
+        teamHR.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("hr"));
+        teamRBI = new TableColumn(COL_RBI);
+        teamRBI.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi"));
+        teamSB = new TableColumn(COL_SB);
+        teamSB.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("sb"));
+        teamBA = new TableColumn(COL_BA);
+        teamBA.setCellValueFactory(new PropertyValueFactory<Double, Double>("ba"));
+        teamW = new TableColumn(COL_W);
+        teamW.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("w"));
+        teamSV = new TableColumn(COL_SV);
+        teamSV.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("sv"));
+        teamK = new TableColumn(COL_K);
+        teamK.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("k"));
+        teamERA = new TableColumn(COL_ERA);
+        teamERA.setCellValueFactory(new PropertyValueFactory<Double, Double>("era"));
+        teamWHIP = new TableColumn(COL_WHIP);
+        teamWHIP.setCellValueFactory(new PropertyValueFactory<Double, Double>("whip"));
+        teamTotalPts = new TableColumn(COL_TOTAL_PTS);
+        teamTotalPts.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("points"));
+        
+        fantasyTeamTable.getColumns().addAll(teamName, playersNeeded, cashLeft, cashPP, teamR, teamHR, teamRBI, teamSB, teamBA, teamW, teamSV, teamK, teamERA, teamWHIP, teamTotalPts);
+        fantasyTeamTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
+        standingsScreen.getChildren().add(fantasyTeamTable);
     }
 
     // CREATE SUMMARY SCREEN
@@ -965,6 +1025,7 @@ public class GUI implements DraftDataView {
             workspacePane.setCenter(playerScreen);
         });
         standingsButton.setOnAction(e -> {
+            fantasyTeamTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
             workspacePane.setCenter(standingsScreen);
         });
         summaryButton.setOnAction(e -> {
@@ -974,7 +1035,7 @@ public class GUI implements DraftDataView {
             workspacePane.setCenter(MLBScreen);
         });
 
-        // THEN PLAYER ADDING/REMOVING CONTROLS
+        // THEN PLAYER ADDING/REMOVING CONTROLS.0
         addPlayerButton.setOnAction(e -> {
             playerController.handleAddPlayerRequest(this);
             updatePlayerTable();
@@ -1190,12 +1251,5 @@ public class GUI implements DraftDataView {
         lineup_position.setSortType(SortType.ASCENDING);
         lineup_position.setSortable(true);
         lineup_position.setSortable(false);
-    }
-
-    public void sortTaxiTable() {
-        taxiTable.getSortOrder().add(taxi_position);
-        taxi_position.setSortType(SortType.ASCENDING);
-        taxi_position.setSortable(true);
-        taxi_position.setSortable(false);
     }
 }

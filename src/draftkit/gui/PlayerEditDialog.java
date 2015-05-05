@@ -112,25 +112,23 @@ public class PlayerEditDialog extends Stage {
         // ON WHETHER WE'RE ADDING OR EDITING
         headingLabel = new Label(PLAYER_HEADING);
         headingLabel.getStyleClass().add(CLASS_HEADING_LABEL);
-        
+
         // NOW THE IMAGES
         String facePath = "file:" + PATH_PLAYERS + player.getLastName() + player.getFirstName() + ".jpg";
         Image face;
         try {
             face = new Image(facePath);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             face = new Image("file:" + PATH_PLAYERS + "AAA_PhotoMissing.jpg");
         }
         faceImage = new ImageView(face);
-        
+
         infoPane = new VBox();
         String countryPath = "file:" + PATH_FLAGS + player.getNationOfBirth() + ".png";
         Image country;
         try {
             country = new Image(countryPath);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             country = new Image("file:" + PATH_FLAGS + "USA.png");
         }
         countryImage = new ImageView(country);
@@ -158,7 +156,23 @@ public class PlayerEditDialog extends Stage {
                 player.setContract(null);
                 salaryTextField.setText(null);
                 player.setSalary(0);
-            } else {
+            } else if (draft.getTeam(newValue.toString()).isTeamFull()) {
+                if (player.getTeam() != null) {
+                    if (player.getTeam().equals(newValue.toString())) {
+                    } else {
+                        player.setTeam(newValue.toString());
+                        positionComboBox.setValue(null);
+                        contractComboBox.setValue("X");
+                        salaryTextField.setText("1");
+                    } 
+                }else {
+                    player.setTeam(newValue.toString());
+                positionComboBox.setValue(null);
+                contractComboBox.setValue("X");
+                salaryTextField.setText("1");
+            }
+            }
+            else {
                 player.setTeam(newValue.toString());
                 positionComboBox.setItems(FXCollections.observableArrayList(player.getPositions()));
                 for (String s : player.getPositions()) {
@@ -168,102 +182,151 @@ public class PlayerEditDialog extends Stage {
                 }
                 contractComboBox.setItems(FXCollections.observableArrayList(contractsList));
             }
-        });
+    }
+    );
 
         // AND THE POSITION
-        positionLabel = new Label(POSITION_PROMPT);
-        positionLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
-        positionComboBox = new ComboBox();
-        positionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+        positionLabel  = new Label(POSITION_PROMPT);
+
+    positionLabel.getStyleClass ()
+    .add(CLASS_PROMPT_LABEL);
+        positionComboBox  = new ComboBox();
+
+    positionComboBox.valueProperty () 
+        .addListener((observable, oldValue, newValue) -> {
             if (player.getTeam() == null) {
-                player.setPosition(null);
-                positionComboBox.setValue(null);
-            } else {
-                player.setPosition(newValue.toString());
-            }
-        });
+            player.setPosition(null);
+            positionComboBox.setValue(null);
+        } else {
+            player.setPosition(newValue.toString());
+        }
+    }
+    );
 
         // AND THE CONTRACT
-        contractLabel = new Label(CONTRACT_PROMPT);
-        contractLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
-        contractComboBox = new ComboBox();
-        contractComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+        contractLabel  = new Label(CONTRACT_PROMPT);
+
+    contractLabel.getStyleClass ()
+    .add(CLASS_PROMPT_LABEL);
+        contractComboBox  = new ComboBox();
+
+    contractComboBox.valueProperty () 
+        .addListener((observable, oldValue, newValue) -> {
             if (player.getTeam() == null) {
-                player.setContract(null);
-                contractComboBox.setValue(null);
-            } else {
-                player.setContract(newValue.toString());
-            }
-        });
+            player.setContract(null);
+            contractComboBox.setValue(null);
+        } else {
+            player.setContract(newValue.toString());
+        }
+    }
+    );
 
         // AND THE SALARY
-        salaryLabel = new Label(SALARY_PROMPT);
-        salaryLabel.getStyleClass().add(CLASS_PROMPT_LABEL);
-        salaryTextField = new TextField();
-        salaryTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+        salaryLabel  = new Label(SALARY_PROMPT);
+
+    salaryLabel.getStyleClass ()
+    .add(CLASS_PROMPT_LABEL);
+        salaryTextField  = new TextField();
+
+    salaryTextField.textProperty () 
+        .addListener((observable, oldValue, newValue) -> {
             if (player.getTeam() == null) {
+            player.setSalary(0);
+            salaryTextField.setText(null);
+        } else {
+            try {
+                player.setSalary(Integer.parseInt(newValue.toString()));
+            } catch (Exception e) {
+                messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_SALARY_MESSAGE));
                 player.setSalary(0);
                 salaryTextField.setText(null);
-            } else {
-                try {
-                    player.setSalary(Integer.parseInt(newValue.toString()));
-                } catch (Exception e) {
-                    messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_SALARY_MESSAGE));
-                    player.setSalary(0);
-                    salaryTextField.setText("0");
-                }
             }
-        });
+        }
+    }
+    );
 
         // AND FINALLY, THE BUTTONS
-        completeButton = new Button(COMPLETE);
-        cancelButton = new Button(CANCEL);
+        completeButton  = new Button(COMPLETE);
+    cancelButton  = new Button(CANCEL);
 
-        // REGISTER EVENT HANDLERS FOR OUR BUTTONS
-        EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
-            if (((Button)ae.getSource()).getText().equals(COMPLETE) && 
-                    (!fantasyTeamComboBox.getValue().equals("Free Agent") && 
-                    (positionComboBox.getValue() == null || contractComboBox.getValue() == null || salaryTextField.getText() == null))) {
-                messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
-            }
-            else {
+    // REGISTER EVENT HANDLERS FOR OUR BUTTONS
+    EventHandler completeCancelHandler = (EventHandler<ActionEvent>) (ActionEvent ae) -> {
+        if (((Button) ae.getSource()).getText().equals(COMPLETE)
+                && (!fantasyTeamComboBox.getValue().equals("Free Agent")
+                && ((!draft.getTeam(player.getTeam()).isTeamFull() && (positionComboBox.getValue() == null))
+                || contractComboBox.getValue() == null
+                || salaryTextField.getText() == null))) {
+            messageDialog.show(props.getProperty(DraftKit_PropertyType.INSUFFICIENT_INFO_MESSAGE));
+        } else {
             Button sourceButton = (Button) ae.getSource();
             PlayerEditDialog.this.selection = sourceButton.getText();
             PlayerEditDialog.this.hide();
-            }
-        };
-        completeButton.setOnAction(completeCancelHandler);
-        cancelButton.setOnAction(completeCancelHandler);
+        }
+    };
 
-        // NOW LET'S ARRANGE THEM ALL AT ONCE
-        gridPane.add(headingLabel, 0, 0, 2, 1);
-        gridPane.add(faceImage, 0, 1, 1, 1);
-        gridPane.add(infoPane, 1, 1, 1, 1);
-        gridPane.add(fantasyTeamLabel, 0, 2, 1, 1);
-        gridPane.add(fantasyTeamComboBox, 1, 2, 1, 1);
-        gridPane.add(positionLabel, 0, 3, 1, 1);
-        gridPane.add(positionComboBox, 1, 3, 1, 1);
-        gridPane.add(contractLabel, 0, 4, 1, 1);
-        gridPane.add(contractComboBox, 1, 4, 1, 1);
-        gridPane.add(salaryLabel, 0, 5, 1, 1);
-        gridPane.add(salaryTextField, 1, 5, 1, 1);
-        gridPane.add(completeButton, 0, 6, 1, 1);
-        gridPane.add(cancelButton, 1, 6, 1, 1);
+    completeButton.setOnAction (completeCancelHandler);
+
+    cancelButton.setOnAction (completeCancelHandler);
+
+    // NOW LET'S ARRANGE THEM ALL AT ONCE
+    gridPane.add (headingLabel, 
+
+    0, 0, 2, 1);
+    gridPane.add (faceImage, 
+
+    0, 1, 1, 1);
+    gridPane.add (infoPane, 
+
+    1, 1, 1, 1);
+    gridPane.add (fantasyTeamLabel, 
+
+    0, 2, 1, 1);
+    gridPane.add (fantasyTeamComboBox, 
+
+    1, 2, 1, 1);
+    gridPane.add (positionLabel, 
+
+    0, 3, 1, 1);
+    gridPane.add (positionComboBox, 
+
+    1, 3, 1, 1);
+    gridPane.add (contractLabel, 
+
+    0, 4, 1, 1);
+    gridPane.add (contractComboBox, 
+
+    1, 4, 1, 1);
+    gridPane.add (salaryLabel, 
+
+    0, 5, 1, 1);
+    gridPane.add (salaryTextField, 
+
+    1, 5, 1, 1);
+    gridPane.add (completeButton, 
+
+    0, 6, 1, 1);
+    gridPane.add (cancelButton, 
+    1, 6, 1, 1);
 
         // AND PUT THE GRID PANE IN THE WINDOW
-        dialogScene = new Scene(gridPane);
-        dialogScene.getStylesheets().add(PRIMARY_STYLE_SHEET);
-        this.setScene(dialogScene);
-        loadGUIData();
-    }
+        dialogScene  = new Scene(gridPane);
 
-    /**
-     * Accessor method for getting the selection the user made.
-     *
-     * @return Either YES, NO, or CANCEL, depending on which button the user
-     * selected when this dialog was presented.
-     */
-    public String getSelection() {
+    dialogScene.getStylesheets ()
+    .add(PRIMARY_STYLE_SHEET);
+         
+
+    this.setScene(dialogScene);
+
+    loadGUIData();
+}
+
+/**
+ * Accessor method for getting the selection the user made.
+ *
+ * @return Either YES, NO, or CANCEL, depending on which button the user
+ * selected when this dialog was presented.
+ */
+public String getSelection() {
         return selection;
     }
 
@@ -302,8 +365,9 @@ public class PlayerEditDialog extends Stage {
                     positionComboBox.getItems().remove(s);
                 }
             }
-        }
-        if (player.getTeam() != null) {
+            if (player.getPosition() != null) {
+                    positionComboBox.getItems().add(player.getPosition());
+            }
             fantasyTeamComboBox.setValue(player.getTeam());
             positionComboBox.setValue(player.getPosition());
             contractComboBox.setValue(player.getContract());

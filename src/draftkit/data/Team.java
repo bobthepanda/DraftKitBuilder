@@ -17,7 +17,8 @@ public abstract class Team {
     private String owner;
     private int cash;
     private int playersNeeded;
-    private double points;
+    private int points;
+    private int cashPP;
 
     /**
      * @return the name
@@ -45,6 +46,7 @@ public abstract class Team {
      */
     public void setCash(int cash) {
         this.cash = cash;
+        setCashPP();
     }
 
     /**
@@ -62,19 +64,20 @@ public abstract class Team {
      */
     public void setPlayersNeeded(int playersNeeded) {
         this.playersNeeded = playersNeeded;
+        setCashPP();
     }
 
     /**
      * @return the points
      */
-    public double getPoints() {
+    public int getPoints() {
         return points;
     }
 
     /**
      * @param points the points to set
      */
-    public void setPoints(double points) {
+    public void setPoints(int points) {
         this.points = points;
     }
 
@@ -99,4 +102,24 @@ public abstract class Team {
     public abstract ObservableList<Player> getTaxi();
     public abstract void setTaxi(ObservableList<Player> players);
     public abstract boolean isPositionFull(String s);
+    public abstract boolean isTeamFull();
+
+    /**
+     * @return the cashPP
+     */
+    public int getCashPP() {
+        return cashPP;
+    }
+
+    /**
+     * @param cashPP the cashPP to set
+     */
+    public void setCashPP() {
+        try {
+            cashPP = cash / playersNeeded;
+        }
+        catch (Exception e) {
+            cashPP = -1;
+        }
+    }
 }
