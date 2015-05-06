@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -89,6 +90,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     String JSON_TEAMS_OF = "of";
 
     String JSON_PLAYERS = "Players";
+    String JSON_INDEX = "Index";
     String JSON_POSITION = "Position";
     String JSON_POSITIONS = "Positions";
     String JSON_R_W = "R_W";
@@ -101,6 +103,8 @@ public class JsonDraftFileManager implements DraftFileManager {
     String JSON_EXT = ".json";
     String SLASH = "/";
     int i = 0;
+    
+    String JSON_PICKS = "Draft Picks";
 
     /**
      * This method saves all the data associated with a draft to a JSON file.
@@ -131,6 +135,8 @@ public class JsonDraftFileManager implements DraftFileManager {
 
         // THE SCHEDULE ITEMS ARRAY
         JsonArray teamsJsonArray = makeTeamsJsonArray(draftToSave.getTeams());
+        
+        JsonArray draftPickJsonArray = makePlayersJsonArray(draftToSave.getDraftPicks());
 
         // NOW BUILD THE COURSE USING EVERYTHING WE'VE ALREADY MADE
         JsonObject draftJsonObject = Json.createObjectBuilder()
@@ -138,6 +144,7 @@ public class JsonDraftFileManager implements DraftFileManager {
                 .add(JSON_PITCHERS, pitchersJsonArray)
                 .add(JSON_PLAYERS, playersJsonArray)
                 .add(JSON_TEAMS, teamsJsonArray)
+                .add(JSON_PICKS, draftPickJsonArray)
                 .build();
 
         // AND SAVE EVERYTHING AT ONCE
@@ -162,6 +169,7 @@ public class JsonDraftFileManager implements DraftFileManager {
         draftToLoad.setPitchers(loadPitchers(json));
         draftToLoad.setHitters(loadHitters(json));
         draftToLoad.setPlayers(loadPlayers(json, JSON_PLAYERS));
+        draftToLoad.setDraftPicks(loadPlayers(json, JSON_PICKS));
     }
 
     /**
@@ -259,6 +267,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     private JsonObject makePitcherJsonObject(Pitcher p) {
         try {
             JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, p.getProTeam())
+                    .add(JSON_PICKS, p.getIndex() + "")
                     .add(JSON_POSITION, p.getPosition())
                     .add(JSON_FANTASY_TEAM, p.getTeam())
                     .add(JSON_FIRST_NAME, p.getFirstName())
@@ -279,6 +288,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             return jso;
         } catch (NullPointerException e) {
             JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, p.getProTeam())
+                    .add(JSON_PICKS, p.getIndex() + "")
                     .add(JSON_FIRST_NAME, p.getFirstName())
                     .add(JSON_LAST_NAME, p.getLastName())
                     .add(JSON_PITCHERS_IP, p.getIp() + "")
@@ -300,6 +310,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     private JsonObject makeHitterJsonObject(Hitter h) {
         try {
             JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, h.getProTeam())
+                    .add(JSON_PICKS, h.getIndex() + "")
                     .add(JSON_POSITION, h.getPosition())
                     .add(JSON_FANTASY_TEAM, h.getTeam())
                     .add(JSON_FIRST_NAME, h.getFirstName() + "")
@@ -320,6 +331,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             return jso;
         } catch (NullPointerException e) {
             JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, h.getProTeam())
+                    .add(JSON_PICKS, h.getIndex() + "")
                     .add(JSON_FIRST_NAME, h.getFirstName())
                     .add(JSON_LAST_NAME, h.getLastName())
                     .add(JSON_HITTERS_QP, h.getPositions_String())
@@ -429,6 +441,7 @@ public class JsonDraftFileManager implements DraftFileManager {
             JsonObject jso = jsonPlayersArray.getJsonObject(i);
             try {
                 Hitter h = new Hitter();
+                h.setIndex(Integer.parseInt(jso.getString(JSON_PICKS)));
                 h.setProTeam(jso.getString(JSON_TEAM));
                 try {
                     h.setTeam(jso.getString(JSON_FANTASY_TEAM));
@@ -472,6 +485,7 @@ public class JsonDraftFileManager implements DraftFileManager {
                 players.add(h);
             } catch (Exception e) {
                 Pitcher p = new Pitcher();
+                p.setIndex(Integer.parseInt(jso.getString(JSON_PICKS)));
                 p.setProTeam(jso.getString(JSON_TEAM));
                 try {
                     p.setTeam(jso.getString(JSON_FANTASY_TEAM));
@@ -507,6 +521,7 @@ public class JsonDraftFileManager implements DraftFileManager {
         for (int i = 0; i < jsonPitchersArray.size(); i++) {
             JsonObject jso = jsonPitchersArray.getJsonObject(i);
             Pitcher p = new Pitcher();
+            p.setIndex(Integer.parseInt(jso.getString(JSON_PICKS)));
             p.setProTeam(jso.getString(JSON_TEAM));
             try {
                 p.setTeam(jso.getString(JSON_FANTASY_TEAM));
@@ -583,6 +598,7 @@ public class JsonDraftFileManager implements DraftFileManager {
         for (int i = 0; i < jsonHittersArray.size(); i++) {
             JsonObject jso = jsonHittersArray.getJsonObject(i);
             Hitter h = new Hitter();
+            h.setIndex(Integer.parseInt(jso.getString(JSON_PICKS)));
             h.setProTeam(jso.getString(JSON_TEAM));
             try {
                 h.setTeam(jso.getString(JSON_FANTASY_TEAM));

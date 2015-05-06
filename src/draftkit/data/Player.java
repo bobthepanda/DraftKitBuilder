@@ -28,6 +28,7 @@ public abstract class Player {
     private int salary;
     private String contract;
     private String oldPosition;
+    private int index;
 
     public Player() {
     }
@@ -255,9 +256,8 @@ public abstract class Player {
     /**
      * @param position the position to set
      */
-    public void setPosition(String position) {
-        this.setOldPosition(position);
-        this.position = position;
+    public void setPosition(String s) {
+        position = s;
     }
 
     /**
@@ -314,6 +314,20 @@ public abstract class Player {
      */
     public void setOldPosition(String oldPosition) {
         this.oldPosition = oldPosition;
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
     
     

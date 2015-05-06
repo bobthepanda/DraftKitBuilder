@@ -16,11 +16,13 @@ public class Draft {
     private ArrayList<Hitter> hitters;
     private ArrayList<Pitcher> pitchers;
     private ArrayList<Team> teams;
+    private ArrayList<Player> draftPicks;
 
     public Draft(ArrayList<Hitter> givenHitters, ArrayList<Pitcher> givenPitchers) {
         hitters = givenHitters;
         pitchers = givenPitchers;
         players = new ArrayList<Player>();
+        draftPicks = new ArrayList<Player>();
         for (Hitter h : hitters) {
             players.add(h);
         }
@@ -499,5 +501,19 @@ public class Draft {
         for (int i = 0; i < tempTeams.size(); i++) {
             tempTeams.get(i).setPoints(tempTeams.get(i).getPoints() + tempTeams.size() - i);
         }
+    }
+
+    /**
+     * @return the draftPicks
+     */
+    public ArrayList<Player> getDraftPicks() {
+        return draftPicks;
+    }
+
+    /**
+     * @param draftPicks the draftPicks to set
+     */
+    public void setDraftPicks(ArrayList<Player> draftPicks) {
+        this.draftPicks = draftPicks;
     }
 }

@@ -214,7 +214,16 @@ public class GUI implements DraftDataView {
     Label lineupLabel;
     VBox taxiBox;
     Label taxiLabel;
-    
+
+    //SUMMARY SCREEN CONTROLS
+    TableView<Player> summaryTable;
+    TableColumn summaryPickNum;
+    TableColumn summaryFirstName;
+    TableColumn summaryLastName;
+    TableColumn summaryTeam;
+    TableColumn summaryContract;
+    TableColumn summarySalary;
+
     //STANDINGS SCREEN CONTROLS
     TableView<Team> fantasyTeamTable;
     TableColumn teamName;
@@ -283,12 +292,13 @@ public class GUI implements DraftDataView {
     static final String COL_ERA = "ERA";
     static final String COL_WHIP = "WHIP";
     static final String COL_CONTRACT = "Contract";
-    static final String COL_SALARY = "Salary";
+    static final String COL_SALARY = "Salary ($)";
     static final String COL_TEAM_NAME = "Team Name";
     static final String COL_PLAYERS_NEEDED = "Players Needed";
     static final String COL_CASH_LEFT = "$ Left";
     static final String COL_CASH_PP = "$ PP";
     static final String COL_TOTAL_PTS = "Total Points";
+    static final String COL_PICK_NUM = "Pick #";
 
     // HERE ARE OUR DIALOGS
     MessageDialog messageDialog;
@@ -820,7 +830,7 @@ public class GUI implements DraftDataView {
         standingsScreen.setMaxHeight(Double.MAX_VALUE);
         standingsScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(standingsScreen, DraftKit_PropertyType.FANTASY_STANDINGS_LABEL, CLASS_HEADING_LABEL);
-        
+
         fantasyTeamTable = new TableView<Team>();
         fantasyTeamTable.setMaxHeight(Double.MAX_VALUE);
         teamName = new TableColumn(COL_TEAM_NAME);
@@ -853,7 +863,7 @@ public class GUI implements DraftDataView {
         teamWHIP.setCellValueFactory(new PropertyValueFactory<Double, Double>("whip"));
         teamTotalPts = new TableColumn(COL_TOTAL_PTS);
         teamTotalPts.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("points"));
-        
+
         fantasyTeamTable.getColumns().addAll(teamName, playersNeeded, cashLeft, cashPP, teamR, teamHR, teamRBI, teamSB, teamBA, teamW, teamSV, teamK, teamERA, teamWHIP, teamTotalPts);
         fantasyTeamTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
         standingsScreen.getChildren().add(fantasyTeamTable);
@@ -865,6 +875,24 @@ public class GUI implements DraftDataView {
         summaryScreen.setMaxHeight(Double.MAX_VALUE);
         summaryScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
+
+        summaryTable = new TableView<Player>();
+        summaryPickNum = new TableColumn(COL_PICK_NUM);
+        summaryPickNum.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("index"));
+        summaryFirstName = new TableColumn(COL_FIRST);
+        summaryFirstName.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
+        summaryLastName = new TableColumn(COL_LAST);
+        summaryLastName.setCellValueFactory(new PropertyValueFactory<String, String>("lastName"));
+        summaryTeam = new TableColumn(COL_TEAM_NAME);
+        summaryTeam.setCellValueFactory(new PropertyValueFactory<String, String>("team"));
+        summaryContract = new TableColumn(COL_CONTRACT);
+        summaryContract.setCellValueFactory(new PropertyValueFactory<String, String>("contract"));
+        summarySalary = new TableColumn(COL_SALARY);
+        summarySalary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
+
+        summaryTable.getColumns().addAll(summaryPickNum, summaryFirstName, summaryLastName, summaryTeam, summaryContract, summarySalary);
+        summaryTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getDraftPicks()));
+        summaryScreen.getChildren().add(summaryTable);
     }
 
     // CREATE MLB SCREEN
@@ -1247,9 +1275,15 @@ public class GUI implements DraftDataView {
     }
 
     public void sortLineupTable() {
+        if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
         lineupTable.getSortOrder().add(lineup_position);
         lineup_position.setSortType(SortType.ASCENDING);
         lineup_position.setSortable(true);
         lineup_position.setSortable(false);
+        }
+    }
+    
+    public void setDraftPickTable() {
+        summaryTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getDraftPicks()));
     }
 }
