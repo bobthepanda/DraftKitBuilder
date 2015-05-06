@@ -74,24 +74,34 @@ public class Pitcher extends Player {
     public void setSb_era() {
         if (ip != 0) {
             try {
-                super.setSb_era(Double.parseDouble(new DecimalFormat("#.##").format(er * 9.00 / ip)));
+                super.setSb_era(er * 9.00 / ip);
             } catch (Exception e) {
                 super.setSb_era(0);
             }
         } else {
             super.setSb_era(0);
         }
+        setSb_era_String();
+    }
+    
+    public void setSb_era_String() {
+        super.setSb_era_String(String.format("%.2f", getSb_era()));
     }
 
     public void setBa_whip() {
         if (ip != 0) {
             try {
-                super.setBa_whip(Double.parseDouble(new DecimalFormat("#.##").format((w + h) / ip)));
+                super.setBa_whip((w + h) / ip);
             } catch (Exception e) {
                 super.setSb_era(0);
             }
         } else {
             super.setSb_era(0);
         }
+        setBa_whip_String();
+    }
+    
+    public void setBa_whip_String() {
+        super.setBa_whip_String(String.format("%.2f", getBa_whip()));
     }
 }

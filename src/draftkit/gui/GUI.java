@@ -596,9 +596,9 @@ public class GUI implements DraftDataView {
         lineup_rbi_k = new TableColumn(COL_RBI_K);
         lineup_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
         lineup_sb_era = new TableColumn(COL_SB_ERA);
-        lineup_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
+        lineup_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era_String"));
         lineup_ba_whip = new TableColumn(COL_BA_WHIP);
-        lineup_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
+        lineup_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip_String"));
         lineup_est_value = new TableColumn(COL_VALUE);
         lineup_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
         lineup_contract = new TableColumn(COL_CONTRACT);
@@ -649,9 +649,9 @@ public class GUI implements DraftDataView {
         taxi_rbi_k = new TableColumn(COL_RBI_K);
         taxi_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
         taxi_sb_era = new TableColumn(COL_SB_ERA);
-        taxi_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
+        taxi_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era_String"));
         taxi_ba_whip = new TableColumn(COL_BA_WHIP);
-        taxi_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
+        taxi_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip_String"));
         taxi_est_value = new TableColumn(COL_VALUE);
         taxi_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
         taxi_contract = new TableColumn(COL_CONTRACT);
@@ -744,9 +744,9 @@ public class GUI implements DraftDataView {
         player_rbi_k = new TableColumn(COL_RBI_K);
         player_rbi_k.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("rbi_k"));
         player_sb_era = new TableColumn(COL_SB_ERA);
-        player_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era"));
+        player_sb_era.setCellValueFactory(new PropertyValueFactory<Double, String>("sb_era_String"));
         player_ba_whip = new TableColumn(COL_BA_WHIP);
-        player_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip"));
+        player_ba_whip.setCellValueFactory(new PropertyValueFactory<Double, String>("ba_whip_String"));
         player_est_value = new TableColumn(COL_VALUE);
         player_est_value.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("estimatedValue"));
         player_notes = new TableColumn(COL_NOTES);

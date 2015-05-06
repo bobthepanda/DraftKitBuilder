@@ -41,15 +41,29 @@ public class Hitter extends Player {
         this.h = h;
     }
 
+    public void setSb_era(double d) {
+        super.setSb_era(d);
+        setSb_era_String();
+    }
+    
+    public void setSb_era_String() {
+        super.setSb_era_String((int)super.getSb_era() + "");
+    }
+    
     public void setBa_whip() {
         if (ab != 0) {
             try {
-                super.setBa_whip(Double.parseDouble(new DecimalFormat("#.###").format((h * 1.000) / ab)));
+                super.setBa_whip((h * 1.000) / ab);
             } catch (Exception e) {
                 super.setBa_whip(0);
             }
         } else {
             super.setBa_whip(0);
         }
+        setBa_whip_String();
+    }
+    
+    public void setBa_whip_String() {
+        super.setBa_whip_String(String.format("%.3f", getBa_whip()));
     }
 }

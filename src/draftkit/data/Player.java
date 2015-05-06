@@ -22,6 +22,8 @@ public abstract class Player {
     private int rbi_k;
     private double sb_era;
     private double ba_whip;
+    private String sb_era_String;
+    private String ba_whip_String;
     private int rank;
     private int estimatedValue;
     private String notes;
@@ -328,6 +330,34 @@ public abstract class Player {
      */
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * @return the sb_era_String
+     */
+    public String getSb_era_String() {
+        return sb_era_String;
+    }
+
+    /**
+     * @param sb_era_String the sb_era_String to set
+     */
+    public void setSb_era_String(String sb_era_String) {
+        this.sb_era_String = sb_era_String;
+    }
+
+    /**
+     * @return the ba_whip_String
+     */
+    public String getBa_whip_String() {
+        return ba_whip_String;
+    }
+
+    /**
+     * @param ba_whip_String the ba_whip_String to set
+     */
+    public void setBa_whip_String(String ba_whip_String) {
+        this.ba_whip_String = ba_whip_String;
     }
     
     
