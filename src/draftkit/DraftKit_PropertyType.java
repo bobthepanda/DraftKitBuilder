@@ -24,6 +24,8 @@ public enum DraftKit_PropertyType {
         ADD_ICON,
         MINUS_ICON,
         EDIT_ICON,
+        START_ICON,
+        PAUSE_ICON,
         
         // APPLICATION TOOLTIPS FOR BUTTONS
         NEW_DRAFT_TOOLTIP,
@@ -38,6 +40,9 @@ public enum DraftKit_PropertyType {
         ADD_TEAM_TOOLTIP,
         REMOVE_TEAM_TOOLTIP,
         EDIT_TEAM_TOOLTIP,
+        AUTO_ADD_TOOLTIP,
+        START_TOOLTIP,
+        PAUSE_TOOLTIP,
         
         //FOR SCREEN SWITCH TOOLBAR
         TEAMS_ICON,

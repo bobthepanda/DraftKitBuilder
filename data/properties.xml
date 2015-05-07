@@ -26,6 +26,8 @@
         <property name="SUMMARY_ICON"       value="kiosk.png"></property>
         <property name="MLB_ICON"           value="baseball.png"></property>
         <property name="EDIT_ICON"          value="pencil.png"></property>
+        <property name="START_ICON"         value="start.png"></property>
+        <property name="PAUSE_ICON"         value="pause.png"></property>
         
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="NEW_DRAFT_TOOLTIP"          value="Create a New Draft"></property>
@@ -45,6 +47,9 @@
         <property name="STANDINGS_TOOLTIP"          value="Fantasy Standings"></property>
         <property name="SUMMARY_TOOLTIP"            value="Draft Summary"></property>
         <property name="MLB_TOOLTIP"                value="MLB Teams"></property>
+        <property name="AUTO_ADD_TOOLTIP"           value="Automatically Add Player"></property>
+        <property name="START_TOOLTIP"              value="Start Automated Draft"></property>
+        <property name="PAUSE_TOOLTIP"           value="Pause Automated Draft"></property>
         
         <!-- GUI LABELS -->
         <property name="FANTASY_TEAMS_LABEL"            value="Fantasy Teams"></property>

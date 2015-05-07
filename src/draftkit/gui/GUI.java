@@ -1,15 +1,11 @@
 package draftkit.gui;
 
-import com.sun.javafx.scene.control.Logging;
 import static draftkit.DraftKit_StartupConstants.*;
 import draftkit.DraftKit_PropertyType;
-//import draftkit.controller.DraftEditController;
+import draftkit.controller.DraftController;
 import draftkit.data.DraftDataManager;
 import draftkit.data.DraftDataView;
 import draftkit.controller.FileController;
-/*
- import draftkit.controller.TeamEditController;
- */
 import draftkit.controller.PlayerController;
 import draftkit.controller.TeamController;
 import draftkit.data.Player;
@@ -17,11 +13,9 @@ import draftkit.data.Draft;
 import draftkit.data.PositionComparator;
 import draftkit.data.Team;
 import draftkit.file.DraftFileManager;
-//import draftkit.file.DraftSiteExporter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -53,7 +47,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import properties_manager.PropertiesManager;
 
 /**
@@ -91,6 +84,7 @@ public class GUI implements DraftDataView {
     FileController fileController;
     PlayerController playerController;
     TeamController teamController;
+    DraftController draftController;
 
     // THIS IS THE APPLICATION WINDOW
     Stage primaryStage;
@@ -216,6 +210,10 @@ public class GUI implements DraftDataView {
     Label taxiLabel;
 
     //SUMMARY SCREEN CONTROLS
+    HBox summaryButtonBox;
+    Button summaryAddButton;
+    Button summaryStartButton;
+    Button summaryPauseButton;
     TableView<Player> summaryTable;
     TableColumn summaryPickNum;
     TableColumn summaryFirstName;
@@ -875,6 +873,12 @@ public class GUI implements DraftDataView {
         summaryScreen.setMaxHeight(Double.MAX_VALUE);
         summaryScreen.getStyleClass().add(CLASS_REGULAR_PANE);
         initChildLabel(summaryScreen, DraftKit_PropertyType.DRAFT_SUMMARY_LABEL, CLASS_HEADING_LABEL);
+        
+        summaryButtonBox = new HBox();
+        summaryAddButton = initChildButton(summaryButtonBox, DraftKit_PropertyType.ADD_ICON, DraftKit_PropertyType.AUTO_ADD_TOOLTIP, false);
+        summaryStartButton = initChildButton(summaryButtonBox, DraftKit_PropertyType.START_ICON, DraftKit_PropertyType.START_TOOLTIP, false);
+        summaryPauseButton = initChildButton(summaryButtonBox, DraftKit_PropertyType.PAUSE_ICON, DraftKit_PropertyType.PAUSE_TOOLTIP, false);
+        summaryScreen.getChildren().add(summaryButtonBox);
 
         summaryTable = new TableView<Player>();
         summaryPickNum = new TableColumn(COL_PICK_NUM);
@@ -1018,6 +1022,7 @@ public class GUI implements DraftDataView {
         );
         playerController = new PlayerController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
         teamController = new TeamController(primaryStage, dataManager.getDraft(), messageDialog, yesNoCancelDialog);
+        draftController = new DraftController();
 
         // FILE SAVING BUTTONS
         newDraftButton.setOnAction(e -> {
