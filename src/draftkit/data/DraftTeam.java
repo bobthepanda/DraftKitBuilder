@@ -23,6 +23,9 @@ public class DraftTeam extends Team {
     private int sv;
     private double era;
     private double whip;
+    private String baString;
+    private String eraString;
+    private String whipString;
     private int c;
     private int ci;
     private int oneB;
@@ -38,7 +41,7 @@ public class DraftTeam extends Team {
 
     public DraftTeam() {
         setCash(260);
-        setPlayersNeeded(31);
+        setPlayersNeeded(23);
         taxi = FXCollections.observableArrayList(new ArrayList<Player>());
         lineup = FXCollections.observableArrayList(new ArrayList<Player>());
         c = 2;
@@ -456,6 +459,7 @@ public class DraftTeam extends Team {
      */
     public void setBa(double ba) {
         this.ba = ba;
+        setBaString();
     }
 
     /**
@@ -484,6 +488,7 @@ public class DraftTeam extends Team {
      */
     public void setEra(double era) {
         this.era = era;
+        setEraString();
     }
 
     /**
@@ -491,6 +496,7 @@ public class DraftTeam extends Team {
      */
     public void setWhip(double whip) {
         this.whip = whip;
+        setWhipString();
     }
 
     /**
@@ -643,5 +649,47 @@ public class DraftTeam extends Team {
      */
     public void setP(int p) {
         this.p = p;
+    }
+
+    /**
+     * @return the baString
+     */
+    public String getBaString() {
+        return baString;
+    }
+
+    /**
+     * @param baString the baString to set
+     */
+    public void setBaString() {
+        baString = String.format("%.2f", ba);
+    }
+
+    /**
+     * @return the eraString
+     */
+    public String getEraString() {
+        return eraString;
+    }
+
+    /**
+     * @param eraString the eraString to set
+     */
+    public void setEraString() {
+        eraString = String.format("%.2f", era);
+    }
+
+    /**
+     * @return the whipString
+     */
+    public String getWhipString() {
+        return whipString;
+    }
+
+    /**
+     * @param whipString the whipString to set
+     */
+    public void setWhipString() {
+        whipString = String.format("%.2f", whip);
     }
 }

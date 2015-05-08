@@ -454,7 +454,7 @@ public class GUI implements DraftDataView {
 
         updateTeamComboBox();
         if (playerTable.getItems() != null) {
-            playerTable.setItems(FXCollections.observableArrayList(draftToReload.getPlayers()));
+            updatePlayerTable();
         }
         if (lineupTable.getItems() != null) {
             lineupTable.setItems(null);
@@ -464,6 +464,12 @@ public class GUI implements DraftDataView {
         }
         if (proTeamTable.getItems() != null) {
             proTeamTable.setItems(null);
+        }
+        if (summaryTable.getItems() != null) {
+            setDraftPickTable();
+        }
+        if (fantasyTeamTable.getItems() != null) {
+            fantasyTeamTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
         }
         setSaveName(s);
     }
@@ -847,7 +853,7 @@ public class GUI implements DraftDataView {
         teamSB = new TableColumn(COL_SB);
         teamSB.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("sb"));
         teamBA = new TableColumn(COL_BA);
-        teamBA.setCellValueFactory(new PropertyValueFactory<Double, Double>("ba"));
+        teamBA.setCellValueFactory(new PropertyValueFactory<String, String>("baString"));
         teamW = new TableColumn(COL_W);
         teamW.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("w"));
         teamSV = new TableColumn(COL_SV);
@@ -855,9 +861,9 @@ public class GUI implements DraftDataView {
         teamK = new TableColumn(COL_K);
         teamK.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("k"));
         teamERA = new TableColumn(COL_ERA);
-        teamERA.setCellValueFactory(new PropertyValueFactory<Double, Double>("era"));
+        teamERA.setCellValueFactory(new PropertyValueFactory<String, String>("eraString"));
         teamWHIP = new TableColumn(COL_WHIP);
-        teamWHIP.setCellValueFactory(new PropertyValueFactory<Double, Double>("whip"));
+        teamWHIP.setCellValueFactory(new PropertyValueFactory<String, String>("whipString"));
         teamTotalPts = new TableColumn(COL_TOTAL_PTS);
         teamTotalPts.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("points"));
 
@@ -1051,6 +1057,7 @@ public class GUI implements DraftDataView {
             workspacePane.setCenter(teamScreen);
             if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
                 lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
+                sortLineupTable();
             }
         });
         playersButton.setOnAction(e -> {
@@ -1111,6 +1118,7 @@ public class GUI implements DraftDataView {
         teamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
                 lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
+                sortLineupTable();
                 taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
             }
         });
