@@ -103,6 +103,7 @@ public abstract class Team {
     public abstract void setTaxi(ObservableList<Player> players);
     public abstract boolean isPositionFull(String s);
     public abstract boolean isTeamFull();
+    public abstract boolean isTaxiFull();
 
     /**
      * @return the cashPP

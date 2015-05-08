@@ -259,7 +259,12 @@ public class Draft {
                 hittersNeeded += t.getHittersNeeded();
             }
 
-            int medianSalary = getCashLeft() / (2 * hittersNeeded);
+            int medianSalary;
+            try {
+                medianSalary = getCashLeft() / (2 * hittersNeeded);
+            } catch (Exception e) {
+                medianSalary = 0;
+            }
             for (Hitter h : tempHitters) {
                 h.setEstimatedValue(medianSalary * hittersNeeded * 2 / h.getRank());
             }
@@ -343,7 +348,12 @@ public class Draft {
                 pitchersNeeded += t.getPitchersNeeded();
             }
 
-            int medianSalary = getCashLeft() / (2 * pitchersNeeded);
+            int medianSalary = 0;
+            try {
+                medianSalary = getCashLeft() / (2 * pitchersNeeded);
+            } catch (Exception e) {
+                medianSalary = 0;
+            }
             for (Pitcher h : tempPitchers) {
                 h.setEstimatedValue(medianSalary * pitchersNeeded * 2 / h.getRank());
             }
@@ -515,5 +525,14 @@ public class Draft {
      */
     public void setDraftPicks(ArrayList<Player> draftPicks) {
         this.draftPicks = draftPicks;
+    }
+
+    public boolean isTeamsFull() {
+        for (Team t : teams) {
+            if (!t.isTeamFull() || !t.isTaxiFull()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

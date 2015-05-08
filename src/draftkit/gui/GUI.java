@@ -578,7 +578,6 @@ public class GUI implements DraftDataView {
         lineup_position = new TableColumn(COL_POSITION);
         lineup_position.setCellValueFactory(new PropertyValueFactory<String, String>("position"));
         lineup_position.setComparator(new PositionComparator());
-        sortLineupTable();
         lineup_first = new TableColumn(COL_FIRST);
         lineup_first.setCellValueFactory(new PropertyValueFactory<String, String>("firstName"));
         lineup_last = new TableColumn(COL_LAST);
@@ -1002,7 +1001,7 @@ public class GUI implements DraftDataView {
         primaryStage.show();
     }
 
-    private void updatePlayerTable() {
+    public void updatePlayerTable() {
         String selected = ((RadioButton) select.getSelectedToggle()).getText();
         if (selected.equals(RADIO_ALL)) {
             playerTable = setPlayerTable(dataManager.getDraft().getPlayers());
@@ -1208,7 +1207,18 @@ public class GUI implements DraftDataView {
                     }
                 }
         );
+        
+        summaryAddButton.setOnAction(e -> {
+            draftController.handleAutoAddRequest(this);
+        });
 
+        summaryStartButton.setOnAction(e -> {
+            draftController.handleStartRequest(this);
+        });
+        
+        summaryPauseButton.setOnAction(e -> {
+            draftController.handlePauseRequest(this);
+        });
         // THEN THE DRAFT EDITING CONTROLS
         // TEXT FIELDS HAVE A DIFFERENT WAY OF LISTENING FOR TEXT CHANGES
         // AND NOW THE LECTURE ADDING AND EDITING CONTROLS

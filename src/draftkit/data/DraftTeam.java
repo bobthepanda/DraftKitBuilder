@@ -180,7 +180,7 @@ public class DraftTeam extends Team {
         return pitchers == 0;
     }
 
-    private boolean isTaxiFull() {
+    public boolean isTaxiFull() {
         return getTaxi().size() >= 8;
     }
 
