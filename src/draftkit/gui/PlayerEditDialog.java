@@ -239,9 +239,15 @@ public class PlayerEditDialog extends Stage {
                     if (player.getTeam() == null) {
                         player.setSalary(0);
                         salaryTextField.setText(null);
-                    } else {
+                    } else if (newValue != null) {
                         try {
-                            player.setSalary(Integer.parseInt(newValue.toString()));
+                            if (draft.getTeam(player.getTeam()).getCash() - Integer.parseInt(newValue.toString()) < 0) {
+                                messageDialog.show(props.getProperty(DraftKit_PropertyType.NO_CASH_MESSAGE));
+                                player.setSalary(0);
+                                salaryTextField.setText(null);
+                            } else {
+                                player.setSalary(Integer.parseInt(newValue.toString()));
+                            }
                         } catch (Exception e) {
                             messageDialog.show(props.getProperty(DraftKit_PropertyType.ILLEGAL_SALARY_MESSAGE));
                             player.setSalary(0);

@@ -85,5 +85,6 @@ public enum DraftKit_PropertyType {
         ILLEGAL_SALARY_MESSAGE,
         INSUFFICIENT_INFO_MESSAGE,
         ILLEGAL_NAME_MESSAGE,
-        NO_SAVE_NAME_MESSAGE
+        NO_SAVE_NAME_MESSAGE,
+        NO_CASH_MESSAGE
 }
