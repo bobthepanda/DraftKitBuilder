@@ -64,6 +64,6 @@ public class Hitter extends Player {
     }
     
     public void setBa_whip_String() {
-        super.setBa_whip_String(String.format("%.3f", getBa_whip()));
+        super.setBa_whip_String(String.format("%.3f", getBa_whip()).substring(1));
     }
 }

@@ -97,13 +97,14 @@ public abstract class Team {
     
     public abstract boolean addPlayer(Player p);
     public abstract void removePlayer(Player p);
-    public abstract ObservableList<Player> getPlayers();
-    public abstract void setPlayers(ObservableList<Player> players);
+    public abstract ObservableList<Player> getLineup();
+    public abstract void setLineup(ObservableList<Player> players);
     public abstract ObservableList<Player> getTaxi();
     public abstract void setTaxi(ObservableList<Player> players);
     public abstract boolean isPositionFull(String s);
-    public abstract boolean isTeamFull();
+    public abstract boolean isLineupFull();
     public abstract boolean isTaxiFull();
+    public abstract boolean isTeamFull();
 
     /**
      * @return the cashPP

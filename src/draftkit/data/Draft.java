@@ -42,7 +42,7 @@ public class Draft {
     /**
      * @param players the players to set
      */
-    public void setPlayers(ArrayList<Player> players) {
+    public void setLineup(ArrayList<Player> players) {
         this.players = players;
     }
 
@@ -372,7 +372,7 @@ public class Draft {
             }
         }
         for (Team t : teams) {
-            for (Player p : t.getPlayers()) {
+            for (Player p : t.getLineup()) {
                 if (p.getProTeam().equals(s)) {
                     proTeam.add(p);
                 }
@@ -526,10 +526,19 @@ public class Draft {
     public void setDraftPicks(ArrayList<Player> draftPicks) {
         this.draftPicks = draftPicks;
     }
+    
+    public boolean isLineupsFull() {
+        for (Team t : teams) {
+            if (!t.isLineupFull()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public boolean isTeamsFull() {
         for (Team t : teams) {
-            if (!t.isTeamFull() || !t.isTaxiFull()) {
+            if (!t.isTeamFull()) {
                 return false;
             }
         }

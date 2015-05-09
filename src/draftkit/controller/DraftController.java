@@ -29,7 +29,7 @@ public class DraftController {
             // GO THROUGH CURRENTLY NON-FULL TEAMS
             for (int i = 0; i < draft.getTeams().size() && !added; i++) {
                 Team t = draft.getTeams().get(i);
-                if (!t.isTeamFull()) {
+                if (!t.isLineupFull()) {
                     for (int j = 0; j < draft.getPlayers().size() && !added; j++) {
                         // FIND AVAILABLE PLAYERS
                         Player p = draft.getPlayers().get(j);
@@ -55,7 +55,7 @@ public class DraftController {
             for (int i = 0; i < draft.getTeams().size() && !added; i++) {
                 Team t = draft.getTeams().get(i);
                 if (!t.isTaxiFull()) {
-                    if (!t.getPlayers().isEmpty()) {
+                    if (!t.getLineup().isEmpty()) {
                         Player p = draft.getPlayers().get(0);
                         p.setTeam(t.getName());
                         p.setIndex(draft.getDraftPicks().size() + 1);
@@ -70,8 +70,8 @@ public class DraftController {
             }
         }
         if (added) {
-            gui.setDraftPickTable();
-            gui.sortLineupTable();
+            gui.updateSummaryTable();
+            gui.updateLineupTable();
             gui.updatePlayerTable();
         }
     }

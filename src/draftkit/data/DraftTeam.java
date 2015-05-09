@@ -410,22 +410,6 @@ public class DraftTeam extends Team {
         }
     }
 
-    public ObservableList<Player> getPlayers() {
-        return getLineup();
-    }
-
-    public void setPlayers(ObservableList<Player> lineup) {
-        setLineup(lineup);
-        for (Player p: lineup) {
-            if (p instanceof Hitter) {
-                hitters--;
-            }
-            else {
-                pitchers--;
-            }
-        }
-    }
-
     /**
      * @param r the r to set
      */
@@ -633,8 +617,12 @@ public class DraftTeam extends Team {
         return pitchers;
     }
     
-    public boolean isTeamFull() {
+    public boolean isLineupFull() {
         return isHittersFull() && isPitchersFull();
+    }
+    
+    public boolean isTeamFull() {
+        return isLineupFull() && isTaxiFull();
     }
 
     /**
@@ -662,7 +650,7 @@ public class DraftTeam extends Team {
      * @param baString the baString to set
      */
     public void setBaString() {
-        baString = String.format("%.2f", ba);
+        baString = String.format("%.3f", ba).substring(1);
     }
 
     /**

@@ -56,6 +56,7 @@ public class PlayerController {
         DraftDataManager cdm = gui.getDataManager();
         Draft draft = cdm.getDraft();
         String s = playerToEdit.getTeam();
+        String oldContract = playerToEdit.getContract();
         playerToEdit.setOldPosition(playerToEdit.getPosition());
         ped.showEditPlayerDialog(playerToEdit);
 
@@ -69,12 +70,10 @@ public class PlayerController {
             } else if (s == null) {
                 draft.removePlayer(playerToEdit);
                 draft.getTeam(playerToEdit.getTeam()).addPlayer(playerToEdit);
-                if (playerToEdit.getContract().equals("S2") || playerToEdit.getContract().equals("X")) {
+                if (playerToEdit.getContract().equals("S2") || (playerToEdit.getContract().equals("X") && draft.getTeam(playerToEdit.getTeam()).getTaxi().contains(playerToEdit))) {
                     draft.getDraftPicks().add(playerToEdit);
                     playerToEdit.setIndex(draft.getDraftPicks().size());
-                    gui.setDraftPickTable();
                 }
-                gui.sortLineupTable();
                 draft.setTeamPoints();
             } else if (playerToEdit.getTeam() == null) {
                 draft.getTeam(s).removePlayer(playerToEdit);
@@ -83,32 +82,44 @@ public class PlayerController {
                     for (int i = 0; i < draft.getDraftPicks().size(); i++) {
                         draft.getDraftPicks().get(i).setIndex(i + 1);
                     }
-                    gui.setDraftPickTable();
                 }
                 draft.addPlayer(playerToEdit);
-                gui.sortLineupTable();
-                draft.setTeamPoints();
             } else if (s.equals(playerToEdit.getTeam())) {
+                if (oldContract.equals("S2") &&
+                        (playerToEdit.getContract().equals("S1") ||
+                        (playerToEdit.getContract().equals("X") && draft.getTeam(playerToEdit.getTeam()).getLineup().contains(playerToEdit)))) {
+                    draft.getDraftPicks().remove(playerToEdit);
+                    for (int i = 0; i < draft.getDraftPicks().size(); i++) {
+                        draft.getDraftPicks().get(i).setIndex(i + 1);
+                    }
+                }
+                else if (!oldContract.equals("S2") && playerToEdit.getContract().equals("S2")) {
+                    playerToEdit.setIndex(draft.getDraftPicks().size() + 1);
+                    draft.getDraftPicks().add(playerToEdit);
+                }
             } else {
                 draft.getTeam(s).removePlayer(playerToEdit);
                 draft.getTeam(playerToEdit.getTeam()).addPlayer(playerToEdit);
-                gui.sortLineupTable();
-                draft.setTeamPoints();
+                if (oldContract.equals("S2") &&
+                        (playerToEdit.getContract().equals("S1") ||
+                        (playerToEdit.getContract().equals("X") && draft.getTeam(playerToEdit.getTeam()).getLineup().contains(playerToEdit)))) {
+                    draft.getDraftPicks().remove(playerToEdit);
+                    for (int i = 0; i < draft.getDraftPicks().size(); i++) {
+                        draft.getDraftPicks().get(i).setIndex(i + 1);
+                    }
+                }
+                else if (!oldContract.equals("S2") && playerToEdit.getContract().equals("S2")) {
+                    draft.getDraftPicks().add(playerToEdit);
+                    playerToEdit.setIndex(draft.getDraftPicks().size());
+                }
             }
 
-            // SET VALUES FOR PLAYER
-            /*playerToEdit.setTeam(p.getTeam());
-            if (p.getTeam() != null) {
-                playerToEdit.setPosition(p.getPosition());
-                playerToEdit.setContract(p.getContract());
-                playerToEdit.setSalary(p.getSalary());
-            } else {
-                playerToEdit.setPosition(null);
-                playerToEdit.setContract(null);
-                playerToEdit.setSalary(0);
-            }*/
-
             // AND ALLOW SAVING
+            gui.updatePlayerTable();
+            gui.updateLineupTable();
+            gui.updateTaxiTable();
+            gui.updateSummaryTable();
+            draft.setTeamPoints();
             gui.getFileController().markAsEdited(gui);
         } else {
             // THE USER MUST HAVE PRESSED CANCEL, SO

@@ -12,10 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -103,7 +103,7 @@ public class JsonDraftFileManager implements DraftFileManager {
     String JSON_EXT = ".json";
     String SLASH = "/";
     int i = 0;
-    
+
     String JSON_PICKS = "Draft Picks";
 
     /**
@@ -135,7 +135,7 @@ public class JsonDraftFileManager implements DraftFileManager {
 
         // THE SCHEDULE ITEMS ARRAY
         JsonArray teamsJsonArray = makeTeamsJsonArray(draftToSave.getTeams());
-        
+
         JsonArray draftPickJsonArray = makePlayersJsonArray(draftToSave.getDraftPicks());
 
         // NOW BUILD THE COURSE USING EVERYTHING WE'VE ALREADY MADE
@@ -144,7 +144,6 @@ public class JsonDraftFileManager implements DraftFileManager {
                 .add(JSON_PITCHERS, pitchersJsonArray)
                 .add(JSON_PLAYERS, playersJsonArray)
                 .add(JSON_TEAMS, teamsJsonArray)
-                .add(JSON_PICKS, draftPickJsonArray)
                 .build();
 
         // AND SAVE EVERYTHING AT ONCE
@@ -168,8 +167,30 @@ public class JsonDraftFileManager implements DraftFileManager {
         draftToLoad.setTeams(loadTeams(json));
         draftToLoad.setPitchers(loadPitchers(json));
         draftToLoad.setHitters(loadHitters(json));
-        draftToLoad.setPlayers(loadPlayers(json, JSON_PLAYERS));
-        draftToLoad.setDraftPicks(loadPlayers(json, JSON_PICKS));
+        draftToLoad.setLineup(loadPlayers(json, JSON_PLAYERS));
+        ObservableList<Player> draftPicks = FXCollections.observableArrayList(new ArrayList<Player>());
+        for (Team t: draftToLoad.getTeams()) {
+            for (Player p: t.getLineup()) {
+                draftPicks.add(p);
+            }
+            for (Player p: t.getTaxi()) {
+                draftPicks.add(p);
+            }
+        }
+        FXCollections.sort(draftPicks, (Player a, Player b) -> {
+                if (a.getIndex() < b.getIndex()) {
+                    return -1;
+                } else if (a.getIndex() > b.getIndex()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+        });
+        ArrayList draftPicksArrayList = new ArrayList<Player>();
+        for (int i = 0; i < draftPicks.size(); i++) {
+            draftPicksArrayList.add(draftPicks.get(i));
+        }
+        draftToLoad.setDraftPicks(draftPicksArrayList);
     }
 
     /**
@@ -286,7 +307,30 @@ public class JsonDraftFileManager implements DraftFileManager {
                     .add(JSON_SALARY, p.getSalary() + "")
                     .build();
             return jso;
-        } catch (NullPointerException e) {
+        } 
+        catch (NullPointerException e) {
+            try {
+                JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, p.getProTeam())
+                    .add(JSON_PICKS, p.getIndex() + "")
+                        .add(JSON_FANTASY_TEAM, p.getTeam())
+                    .add(JSON_FIRST_NAME, p.getFirstName())
+                    .add(JSON_LAST_NAME, p.getLastName())
+                    .add(JSON_PITCHERS_IP, p.getIp() + "")
+                    .add(JSON_PITCHERS_ER, p.getEr() + "")
+                    .add(JSON_PITCHERS_W, p.getR_w() + "")
+                    .add(JSON_PITCHERS_BB, p.getW() + "")
+                    .add(JSON_PITCHERS_SV, p.getHr_sv() + "")
+                    .add(JSON_PITCHERS_H, p.getH() + "")
+                    .add(JSON_PITCHERS_K, p.getRbi_k() + "")
+                    .add(JSON_CONTRACT, p.getContract())
+                    .add(JSON_NOTES, p.getNotes())
+                    .add(JSON_YEAR_OF_BIRTH, p.getYearOfBirth() + "")
+                    .add(JSON_NATION_OF_BIRTH, p.getNationOfBirth())
+                    .add(JSON_SALARY, p.getSalary() + "")
+                    .build();
+            return jso;
+            }
+            catch (NullPointerException f) {
             JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, p.getProTeam())
                     .add(JSON_PICKS, p.getIndex() + "")
                     .add(JSON_FIRST_NAME, p.getFirstName())
@@ -303,6 +347,7 @@ public class JsonDraftFileManager implements DraftFileManager {
                     .add(JSON_NATION_OF_BIRTH, p.getNationOfBirth())
                     .build();
             return jso;
+            }
         }
     }
 
@@ -330,22 +375,44 @@ public class JsonDraftFileManager implements DraftFileManager {
                     .build();
             return jso;
         } catch (NullPointerException e) {
-            JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, h.getProTeam())
-                    .add(JSON_PICKS, h.getIndex() + "")
-                    .add(JSON_FIRST_NAME, h.getFirstName())
-                    .add(JSON_LAST_NAME, h.getLastName())
-                    .add(JSON_HITTERS_QP, h.getPositions_String())
-                    .add(JSON_HITTERS_AB, h.getAb() + "")
-                    .add(JSON_HITTERS_R, h.getR_w() + "")
-                    .add(JSON_HITTERS_HR, h.getHr_sv() + "")
-                    .add(JSON_HITTERS_H, h.getH() + "")
-                    .add(JSON_HITTERS_RBI, h.getRbi_k() + "")
-                    .add(JSON_HITTERS_SB, h.getSb_era() + "")
-                    .add(JSON_NOTES, h.getNotes())
-                    .add(JSON_YEAR_OF_BIRTH, h.getYearOfBirth() + "")
-                    .add(JSON_NATION_OF_BIRTH, h.getNationOfBirth())
-                    .build();
-            return jso;
+            try {
+                JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, h.getProTeam())
+                        .add(JSON_PICKS, h.getIndex() + "")
+                        .add(JSON_FANTASY_TEAM, h.getTeam())
+                        .add(JSON_FIRST_NAME, h.getFirstName() + "")
+                        .add(JSON_LAST_NAME, h.getLastName() + "")
+                        .add(JSON_HITTERS_QP, h.getPositions_String())
+                        .add(JSON_HITTERS_AB, h.getAb() + "")
+                        .add(JSON_HITTERS_R, h.getR_w() + "")
+                        .add(JSON_HITTERS_HR, h.getHr_sv() + "")
+                        .add(JSON_HITTERS_H, h.getH() + "")
+                        .add(JSON_HITTERS_RBI, h.getRbi_k() + "")
+                        .add(JSON_HITTERS_SB, h.getSb_era() + "")
+                        .add(JSON_CONTRACT, h.getContract())
+                        .add(JSON_NOTES, h.getNotes())
+                        .add(JSON_YEAR_OF_BIRTH, h.getYearOfBirth() + "")
+                        .add(JSON_NATION_OF_BIRTH, h.getNationOfBirth())
+                        .add(JSON_SALARY, h.getSalary() + "")
+                        .build();
+                return jso;
+            } catch (NullPointerException f) {
+                JsonObject jso = Json.createObjectBuilder().add(JSON_TEAM, h.getProTeam())
+                        .add(JSON_PICKS, h.getIndex() + "")
+                        .add(JSON_FIRST_NAME, h.getFirstName())
+                        .add(JSON_LAST_NAME, h.getLastName())
+                        .add(JSON_HITTERS_QP, h.getPositions_String())
+                        .add(JSON_HITTERS_AB, h.getAb() + "")
+                        .add(JSON_HITTERS_R, h.getR_w() + "")
+                        .add(JSON_HITTERS_HR, h.getHr_sv() + "")
+                        .add(JSON_HITTERS_H, h.getH() + "")
+                        .add(JSON_HITTERS_RBI, h.getRbi_k() + "")
+                        .add(JSON_HITTERS_SB, h.getSb_era() + "")
+                        .add(JSON_NOTES, h.getNotes())
+                        .add(JSON_YEAR_OF_BIRTH, h.getYearOfBirth() + "")
+                        .add(JSON_NATION_OF_BIRTH, h.getNationOfBirth())
+                        .build();
+                return jso;
+            }
         }
     }
 
@@ -445,6 +512,9 @@ public class JsonDraftFileManager implements DraftFileManager {
                 h.setProTeam(jso.getString(JSON_TEAM));
                 try {
                     h.setTeam(jso.getString(JSON_FANTASY_TEAM));
+                } catch (Exception e) {
+                }
+                try {
                     h.setContract(jso.getString(JSON_CONTRACT));
                     h.setPosition(jso.getString(JSON_POSITION));
                     h.setSalary(Integer.parseInt(jso.getString(JSON_SALARY)));
@@ -489,6 +559,9 @@ public class JsonDraftFileManager implements DraftFileManager {
                 p.setProTeam(jso.getString(JSON_TEAM));
                 try {
                     p.setTeam(jso.getString(JSON_FANTASY_TEAM));
+                } catch (Exception g) {
+                }
+                try {
                     p.setContract(jso.getString(JSON_CONTRACT));
                     p.setPosition(jso.getString(JSON_POSITION));
                     p.setSalary(Integer.parseInt(jso.getString(JSON_SALARY)));
@@ -525,6 +598,9 @@ public class JsonDraftFileManager implements DraftFileManager {
             p.setProTeam(jso.getString(JSON_TEAM));
             try {
                 p.setTeam(jso.getString(JSON_FANTASY_TEAM));
+            } catch (Exception f) {
+            }
+            try {
                 p.setContract(jso.getString(JSON_CONTRACT));
                 p.setPosition(jso.getString(JSON_POSITION));
                 p.setSalary(Integer.parseInt(jso.getString(JSON_SALARY)));
@@ -602,6 +678,9 @@ public class JsonDraftFileManager implements DraftFileManager {
             h.setProTeam(jso.getString(JSON_TEAM));
             try {
                 h.setTeam(jso.getString(JSON_FANTASY_TEAM));
+            } catch (Exception f) {
+            }
+            try {
                 h.setContract(jso.getString(JSON_CONTRACT));
                 h.setPosition(jso.getString(JSON_POSITION));
                 h.setSalary(Integer.parseInt(jso.getString(JSON_SALARY)));

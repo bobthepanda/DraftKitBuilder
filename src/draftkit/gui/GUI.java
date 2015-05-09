@@ -466,7 +466,7 @@ public class GUI implements DraftDataView {
             proTeamTable.setItems(null);
         }
         if (summaryTable.getItems() != null) {
-            setDraftPickTable();
+            summaryTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getDraftPicks()));
         }
         if (fantasyTeamTable.getItems() != null) {
             fantasyTeamTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getTeams()));
@@ -900,6 +900,9 @@ public class GUI implements DraftDataView {
         summarySalary.setCellValueFactory(new PropertyValueFactory<Integer, Integer>("salary"));
 
         summaryTable.getColumns().addAll(summaryPickNum, summaryFirstName, summaryLastName, summaryTeam, summaryContract, summarySalary);
+        for (TableColumn t: summaryTable.getColumns()) {
+            t.setSortable(false);
+        }
         summaryTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getDraftPicks()));
         summaryScreen.getChildren().add(summaryTable);
     }
@@ -924,10 +927,9 @@ public class GUI implements DraftDataView {
         proTeam_QP = new TableColumn(COL_POSITIONS);
         proTeam_QP.setCellValueFactory(new PropertyValueFactory<String, String>("positions_String"));
 
-        proTeamTable.getColumns().add(proTeam_firstName);
         proTeamTable.getColumns().add(proTeam_lastName);
+        proTeamTable.getColumns().add(proTeam_firstName);
         proTeamTable.getColumns().add(proTeam_QP);
-
         MLBScreen.getChildren().add(selectTeamBox);
         MLBScreen.getChildren().add(proTeamTable);
     }
@@ -1056,8 +1058,10 @@ public class GUI implements DraftDataView {
         teamsButton.setOnAction(e -> {
             workspacePane.setCenter(teamScreen);
             if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
-                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
-                sortLineupTable();
+                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getLineup());
+                taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
+                updateLineupTable();
+                updateTaxiTable();
             }
         });
         playersButton.setOnAction(e -> {
@@ -1087,6 +1091,8 @@ public class GUI implements DraftDataView {
                 playerTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
+                updateLineupTable();
+                updateTaxiTable();
             }
         });
 
@@ -1117,17 +1123,21 @@ public class GUI implements DraftDataView {
 
         teamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
-                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getPlayers());
-                sortLineupTable();
+                lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getLineup());
                 taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
+                updateLineupTable();
+                updateTaxiTable();
             }
         });
 
         proTeamComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (proTeamComboBox.getSelectionModel().getSelectedItem() != null) {
                 proTeamTable.setItems(dataManager.getDraft().getProTeam(newValue.toString()));
-            }
-        });
+                proTeamTable.getSortOrder().add(proTeam_lastName);
+                proTeamTable.getSortOrder().add(proTeam_firstName);
+                proTeamTable.sort();
+                }
+            });
 
         lineupTable.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
@@ -1136,6 +1146,8 @@ public class GUI implements DraftDataView {
                 lineupTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
+                updateLineupTable();
+                updateTaxiTable();
             }
         });
 
@@ -1146,6 +1158,8 @@ public class GUI implements DraftDataView {
                 taxiTable.getSelectionModel().selectNext();
                 playerController.handleEditPlayerRequest(this, p);
                 updatePlayerTable();
+                updateLineupTable();
+                updateTaxiTable();
             }
         });
 
@@ -1227,12 +1241,6 @@ public class GUI implements DraftDataView {
         summaryPauseButton.setOnAction(e -> {
             draftController.handlePauseRequest(this);
         });
-        // THEN THE DRAFT EDITING CONTROLS
-        // TEXT FIELDS HAVE A DIFFERENT WAY OF LISTENING FOR TEXT CHANGES
-        // AND NOW THE LECTURE ADDING AND EDITING CONTROLS
-        // AND NOW THE LECTURE TABLE
-        // AND NOW THE HW ADDING AND EDITING CONTROLS
-        // AND NOW THE LECTURE TABLE
     }
 
     // INIT A BUTTON AND ADD IT TO A CONTAINER IN A TOOLBAR
@@ -1259,34 +1267,11 @@ public class GUI implements DraftDataView {
         return label;
     }
 
-    // INIT A LABEL AND PLACE IT IN A GridPane INIT ITS PROPER PLACE
-    private Label initGridLabel(GridPane container, DraftKit_PropertyType labelProperty, String styleClass, int col, int row, int colSpan, int rowSpan) {
-        Label label = initLabel(labelProperty, styleClass);
-        container.add(label, col, row, colSpan, rowSpan);
-        return label;
-    }
-
     // INIT A LABEL AND PUT IT IN A TOOLBAR
     private Label initChildLabel(Pane container, DraftKit_PropertyType labelProperty, String styleClass) {
         Label label = initLabel(labelProperty, styleClass);
         container.getChildren().add(label);
         return label;
-    }
-
-    // INIT A COMBO BOX AND PUT IT IN A GridPane
-    private ComboBox initGridComboBox(GridPane container, int col, int row, int colSpan, int rowSpan) throws IOException {
-        ComboBox comboBox = new ComboBox();
-        container.add(comboBox, col, row, colSpan, rowSpan);
-        return comboBox;
-    }
-
-    private TextField initGridTextField(GridPane container, int size, String initText, boolean editable, int col, int row, int colSpan, int rowSpan) {
-        TextField tf = new TextField();
-        tf.setPrefColumnCount(size);
-        tf.setText(initText);
-        tf.setEditable(editable);
-        container.add(tf, col, row, colSpan, rowSpan);
-        return tf;
     }
 
     public String getSaveName() {
@@ -1297,16 +1282,23 @@ public class GUI implements DraftDataView {
         saveField.setText(s);
     }
 
-    public void sortLineupTable() {
+    public void updateLineupTable() {
         if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
-        lineupTable.getSortOrder().add(lineup_position);
-        lineup_position.setSortType(SortType.ASCENDING);
-        lineup_position.setSortable(true);
-        lineup_position.setSortable(false);
+            lineupTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getLineup());
+            lineupTable.getSortOrder().add(lineup_position);
+            lineup_position.setSortType(SortType.ASCENDING);
+            lineup_position.setSortable(true);
+            lineup_position.setSortable(false);
         }
     }
     
-    public void setDraftPickTable() {
+    public void updateTaxiTable() {
+        if (teamComboBox.getSelectionModel().getSelectedItem() != null) {
+            taxiTable.setItems(dataManager.getDraft().getTeam(teamComboBox.getSelectionModel().getSelectedItem().toString()).getTaxi());
+        }
+    }
+    
+    public void updateSummaryTable() {
         summaryTable.setItems(FXCollections.observableArrayList(dataManager.getDraft().getDraftPicks()));
     }
 }
